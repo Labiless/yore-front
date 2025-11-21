@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import Button from '@shared/components/ui/button/Button.vue'
+import { RouterView } from 'vue-router';
 </script>
 
 <template>
-  <h1>BACKOFFICE</h1>
-  <Button>Click me</Button>
+  <main>
+    <RouterView />
+  </main>
 </template>
 
 <style scoped></style>

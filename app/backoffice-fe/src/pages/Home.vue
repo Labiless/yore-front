@@ -1,10 +1,12 @@
 <template lang="">
     <div>
-        
+        HOME
     </div>
 </template>
-<script setup lang="ts">
-
+<script>
+export default {
+    
+}
 </script>
 <style lang="">
     

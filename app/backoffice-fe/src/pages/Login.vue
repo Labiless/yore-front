@@ -1,4 +1,4 @@
-<template lang="">
+<template>
     <div>
         <LoginForm @submit="onsubmit">Click me</LoginForm>
     </div>
@@ -19,6 +19,6 @@ const onsubmit = async (data: { username: string; password: string }) => {
 
 </script>
 
-<style lang="">
+<style>
 
 </style>

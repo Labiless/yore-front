@@ -1,4 +1,4 @@
-<template lang="">
+<template>
     <div class="flex flex-col gap-4 max-w-sm mx-auto mt-20">
         YORE
         <Input placeholder="Username" v-model="username" />
@@ -22,6 +22,6 @@ const onsubmit = () => {
 
 </script>
 
-<style lang="">
+<style>
 
 </style>

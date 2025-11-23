@@ -27,7 +27,7 @@ const links = [
     icon: "Wrench"
   },
   {
-    link: "/",
+    link: "/loadbatch",
     icon: "ArchiveRestore"
   },
   {

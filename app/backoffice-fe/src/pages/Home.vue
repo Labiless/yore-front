@@ -1,10 +1,10 @@
 <template>
     <div class="flex justify-center items-center">
-        <HomeButton icon="Upload" link="/home">Carica Lotto</HomeButton>
+        <HomeButton icon="Upload" link="/loadbatch">Carica Lotto</HomeButton>
         <HomeButton icon="Barcode" link="/">Genera etichette</HomeButton>
     </div>
 </template>
-<script setup>
+<script setup lang="ts">
 
 import { useUiStore } from '@/stores/ui';
 import { onMounted } from 'vue';

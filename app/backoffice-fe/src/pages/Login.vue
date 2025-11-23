@@ -18,7 +18,7 @@ const onsubmit = async (data: { username: string; password: string }) => {
     try {
         const [username, password] = [data.username, data.password];
         if (!username || !password) throw new Error("No username or passowrd")
-        const res = await api.post('/api/auth/signin', {
+        const res = await api.post('/auth/signin', {
             email: username,
             password
         })

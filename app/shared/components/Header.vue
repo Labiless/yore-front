@@ -1,10 +1,9 @@
 <template>
-    <div>
-        <h1>{{ title }}</h1>
+    <div class="p-4 fixed top-0">
+        <h1 class="font-bold text-3xl">{{ title }}</h1>
     </div>
 </template>
 <script setup lang="ts">
-import { defineProps } from 'vue';
 
 defineProps<{
     title?: string

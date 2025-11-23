@@ -1,8 +1,8 @@
 <template>
   <main>
-    <Header :title="uiSTore.title" />
-    <RouterView />
-    <Nav :links />
+    <Header v-if="authStore.isAuthenticated" :title="uiSTore.title" />
+    <RouterView class="h-screen bg-gray-100" />
+    <Nav v-if="authStore.isAuthenticated" :links />
   </main>
 </template>
 
@@ -12,32 +12,34 @@ import { RouterView } from 'vue-router';
 import Header from '@shared/components/Header.vue';
 import Nav from '@shared/components/Nav.vue';
 import { useUiStore } from '@/stores/ui';
+import { useAuthStore } from './stores/auth';
 
 const uiSTore = useUiStore();
+const authStore = useAuthStore();
 
 const links = [
   {
-    link: "home",
+    link: "/",
     icon: "House"
   },
   {
-    link: "home",
+    link: "/",
     icon: "Wrench"
   },
   {
-    link: "home",
+    link: "/",
     icon: "ArchiveRestore"
   },
   {
-    link: "home",
+    link: "/",
     icon: "Warehouse"
   },
   {
-    link: "home",
+    link: "/",
     icon: "QrCode"
   },
   {
-    link: "home",
+    link: "/",
     icon: "UserRoundCog"
   }
 ]

@@ -22,11 +22,11 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const authStore = useAuthStore()
+  const authStore = useAuthStore();
   if (to.path !== '/login' && !authStore.isAuthenticated) {
-    next('/login')
+    next('/login');
   } else {
-    next()
+    next();
   }
 })
 

@@ -1,12 +1,17 @@
 <template>
-    <div>
-        HOME
-    </div>
+
 </template>
-<script>
-export default {
-    
-}
+<script setup>
+
+import { useUiStore } from '@/stores/ui';
+import { onMounted } from 'vue';
+
+const uiStore = useUiStore();
+
+onMounted(() => {
+    uiStore.title = "HOME";
+});
+
 </script>
 <style>
     

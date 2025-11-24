@@ -4,3 +4,8 @@ export const getInkTypes = async () => {
     const data = await api.get("/ink-types");
     return data.data;
 };
+
+export const loadInks = async (data: any) => {
+    const res  = await api.post("/inks/load", data);
+    return res.data;
+}

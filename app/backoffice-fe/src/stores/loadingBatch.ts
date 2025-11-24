@@ -4,7 +4,7 @@ export const useLoadingBatchStore = defineStore('loadingBatch', {
   state: () => ({
     color: '',
     inkType: '',
-    amount: '',
+    amount: 0,
     expirationDate: '',
     productionId: '',
     inkFormulaUrl: '',
@@ -15,21 +15,29 @@ export const useLoadingBatchStore = defineStore('loadingBatch', {
   }),
 
   getters: {
-    //title: (state) => state.title,
   },
 
   actions: {
     resetLoadingBatch() {
-        this.color = '';
-        this.inkType = '';
-        this.amount = '';
-        this.expirationDate = '';
-        this.productionId = '';
-        this.inkFormulaUrl = '';
-        this.sdsUrl = '';
-        this.sterilizationCertUrl = '';
-        this.chemistryAnalysisUrl = '';
-        this.microbiologicalAnalysisUrl = '';
+      this.color = '';
+      this.inkType = '';
+      this.amount = 0;
+      this.expirationDate = '';
+      this.productionId = '';
+      this.inkFormulaUrl = '';
+      this.sdsUrl = '';
+      this.sterilizationCertUrl = '';
+      this.chemistryAnalysisUrl = '';
+      this.microbiologicalAnalysisUrl = '';
     },
+    initBatchLoading(data : {
+      color: string
+      inkType: string
+      amount: number
+    }) {
+      this.color = data.color;
+      this.inkType = data.inkType;
+      this.amount = data.amount;
+    }
   },
 })

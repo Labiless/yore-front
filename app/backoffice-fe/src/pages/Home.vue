@@ -1,5 +1,5 @@
 <template>
-    <div class="flex justify-center items-center">
+    <div class="flex justify-center items-center h-full">
         <HomeButton icon="Upload" link="/loadbatch">Carica Lotto</HomeButton>
         <HomeButton icon="Barcode" link="/">Genera etichette</HomeButton>
     </div>

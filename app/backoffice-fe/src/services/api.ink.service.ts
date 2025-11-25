@@ -14,3 +14,8 @@ export const getAllBatches = async () => {
     const res  = await api.get("/ink-batches");
     return res.data;
 }
+
+export const getBatchById = async (batchId : string) => {
+    const res = await api.get(`inks/batch/${batchId}`);
+    return res.data;
+}

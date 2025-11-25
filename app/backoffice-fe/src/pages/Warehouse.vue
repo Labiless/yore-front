@@ -1,6 +1,6 @@
 <template>
-    <div class="grid grid-cols-4 gap-4 pt-48 mx-auto w-5/6 items-start">
-        <div class="flex justify-start items-center shadow-2xl p-4 bg-white rounded-2xl w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
+    <div class="grid grid-cols-3 gap-4 pt-48 mx-auto w-5/6 items-start">
+        <router-link :to="`/warehosue/${batch.uuid}`" class="flex justify-start items-center shadow-2xl p-4 bg-white rounded-2xl w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
             v-for="batch in allBatches">
             <p class="font-bold text-2xl pr-4">x {{ batch.amount }}</p>
             <div class="border-l-1 border-black pl-4">
@@ -8,7 +8,7 @@
                 <p>{{ new Date(batch.creationDate).toDateString() }}</p>
                 <p class="text-xs">{{ batch.uuid }}</p>
             </div>
-        </div>
+        </router-link>
     </div>
 </template>
 

@@ -8,6 +8,7 @@ import Warehouse from '@/pages/Warehouse.vue';
 import CreateLabels from '@/pages/CreateLabels.vue';
 import Labels from '@/pages/Labels.vue';
 import Users from '@/pages/Users.vue';
+import InkBatch from '@/pages/InkBatch.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -33,6 +34,12 @@ const router = createRouter({
       path: '/warehouse',
       name: 'warehouse',
       component: Warehouse,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/warehosue/:batchId',
+      name: 'inkBatch',
+      component: InkBatch,
       meta: { requiresAuth: true },
     },
     {

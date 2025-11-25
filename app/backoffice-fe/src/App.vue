@@ -4,7 +4,7 @@
   </div>
   <main class="h-screen w-full bg-gray-100" :class="`${uiStore.loading ? 'blur' : ''}`">
     <Header v-if="authStore.isAuthenticated" :title="uiStore.title" />
-    <RouterView/>
+    <RouterView />
     <Nav v-if="authStore.isAuthenticated" :links />
   </main>
 </template>
@@ -23,27 +23,33 @@ const authStore = useAuthStore();
 const links = [
   {
     link: "/",
-    icon: "House"
-  },
-  {
-    link: "/",
-    icon: "Wrench"
+    icon: "House",
+    name: "Home",
   },
   {
     link: "/loadbatch",
-    icon: "ArchiveRestore"
+    icon: "ArchiveRestore",
+    name: "Carica lotto",
   },
   {
-    link: "/",
-    icon: "Warehouse"
+    link: "/warehouse",
+    icon: "Warehouse",
+    name: "Magazzino",
   },
   {
-    link: "/",
-    icon: "QrCode"
+    link: "/createlabels",
+    icon: "Wrench",
+    name: "Crea etichette",
   },
   {
-    link: "/",
-    icon: "UserRoundCog"
+    link: "/labels",
+    icon: "QrCode",
+    name: "Etichette",
+  },
+  {
+    link: "/users",
+    icon: "UserRoundCog",
+    name: "Utenti",
   }
 ]
 

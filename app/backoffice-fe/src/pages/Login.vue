@@ -10,11 +10,14 @@ import api from '@/services/api.service';
 import { useAuthStore } from '@/stores/auth';
 import { ref } from 'vue';
 import router from '@/router';
+import { useUiStore } from '@/stores/ui';
 
 const error = ref("");
 const authStore = useAuthStore();
+const uiStore = useUiStore();
 
 const onsubmit = async (data: { username: string; password: string }) => {
+    uiStore.loading = true;
     try {
         const [username, password] = [data.username, data.password];
         if (!username || !password) throw new Error("No username or passowrd")
@@ -28,6 +31,7 @@ const onsubmit = async (data: { username: string; password: string }) => {
     } catch (e : any) {
         error.value = e.message;
     }
+    uiStore.loading = false;
 };
 
 const onLogin = (accessToken : string) => {

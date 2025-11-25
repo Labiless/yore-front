@@ -1,11 +1,11 @@
 <template>
-    <div class="flex flex-col gap-4 max-w-full mx-auto">
+    <form @submit.prevent="onsubmit" class="flex flex-col gap-4 max-w-full mx-auto">
         YORE
-        <Input autocomplete="username" placeholder="Username" v-model="username" />
-        <Input autocomplete="current-password" placeholder="Password" v-model="password" type="password" />
-        <Button @click="onsubmit">Login</Button>
+        <Input autocomplete="username" placeholder="Username" v-model="username" required />
+        <Input autocomplete="current-password" placeholder="Password" v-model="password" type="password" required/>
+        <Button type="submit">Login</Button>
         <p class="text-red-500 text-sm">{{ error }}</p>
-    </div>
+    </form>
 </template>
 
 <script setup lang="ts">

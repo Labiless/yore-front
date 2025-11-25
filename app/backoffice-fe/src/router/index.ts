@@ -9,6 +9,7 @@ import CreateLabels from '@/pages/CreateLabels.vue';
 import Labels from '@/pages/Labels.vue';
 import Users from '@/pages/Users.vue';
 import InkBatch from '@/pages/InkBatch.vue';
+import Ink from '@/pages/Ink.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -37,9 +38,15 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: '/warehosue/:batchId',
+      path: '/warehouse/:batchId',
       name: 'inkBatch',
       component: InkBatch,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/warehouse/:batchId/:inkId',
+      name: 'ink',
+      component: Ink,
       meta: { requiresAuth: true },
     },
     {
@@ -70,6 +77,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  console.log(to);
   const authStore = useAuthStore();
   if (to.path !== '/login' && !authStore.isAuthenticated) {
     next('/login');

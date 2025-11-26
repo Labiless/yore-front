@@ -38,13 +38,13 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: '/warehouse/:batchId',
+      path: '/warehouse/:batchUuid',
       name: 'inkBatch',
       component: InkBatch,
       meta: { requiresAuth: true },
     },
     {
-      path: '/warehouse/:batchId/:inkId',
+      path: '/warehouse/:batchUuid/:inkUuid',
       name: 'ink',
       component: Ink,
       meta: { requiresAuth: true },
@@ -77,7 +77,6 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  console.log(to);
   const authStore = useAuthStore();
   if (to.path !== '/login' && !authStore.isAuthenticated) {
     next('/login');

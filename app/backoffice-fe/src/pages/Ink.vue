@@ -7,20 +7,19 @@
 <script setup lang="ts">
 import { useUiStore } from '@/stores/ui';
 import { onMounted, ref } from 'vue';
-import { getBatchById } from '@/services/api.ink.service';
+import { getInkByUuid } from '@/services/api.ink.service';
 import router from '@/router';
 
 const uiStore = useUiStore();
 const inkData = ref(null);
 
-const inkId = router.resolve().params.inkId;
+const inkUuid = router.resolve().params.inkUuid as string;
 
 onMounted(async () => {
-    uiStore.title = inkId;
+    uiStore.title = "Singolo inchiostro";
     uiStore.loading = true;
     // @ts-ignore
-    //batchData.value = await getBatchById(inkId);
-    //console.log(batchData.value);
+    inkData.value = await getInkByUuid(inkUuid);
     uiStore.loading = false;
 });
 

@@ -2,11 +2,11 @@
   <div class="flex justify-center items-center w-full h-full fixed z-10 bg-gray-500 opacity-35" v-if="uiStore.loading">
     <div class="w-16 h-16 bg-white rounded-full animate-bounce"></div>
   </div>
-  <main class="h-screen w-full bg-gray-100" :class="`${uiStore.loading ? 'blur' : ''}`">
-    <Header v-if="authStore.isAuthenticated" :title="uiStore.title" />
+  <Header v-if="authStore.isAuthenticated" :title="uiStore.title" />
+  <main class="h-screen w-4/6 mx-auto" :class="`${uiStore.loading ? 'blur' : ''}`">
     <RouterView />
-    <Nav v-if="authStore.isAuthenticated" :links />
   </main>
+  <Nav v-if="authStore.isAuthenticated" :links />
 </template>
 
 <script setup lang="ts">

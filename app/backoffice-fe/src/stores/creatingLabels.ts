@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-export const useLoadingBatchStore = defineStore('loadingBatch', {
+export const useCreatingLabelsStore = defineStore('creatingLabels', {
   state: () => ({
     color: '',
     inkType: '',
@@ -19,7 +19,7 @@ export const useLoadingBatchStore = defineStore('loadingBatch', {
   },
 
   actions: {
-    resetLoadingBatch() {
+    resetCreatingLabels() {
       this.color = '';
       this.inkType = '';
       this.amount = 0;
@@ -31,7 +31,7 @@ export const useLoadingBatchStore = defineStore('loadingBatch', {
       this.chemistryAnalysisUrl = '';
       this.microbiologicalAnalysisUrl = '';
     },
-    initBatchLoading(data : {
+    initLabelsCreation(data : {
       color: string,
       inkType: string,
       inkTypeUuid: string,

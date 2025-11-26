@@ -1,6 +1,8 @@
 // src/services/api.ts
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
+import { useUiStore } from '@/stores/ui'
+import router from '@/router';
 
 const api = axios.create({
   baseURL: 'http://localhost:3000/api', // cambia con il tuo BE
@@ -15,15 +17,21 @@ api.interceptors.request.use((config) => {
   return config
 })
 
-// opzionale: se il BE risponde 401, facciamo logout e redirect
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    const authStore = useAuthStore()
+    const uiStore = useUiStore();
+    const authStore = useAuthStore();
     if (error.response?.status === 401) {
-      authStore.logout()
-      window.location.href = '/login'
+      alert("Session expired");
+      authStore.logout();
+      router.push('/login');
     }
+    else {
+      alert("Error with BE");
+      router.push('/home');
+    }
+    uiStore.loading = false;
     return Promise.reject(error)
   },
 )

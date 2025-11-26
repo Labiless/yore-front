@@ -28,13 +28,15 @@ onMounted(async () => {
     uiStore.loading = true;
     uiStore.title = "Carica Lotto";
     inkTypes.value = await getInkTypes();
+    console.log(inkTypes.value)
     uiStore.loading = false;
 })
 
 const addAmount = (data: {
-    color: string
-    inkType: string
-    amount: number
+    color: string,
+    inkType: string,
+    inkTypeUuid: string,
+    amount: number,
 }) => {
     loadingBatchStore.initBatchLoading(data);
 }
@@ -45,7 +47,8 @@ const loadBatch = async () => {
     data.expirationDate = date.toISOString();
     const res = await loadInks(data);
     if (res) {
-        router.push('/home');
+        loadingBatchStore.resetLoadingBatch()
+        router.push('/warehouse');
     }
 }
 

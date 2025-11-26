@@ -1,7 +1,11 @@
 <template>
-    <div class="grid grid-cols-3 gap-4 pt-48 mx-auto w-5/6 items-start">
-        <router-link :to="`${batchId}/${ink.uuid}`"
-            class="flex justify-start items-center shadow-2xl p-4 bg-white rounded-2xl w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
+    <div class="mx-auto flex pt-48 w-full mb-8">
+        <ArrowLeft @click="router.push('/warehouse')" class="hover:cursor-pointer mt-1 mr-2" />
+        <h1 class="font-bold text-xl">{{ batchUuid }}</h1>
+    </div>
+    <div class="mx-auto w-full items-start">
+        <router-link :to="`${batchUuid}/${ink.uuid}`"
+            class="flex mb-4 justify-start items-center shadow-2xl p-4 bg-white rounded-2xl w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
             v-for="ink in batchData">
             <p class="font-bold text-2xl pr-4">{{ ink.id }}</p>
             <div class="border-l-1 border-black pl-4">
@@ -15,20 +19,20 @@
 <script setup lang="ts">
 import { useUiStore } from '@/stores/ui';
 import { onMounted, ref } from 'vue';
-import { getBatchById } from '@/services/api.ink.service';
+import { getBatchByUuid } from '@/services/api.ink.service';
+import { ArrowLeft } from 'lucide-vue-next';
 import router from '@/router';
 
 const uiStore = useUiStore();
 const batchData = ref(null);
 
-const batchId = router.resolve().params.batchId;
+const batchUuid = router.resolve().params.batchUuid as string;
 
 onMounted(async () => {
-    uiStore.title = batchId;
+    uiStore.title = "Lotto caricato";
     uiStore.loading = true;
     // @ts-ignore
-    batchData.value = await getBatchById(batchId);
-    console.log(batchData.value);
+    batchData.value = await getBatchByUuid(batchUuid);
     uiStore.loading = false;
 });
 

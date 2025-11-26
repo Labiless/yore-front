@@ -1,16 +1,12 @@
 <template>
-    <form ref="form" @submit.prevent="addAmount" class="bg-white flex gap-4 flex-col p-4 rounded-2xl shadow-2xl w-1/3 max-w-xs">
+    <form @submit.prevent="addAmount" class="bg-white flex gap-4 mx-4 flex-col p-4 rounded-2xl shadow-2xl w-1/3 max-w-xs">
         <h2 class="font-bold capitalize text-xl">{{ inkType.name }}</h2>
         <p class="text-xs">{{ inkType.creationDate }}</p>
         <hr></hr>
-        <p>Seleziona il colore</p>
-        <label v-for="color, i in inkType.colors">
-            <input name="color" type="radio" :value="color" :required="i === 0"  />
-            {{ color }}
-        </label>
+        <p :style="`color: ${inkType.color}`">{{ inkType.color }}</p>            
         <hr></hr>
-        <label for="amount">Seleziona la quantità</label>
-        <Input name="amount" required="true" v-model="amount" placeholder="Quantità da caricare" type="number" min="1" max="1000"/>
+        <label for="amount">Seleziona la quantità <span v-if="inkType.amount">max({{ inkType.amount }})</span></label>
+        <Input name="amount" required="true" v-model="amount" placeholder="Quantità da caricare" type="number" min="1" :max="inkType.amount || 1000"/>
         <Button type="submit">Aggiungi</Button>
     </form>
 </template>
@@ -22,25 +18,23 @@ import { ref } from 'vue';
 
 const props = defineProps<{
     inkType: {
-        colors: string[]
+        color: string,
         creationDate: Date,
         id: string,
         name: string,
         uuid: string,
+        amount? :number
     },
 }>();
 
 const emit = defineEmits(['addAmount'])
-
-const form = ref(null)
-
-const colorIndex = ref(0);
 const amount = ref(0)
-const selectedColor = ref(props.inkType.colors[colorIndex.value]);
+
+console.log(props);
 
 const addAmount = () => {
     // @ts-ignore
-    emit('addAmount', { inkType: props.inkType.name, color: selectedColor.value, amount: amount.value });
+    emit('addAmount', { inkType: props.inkType.name, inkTypeUuid: props.inkType.uuid, color: props.inkType.color, amount: amount.value });
 }
 
 </script>

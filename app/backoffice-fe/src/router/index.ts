@@ -10,6 +10,7 @@ import Labels from '@/pages/Labels.vue';
 import Users from '@/pages/Users.vue';
 import InkBatch from '@/pages/InkBatch.vue';
 import Ink from '@/pages/Ink.vue';
+import LabelBatch from '@/pages/LabelBatch.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -59,6 +60,12 @@ const router = createRouter({
       path: '/labels',
       name: 'labels',
       component: Labels,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/labels/:labelsUuid',
+      name: 'labelBatch',
+      component: LabelBatch,
       meta: { requiresAuth: true },
     },
     {

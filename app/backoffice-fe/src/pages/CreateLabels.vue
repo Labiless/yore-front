@@ -1,6 +1,7 @@
 <template>
     <div class="w-full flex justify-center items-center h-full">
-        <inkTypeSelector v-for="inkType in warehouse" :ink-type="inkType" />
+        <inkTypeSelector @submit="create" v-for="inkType in warehouse" :ink-type="inkType">Crea etichette
+        </inkTypeSelector>
     </div>
 </template>
 
@@ -8,8 +9,10 @@
 
 import { onMounted, ref } from 'vue';
 import { getInkTypes, getInksByType } from "@/services/api.ink.service";
+import { createLabels } from '@/services/api.label.service';
 import { useUiStore } from '@/stores/ui';
 import inkTypeSelector from '@/components/inkTypeSelector.vue';
+import router from '@/router';
 
 const uiStore = useUiStore();
 const inkTypes = ref([]);
@@ -26,13 +29,20 @@ onMounted(async () => {
     uiStore.loading = false;
 });
 
-const addAmount = (data: {
+const create = async (data: {
     color: string,
     inkType: string,
     inkTypeUuid: string,
     amount: number,
 }) => {
-    //loadingBatchStore.initBatchLoading(data);
+    try {
+        uiStore.loading = true;
+        const res = await createLabels(data.amount, data.inkTypeUuid);
+        router.push("labels");
+    } catch (error) {
+        alert(error.message);
+        uiStore.loading = false;
+    }
 }
 
 </script>

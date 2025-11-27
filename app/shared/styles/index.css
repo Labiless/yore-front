@@ -20,6 +20,53 @@ body{
   opacity: 0;
 }
 
+.next-enter-from{
+  transform: translateX(1000px);
+}
+.next-enter-active{
+  position: absolute;
+  width: 50%;
+  transition: all 0.5s;
+}
+.next-enter-to{
+    transform: translateX(0px);
+}
+
+.next-leave-from{
+  transform: translateX(0px);
+}
+.next-leave-active{
+  position: absolute;
+  transition: all 0.5s;
+}
+.next-leave-to{
+    transform: translateX(-1000px);
+}
+
+
+.back-enter-from{
+  transform: translateX(0px);
+}
+.back-enter-active{
+  position: absolute;
+  width: 50%;
+  transition: all 0.5s;
+}
+.back-enter-to{
+    transform: translateX(1000px);
+}
+
+.back-leave-from{
+  transform: translateX(-1000px);
+}
+.back-leave-active{
+  position: absolute;
+  transition: all 0.5s;
+}
+.back-leave-to{
+    transform: translateX(0px);
+}
+
 @theme inline {
   --font-display: "Inter", sans-serif;
   --radius-sm: calc(var(--radius) - 4px);

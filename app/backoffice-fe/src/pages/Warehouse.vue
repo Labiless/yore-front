@@ -2,55 +2,116 @@
     <div class="mx-auto flex pt-48 w-full mb-8">
         <h1 class="font-bold text-2xl">Inchiostri disponibili</h1>
     </div>
-    <div class="grid grid-cols-3 gap-4 mx-auto w-full items-start">
+    <div class="grid grid-cols-3 gap-4 mx-auto w-full items-start" v-if="warehouse.length">
         <div class="shadow-2xl p-4 bg-white rounded-2xl flex justify-center items-center" v-for="inks in warehouse">
-            <p class="font-bold text-xl pr-4 w-16 text-center">X {{ inks._count.id }}</p>
+            <p class="font-bold text-xl pr-4 w-16 text-center">X {{ inks.amount }}</p>
             <div class="border-l-1 border-black pl-4">
                 <p class="font-bold capitalize text-2xl">{{ inks.name }}</p>
                 <p :style="`color: ${inks.color}`">{{ inks.color }}</p>
-                <p class="text-xs">{{ inks.inkTypeUuid }}</p>
+                <p class="text-xs">{{ inks.uuid }}</p>
             </div>
         </div>
+    </div>
+    <div v-else>
+        <h1>Magazzino vuoto</h1>
     </div>
     <div class="mx-auto flex pt-8 w-full mb-8">
         <h1 class="font-bold text-lg">Storico caricamenti</h1>
     </div>
-    <div class="mx-auto w-full items-start overflow-y-auto h-1/2">
-        <router-link :to="`/warehouse/${batch.uuid}`"
-            class="flex justify-start items-center mx-4 shadow-2xl p-4 bg-white mb-4 rounded-2xl w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
-            v-for="batch in allBatches">
-            <p class="font-bold text-2xl pr-4 w-16 text-center">x {{ batch.amount }}</p>
-            <div class="border-l-1 border-black pl-4">
-                <p class="font-bold">N°{{ batch.id }}</p>
-                <p>{{ new Date(batch.creationDate).toDateString() }}</p>
-                <p class="text-xs">{{ batch.uuid }}</p>
+    <div class="mx-auto w-full items-start overflow-y-auto h-1/2" v-if="allBatches.length">
+        <transition :name="transitionDirection">
+            <div v-if="!batchUuid">
+                <div @click="showBatch(batch.uuid)"
+                    class="flex justify-start items-center mx-4 shadow-2xl p-4 bg-white mb-4 rounded-2xl w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
+                    v-for="batch in allBatches">
+                    <p class="font-bold text-2xl pr-4 w-16 text-center">x {{ batch.amount }}</p>
+                    <div class="border-l-1 border-black pl-4">
+                        <p class="font-bold">N°{{ batch.id }}</p>
+                        <p>{{ new Date(batch.creationDate).toDateString() }}</p>
+                        <p class="text-xs">{{ batch.uuid }}</p>
+                    </div>
+                </div>
             </div>
-        </router-link>
+            <div v-else-if="batchUuid && !inkUuid">
+                <div class="flex mb-4">
+                    <ArrowLeft @click="transitionDirection = 'back'; batchUuid = ''" class="hover:cursor-pointer ml-4 mb-4 mr-4" />
+                    <p class="font-bold text-xl">{{ batchUuid }}</p>
+                </div>
+                <div @click="showInk(ink.uuid)"
+                    class="flex justify-start items-center mx-4 shadow-2xl p-4 bg-white mb-4 rounded-2xl w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
+                    v-for="ink in batchData">
+                    <p class="font-bold text-2xl pr-4 w-16 text-center">{{ ink.id }}</p>
+                    <div class="border-l-1 border-black pl-4">
+                        <p class="font-bold">{{ ink.uuid }}</p>
+                        <p>{{ new Date(ink.creationDate).toDateString() }}</p>
+                    </div>
+                </div>
+            </div>
+            <div v-else>
+                <div class="flex mb-4">
+                    <ArrowLeft @click="transitionDirection = 'back'; inkUuid = '';" class="hover:cursor-pointer ml-4 mb-4 mr-4" />
+                    <p class="font-bold text-xl">{{ inkUuid }}</p>
+                </div>
+                <div
+                    class="flex justify-start items-center mx-4 shadow-2xl p-4 bg-white mb-4 rounded-2xl w-auto h-80 hover:bg-blue-100 transition-all ">
+                    <p class="font-bold text-2xl pr-4 w-16 text-center">{{ inkData.id }}</p>
+                    <div class="border-l-1 border-black pl-4">
+                        <p class="font-bold">{{ inkData.uuid }}</p>
+                        <p>{{ new Date(inkData.creationDate).toDateString() }}</p>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </div>
+    <div v-else>
+        <h1>Nessun lotto creato</h1>
     </div>
 </template>
 
 <script setup lang="ts">
 
 import { onMounted } from 'vue';
-import { getAllBatches, getInksByType, getInkTypes } from "@/services/api.ink.service";
+import { getAllBatches, getAvailableInksByType, getInkTypes, getBatchByUuid, getInkByUuid } from "@/services/api.ink.service";
+import { ArrowLeft } from 'lucide-vue-next';
 import { useUiStore } from '@/stores/ui';
 import { ref } from 'vue';
 
 const uiStore = useUiStore();
+const transitionDirection = ref('next');
+
 const allBatches = ref([]);
 const warehouse = ref([]);
-const inkTypes = ref([])
+const batchUuid = ref('');
+const batchData = ref([]);
+const inkUuid = ref('');
+const inkData = ref({});
 
 onMounted(async () => {
     uiStore.title = "Magazzino Inchiostri";
     uiStore.loading = true;
     allBatches.value = await getAllBatches();
-    inkTypes.value = await getInkTypes();
-    warehouse.value = (await getInksByType()).map(el => ({
-        ...el,
-        ...inkTypes.value.filter(newEl => newEl.uuid === el.inkTypeUuid)[0]
-    }))
+    const inkTypes = await getInkTypes();
+    for (let i = 0; i < inkTypes.length; i++) {
+        const availableAmount = await getAvailableInksByType(inkTypes[i].uuid);
+        //@ts-ignore
+        if (availableAmount.length) warehouse.value[i] = {
+            ...inkTypes[i],
+            amount: availableAmount.length
+        }
+    }
     uiStore.loading = false;
 });
+
+const showBatch = async (uuid: string) => {
+    transitionDirection.value = 'next';
+    batchUuid.value = uuid;
+    batchData.value = await getBatchByUuid(batchUuid.value);
+}
+
+const showInk = async (uuid: string) => {
+    transitionDirection.value = 'next';
+    inkUuid.value = uuid;
+    inkData.value = await getInkByUuid(uuid);
+}
 
 </script>

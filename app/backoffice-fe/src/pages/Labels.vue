@@ -1,6 +1,6 @@
 <template>
     <div class="mx-auto pt-48 flex pt-8 w-full mb-8">
-        <h1 class="font-bold text-lg">Storico caricamenti</h1>
+        <h1 class="font-bold text-lg">Storico creazione etichette</h1>
     </div>
     <div class="mx-auto w-full overflow-y-auto items-start overflow-y-auto h-2/3">
         <router-link :to="`/labels/${batch.uuid}`"

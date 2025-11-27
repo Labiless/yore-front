@@ -1,31 +1,36 @@
 <template>
-    <div class="w-full flex justify-center items-center h-full">
+    <div class="w-full flex justify-center items-center h-full" v-if="warehouse.length">
         <inkTypeSelector @submit="create" v-for="inkType in warehouse" :ink-type="inkType">Crea etichette
         </inkTypeSelector>
+    </div>
+    <div v-else class="w-full flex justify-center items-center h-full">
+        <h1>Nessun inchiostro disponibile per creazione etichette</h1>
     </div>
 </template>
 
 <script setup lang="ts">
 
 import { onMounted, ref } from 'vue';
-import { getInkTypes, getInksByType } from "@/services/api.ink.service";
+import { getInkTypes, getInksByType, getAvailableInksByType } from "@/services/api.ink.service";
 import { createLabels } from '@/services/api.label.service';
 import { useUiStore } from '@/stores/ui';
 import inkTypeSelector from '@/components/inkTypeSelector.vue';
 import router from '@/router';
 
 const uiStore = useUiStore();
-const inkTypes = ref([]);
 const warehouse = ref([]);
 
 onMounted(async () => {
     uiStore.title = "Crea etichette";
     uiStore.loading = true;
-    inkTypes.value = await getInkTypes();
-    warehouse.value = (await getInksByType()).map(el => ({
-        ...el,
-        ...inkTypes.value.filter(newEl => newEl.uuid === el.inkTypeUuid)[0]
-    }))
+    const inkTypes = await getInkTypes();
+    for(let i = 0; i <inkTypes.length; i++){
+        const availableAmount = await getAvailableInksByType(inkTypes[i].uuid);
+        if(availableAmount.length) warehouse.value[i] = {
+            ...inkTypes[i],
+            amount : availableAmount.length
+        }
+    }
     uiStore.loading = false;
 });
 

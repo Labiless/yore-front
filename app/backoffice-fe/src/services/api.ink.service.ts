@@ -10,6 +10,11 @@ export const getInksByType = async () => {
     return data.data;
 }
 
+export const getAvailableInksByType = async (uuid: string) => {
+    const data = await api.get(`/inks/available/${uuid}`);
+    return data.data;
+}
+
 export const loadInks = async (data: any) => {
     const res  = await api.post("/inks/load", data);
     return res.data;

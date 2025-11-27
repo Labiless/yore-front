@@ -1,7 +1,7 @@
 <template>
     <Transition>
         <div v-if="!loadingBatchStore.amount" class="w-full flex justify-center items-center h-full">
-            <inkTypeSelector @submit="addAmount" v-for="inkType in inkTypes" :inkType="inkType" />
+            <inkTypeSelector @submit="addAmount" v-for="inkType in inkTypes" :inkType="inkType" >Carica inchiostro</inkTypeSelector>
         </div>
         <div v-else class="flex justify-center items-center w-full h-full mx-auto">
             <ArrowLeft @click="loadingBatchStore.resetLoadingBatch()" class="hover:cursor-pointer mt-1" />

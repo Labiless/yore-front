@@ -15,8 +15,12 @@
     <div v-else>
         <h1>Magazzino vuoto</h1>
     </div>
-    <div class="mx-auto flex pt-8 w-full mb-8">
+    <div class="mx-auto flex pt-8 px-4 w-full">
         <h1 class="font-bold text-lg">Storico caricamenti</h1>
+    </div>
+    <div class="p-4 flex justify-start items-center">
+        <Input class="w-1/3 shadow-xl" type="text"/>
+        <Search class="ml-2"/>
     </div>
     <div class="mx-auto w-full items-start overflow-y-auto h-1/2" v-if="allBatches.length">
         <transition :name="transitionDirection">
@@ -33,9 +37,37 @@
                 </div>
             </div>
             <div v-else-if="batchUuid && !inkUuid">
-                <div class="flex mb-4">
-                    <ArrowLeft @click="transitionDirection = 'back'; batchUuid = ''" class="hover:cursor-pointer ml-4 mb-4 mr-4" />
+                <div class="flex py-4">
+                    <ArrowLeft @click="transitionDirection = 'back'; batchUuid = ''"
+                        class="hover:cursor-pointer ml-4 mb-4 mr-4" />
                     <p class="font-bold text-xl">{{ batchUuid }}</p>
+                </div>
+                <div class="flex gap-2 mb-4 p-4">
+                    <a :href="batchData[0].chemistryAnalysisUrl" target="_blank">
+                        <Button>
+                            <Download /> Chemistry Analysis
+                        </Button>
+                    </a>
+                    <a :href="batchData[0].inkFormulaUrl" target="_blank">
+                        <Button>
+                            <Download /> inkFormulaUrl
+                        </Button>
+                    </a>
+                    <a :href="batchData[0].microbiologicalAnalysisUrl" target="_blank">
+                        <Button>
+                            <Download /> microbiologicalAnalysisUrl
+                        </Button>
+                    </a>
+                    <a :href="batchData[0].sterilizationCertUrl" target="_blank">
+                        <Button>
+                            <Download /> sterilizationCertUrl
+                        </Button>
+                    </a>
+                    <a :href="batchData[0].sdsUrl" target="_blank">
+                        <Button>
+                            <Download /> sdsUrl
+                        </Button>
+                    </a>
                 </div>
                 <div @click="showInk(ink.uuid)"
                     class="flex justify-start items-center mx-4 shadow-2xl p-4 bg-white mb-4 rounded-2xl w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
@@ -49,11 +81,39 @@
             </div>
             <div v-else>
                 <div class="flex mb-4">
-                    <ArrowLeft @click="transitionDirection = 'back'; inkUuid = '';" class="hover:cursor-pointer ml-4 mb-4 mr-4" />
+                    <ArrowLeft @click="transitionDirection = 'back'; inkUuid = '';"
+                        class="hover:cursor-pointer ml-4 mb-4 mr-4" />
                     <p class="font-bold text-xl">{{ inkUuid }}</p>
                 </div>
+                <div class="flex gap-2 mb-4 p-4">
+                    <a :href="batchData[0].chemistryAnalysisUrl" target="_blank">
+                        <Button>
+                            <Download /> Chemistry Analysis
+                        </Button>
+                    </a>
+                    <a :href="batchData[0].inkFormulaUrl" target="_blank">
+                        <Button>
+                            <Download /> inkFormulaUrl
+                        </Button>
+                    </a>
+                    <a :href="batchData[0].microbiologicalAnalysisUrl" target="_blank">
+                        <Button>
+                            <Download /> microbiologicalAnalysisUrl
+                        </Button>
+                    </a>
+                    <a :href="batchData[0].sterilizationCertUrl" target="_blank">
+                        <Button>
+                            <Download /> sterilizationCertUrl
+                        </Button>
+                    </a>
+                    <a :href="batchData[0].sdsUrl" target="_blank">
+                        <Button>
+                            <Download /> sdsUrl
+                        </Button>
+                    </a>
+                </div>                
                 <div
-                    class="flex justify-start items-center mx-4 shadow-2xl p-4 bg-white mb-4 rounded-2xl w-auto h-80 hover:bg-blue-100 transition-all ">
+                    class="flex justify-start items-start mx-4 shadow-2xl p-4 bg-white mb-4 rounded-2xl w-auto h-80 hover:bg-blue-100 transition-all ">
                     <p class="font-bold text-2xl pr-4 w-16 text-center">{{ inkData.id }}</p>
                     <div class="border-l-1 border-black pl-4">
                         <p class="font-bold">{{ inkData.uuid }}</p>
@@ -72,8 +132,10 @@
 
 import { onMounted } from 'vue';
 import { getAllBatches, getAvailableInksByType, getInkTypes, getBatchByUuid, getInkByUuid } from "@/services/api.ink.service";
-import { ArrowLeft } from 'lucide-vue-next';
+import { ArrowLeft, Download, Search } from 'lucide-vue-next';
 import { useUiStore } from '@/stores/ui';
+import Input from '@shared/components/ui/input/input.vue';
+import Button from '@shared/components/ui/button/button.vue';
 import { ref } from 'vue';
 
 const uiStore = useUiStore();
@@ -106,6 +168,7 @@ const showBatch = async (uuid: string) => {
     transitionDirection.value = 'next';
     batchUuid.value = uuid;
     batchData.value = await getBatchByUuid(batchUuid.value);
+    console.log(batchData.value);
 }
 
 const showInk = async (uuid: string) => {

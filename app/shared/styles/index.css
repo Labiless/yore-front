@@ -45,7 +45,7 @@ body{
 
 
 .back-enter-from{
-  transform: translateX(0px);
+  transform: translateX(-1000px);
 }
 .back-enter-active{
   position: absolute;
@@ -53,18 +53,18 @@ body{
   transition: all 0.5s;
 }
 .back-enter-to{
-    transform: translateX(1000px);
+    transform: translateX(0px);
 }
 
 .back-leave-from{
-  transform: translateX(-1000px);
+  transform: translateX(0px);
 }
 .back-leave-active{
   position: absolute;
   transition: all 0.5s;
 }
 .back-leave-to{
-    transform: translateX(0px);
+    transform: translateX(1000px);
 }
 
 @theme inline {

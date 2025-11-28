@@ -30,7 +30,7 @@
 import { useUiStore } from '@/stores/ui';
 import Button from '@shared/components/ui/button/button.vue';
 import { onMounted, ref } from 'vue';
-import { getLabelsByBatch, getPrintFile } from '@/services/api.label.service';
+import { getBatchByUuid, getPrintFile } from '@/services/api.label.service';
 import { Printer, ArrowLeft } from 'lucide-vue-next';
 import router from '@/router';
 
@@ -44,7 +44,7 @@ onMounted(async () => {
     uiStore.loading = true;
     console.log(batchUuid);
     // @ts-ignore
-    batchData.value = await getLabelsByBatch(batchUuid);
+    batchData.value = await getBatchByUuid(batchUuid);
     console.log(batchData.value[0].uuid);
     uiStore.loading = false;
 });

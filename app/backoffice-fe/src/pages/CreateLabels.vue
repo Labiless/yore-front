@@ -14,10 +14,12 @@ import { onMounted, ref } from 'vue';
 import { getInkTypes, getInksByType, getAvailableInksByType } from "@/services/api.ink.service";
 import { createLabels } from '@/services/api.label.service';
 import { useUiStore } from '@/stores/ui';
+import { useLabelsStore } from '@/stores/lables.store';
 import inkTypeSelector from '@/components/inkTypeSelector.vue';
 import router from '@/router';
 
 const uiStore = useUiStore();
+const labelsStore = useLabelsStore();
 const warehouse = ref([]);
 
 onMounted(async () => {
@@ -43,7 +45,7 @@ const create = async (data: {
     try {
         uiStore.loading = true;
         const res = await createLabels(data.amount, data.inkTypeUuid);
-        router.push("labels");
+        router.push(`labels/${res}`);
     } catch (error) {
         alert(error.message);
         uiStore.loading = false;

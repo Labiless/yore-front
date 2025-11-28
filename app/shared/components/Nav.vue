@@ -5,7 +5,7 @@
             <p class="absolute -top-8 text-sm" v-if="linkIndex > -1">{{ links[linkIndex].name }}</p>
         </Transition>
         <div class="flex m-auto">
-            <IconLink @mouseover="linkIndex = i" @mouseout="linkIndex = -1" v-for="link, i in links" :icon="link.icon"
+            <IconLink @click="selectedIndex = i" :class="`${selectedIndex === i ? 'bg-black text-white p-2 rounded-full' : ''}`" @mouseover="linkIndex = i" @mouseout="linkIndex = -1" v-for="link, i in links" :icon="link.icon"
                 :link="link.link" />
         </div>
     </nav>
@@ -15,7 +15,8 @@
 import IconLink from './ui/IconLink.vue';
 import { ref } from 'vue';
 
-defineProps<{
+const props = defineProps<{
+    firstIndex?: number,
     links: {
         link: string,
         icon: string,
@@ -24,6 +25,7 @@ defineProps<{
 }>();
 
 const linkIndex = ref(-1);
+const selectedIndex = ref(+props.firstIndex || 0);
 
 </script>
 <style></style>

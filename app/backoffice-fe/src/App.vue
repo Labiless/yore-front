@@ -4,9 +4,11 @@
   </div>
   <Header v-if="authStore.isAuthenticated" :title="uiStore.title" />
   <main class="h-screen w-4/6 mx-auto" :class="`${uiStore.loading ? 'blur' : ''}`">
-    <RouterView />
+    <Transition>
+      <RouterView />
+    </Transition>
   </main>
-  <Nav v-if="authStore.isAuthenticated" :links />
+  <Nav firstIndex="0" v-if="authStore.isAuthenticated" :links />
 </template>
 
 <script setup lang="ts">
@@ -38,12 +40,12 @@ const links = [
   },
   {
     link: "/createlabels",
-    icon: "Wrench",
+    icon: "Tag",
     name: "Crea etichette",
   },
   {
     link: "/labels",
-    icon: "QrCode",
+    icon: "Tags",
     name: "Etichette",
   },
   {

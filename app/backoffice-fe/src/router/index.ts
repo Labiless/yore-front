@@ -65,7 +65,7 @@ const router = createRouter({
     {
       path: '/labels/:labelsUuid',
       name: 'labelBatch',
-      component: LabelBatch,
+      component: Labels,
       meta: { requiresAuth: true },
     },
     {

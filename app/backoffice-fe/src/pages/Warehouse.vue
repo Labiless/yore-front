@@ -19,12 +19,12 @@
         <h1 class="font-bold text-lg">Storico caricamenti</h1>
     </div>
     <div class="p-4 flex justify-start items-center">
-        <Input class="w-1/3 shadow-xl" type="text"/>
-        <Search class="ml-2"/>
+        <Input v-model="searchUuid" class="w-1/3 shadow-xl" type="text" />
+        <Search class="ml-2" />
     </div>
     <div class="mx-auto w-full items-start overflow-y-auto h-1/2" v-if="allBatches.length">
         <transition :name="transitionDirection">
-            <div v-if="!batchUuid">
+            <div v-if="!batchUuid && !inkUuid">
                 <div @click="showBatch(batch.uuid)"
                     class="flex justify-start items-center mx-4 shadow-2xl p-4 bg-white mb-4 rounded-2xl w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
                     v-for="batch in allBatches">
@@ -79,39 +79,39 @@
                     </div>
                 </div>
             </div>
-            <div v-else>
+            <div v-else-if="inkUuid">
                 <div class="flex mb-4">
                     <ArrowLeft @click="transitionDirection = 'back'; inkUuid = '';"
                         class="hover:cursor-pointer ml-4 mb-4 mr-4" />
                     <p class="font-bold text-xl">{{ inkUuid }}</p>
                 </div>
                 <div class="flex gap-2 mb-4 p-4">
-                    <a :href="batchData[0].chemistryAnalysisUrl" target="_blank">
+                    <a :href="inkData.chemistryAnalysisUrl" target="_blank">
                         <Button>
                             <Download /> Chemistry Analysis
                         </Button>
                     </a>
-                    <a :href="batchData[0].inkFormulaUrl" target="_blank">
+                    <a :href="inkData.inkFormulaUrl" target="_blank">
                         <Button>
                             <Download /> inkFormulaUrl
                         </Button>
                     </a>
-                    <a :href="batchData[0].microbiologicalAnalysisUrl" target="_blank">
+                    <a :href="inkData.microbiologicalAnalysisUrl" target="_blank">
                         <Button>
                             <Download /> microbiologicalAnalysisUrl
                         </Button>
                     </a>
-                    <a :href="batchData[0].sterilizationCertUrl" target="_blank">
+                    <a :href="inkData.sterilizationCertUrl" target="_blank">
                         <Button>
                             <Download /> sterilizationCertUrl
                         </Button>
                     </a>
-                    <a :href="batchData[0].sdsUrl" target="_blank">
+                    <a :href="inkData.sdsUrl" target="_blank">
                         <Button>
                             <Download /> sdsUrl
                         </Button>
                     </a>
-                </div>                
+                </div>
                 <div
                     class="flex justify-start items-start mx-4 shadow-2xl p-4 bg-white mb-4 rounded-2xl w-auto h-80 hover:bg-blue-100 transition-all ">
                     <p class="font-bold text-2xl pr-4 w-16 text-center">{{ inkData.id }}</p>
@@ -130,13 +130,12 @@
 
 <script setup lang="ts">
 
-import { onMounted } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { getAllBatches, getAvailableInksByType, getInkTypes, getBatchByUuid, getInkByUuid } from "@/services/api.ink.service";
 import { ArrowLeft, Download, Search } from 'lucide-vue-next';
 import { useUiStore } from '@/stores/ui';
 import Input from '@shared/components/ui/input/input.vue';
 import Button from '@shared/components/ui/button/button.vue';
-import { ref } from 'vue';
 
 const uiStore = useUiStore();
 const transitionDirection = ref('next');
@@ -147,6 +146,40 @@ const batchUuid = ref('');
 const batchData = ref([]);
 const inkUuid = ref('');
 const inkData = ref({});
+
+const searchUuid = ref('');
+const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+const isValidUuid = (uuid: string) => {
+    return uuidRegex.test(uuid);
+}
+
+watch(searchUuid, async (newSearchUuid, oldSearchUuid) => {
+    if (isValidUuid(newSearchUuid)) {
+        console.log(newSearchUuid);
+        const ink = await getInkByUuid(newSearchUuid);     
+        if (ink.batchId) {
+            resetSearch();
+            inkUuid.value = newSearchUuid;
+            inkData.value = ink;
+        }
+        const batch = await getBatchByUuid(ink.batchId || newSearchUuid);
+        if (batch.length) {
+            if(!ink) resetSearch();
+            batchUuid.value = newSearchUuid;
+            batchData.value = batch;
+            console.log(batchData.value);
+        }
+
+    }
+})
+
+const resetSearch = () => {
+    batchUuid.value = '';
+    batchData.value = [];
+    inkUuid.value = '';
+    inkData.value = {};
+}
 
 onMounted(async () => {
     uiStore.title = "Magazzino Inchiostri";
@@ -168,7 +201,6 @@ const showBatch = async (uuid: string) => {
     transitionDirection.value = 'next';
     batchUuid.value = uuid;
     batchData.value = await getBatchByUuid(batchUuid.value);
-    console.log(batchData.value);
 }
 
 const showInk = async (uuid: string) => {

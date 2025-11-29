@@ -1,0 +1,19 @@
+<template>
+    <div class="flex justify-center items-center h-full">
+        <HomeButton icon="Plus" link="/loadbatch">Nuovo tatuaggio</HomeButton>
+    </div>
+</template>
+<script setup lang="ts">
+
+import { useUiStore } from '@/stores/ui';
+import { onMounted } from 'vue';
+import HomeButton from '@shared/components/ui/HomeButton.vue';
+
+const uiStore = useUiStore();
+
+onMounted(() => {
+    uiStore.title = "Home";
+});
+
+</script>
+<style></style>

@@ -97,6 +97,9 @@ import { useUiStore } from '@/stores/ui';
 import { useWharehouseStore } from '@/stores/warehouse.store';
 import Input from '@shared/components/ui/input/input.vue';
 import Button from '@shared/components/ui/button/button.vue';
+import router from '@/router';
+
+const batchUuid = router.resolve().params.labelsUuid as string;
 
 const uiStore = useUiStore();
 const warehouseStore = useWharehouseStore();

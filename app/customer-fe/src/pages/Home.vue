@@ -1,6 +1,6 @@
 <template>
     <div class="flex justify-center items-center h-full">
-        <HomeButton icon="Plus" link="/loadbatch">Nuovo tatuaggio</HomeButton>
+        <HomeButton icon="Plus" link="/createtattoo">Nuovo tatuaggio</HomeButton>
     </div>
 </template>
 <script setup lang="ts">

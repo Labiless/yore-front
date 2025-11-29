@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth';
 import Home from '@/pages/Home.vue';
 import Login from '@/pages/Login.vue';
+import CreateTattoo from "@/pages/CreateTattoo.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,6 +16,12 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: Home,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/createtattoo',
+      name: 'createtattoo',
+      component: CreateTattoo,
       meta: { requiresAuth: true },
     },
     {

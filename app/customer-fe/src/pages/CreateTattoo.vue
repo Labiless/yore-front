@@ -14,8 +14,8 @@
                 <Droplet class="text-black" v-if="status.name === 'ink'" />
                 <Brush class="text-black" v-if="status.name === 'tattoo'" />
                 <PenTool class="text-black" v-if="status.name === 'sign'" />
-                <div class="rounded-full bg-green-700 p-1"
-                    :class="`${status.validation() ? '' : 'bg-amber-500!'}`"></div>
+                <div class="rounded-full bg-green-700 p-1" :class="`${status.validation() ? '' : 'bg-amber-500!'}`">
+                </div>
             </Button>
         </div>
         <div id="info" class="overflow-y-scroll flex flex-col gap-4 h-1/2 pb-16 pt-8" v-if="activeStep === 'info'">
@@ -66,8 +66,23 @@
                 </Label>
             </div>
         </div>
-        <div id="kirbyDesay" v-if="activeStep === 'kirbyDesay'">
-            <h1>kirbyDesay</h1>
+        <div id="kirbyDesay" class="overflow-y-scroll flex flex-col gap-4 h-1/2 pb-16 pt-8"
+            v-if="activeStep === 'kirbyDesay'">
+            <p class="text-center font-bold mb-2 w-fit flex items-center mx-auto">
+                <ClipboardList class="text-black mr-2" />
+                Kirby-Desai data
+            <div class="rounded-full bg-green-700 p-1 w-2 h-2 ml-2"
+                :class="`${createTattoStore.kirbyDesayValidation() ? '' : 'bg-amber-500!'}`"></div>
+            </p>
+            <hr>
+            </hr>
+            <div class="grid grid-cols-3 gap-2 ">
+                <Button v-for="skinType in skinTypes" class="h-fit shadow-xl bg-white text-black flex flex-col">
+                    <p class="text-center rounded-sm p-1" :class="`${skinType.bg}`">{{ skinType.name }}</p>
+                    <p class="text-center text-xs block whitespace-normal">{{ skinType.description }}</p>
+                </Button>
+            </div>
+
         </div>
         <div id="ink" v-if="activeStep === 'ink'">
             <h1>ink</h1>
@@ -92,27 +107,67 @@ import { useCreateTattoStore } from '@/stores/createTatto.store';
 const uiStore = useUiStore();
 const createTattoStore = useCreateTattoStore();
 
+const skinTypes = [
+    {
+        id: 1,
+        name: 'molto chiara',
+        description: 'descrizione della pelle',
+        bg: 'bg-red-500'
+    },
+    {
+        id: 1,
+        name: 'molto chiara',
+        description: 'descrizione della pelle',
+        bg: 'bg-red-500'
+    },
+    {
+        id: 1,
+        name: 'molto chiara',
+        description: 'descrizione della pelle',
+        bg: 'bg-red-500'
+    },
+    {
+        id: 1,
+        name: 'molto chiara',
+        description: 'descrizione della pelle',
+        bg: 'bg-red-500'
+    },
+    {
+        id: 1,
+        name: 'molto chiara',
+        description: 'descrizione della pelle',
+        bg: 'bg-red-500'
+    },
+    {
+        id: 1,
+        name: 'molto chiara',
+        description: 'descrizione della pelle',
+        bg: 'bg-red-500'
+    },
+]
+
+
 const activeStep = ref('info');
 const allSteps = [
     {
         name: 'info',
-        validation : createTattoStore.infoValidation
+        validation: createTattoStore.infoValidation
     },
     {
         name: 'kirbyDesay',
-        validation : createTattoStore.kirbyDesayValidation
+        validation: createTattoStore.kirbyDesayValidation
     },
     {
         name: 'ink',
-        validation : createTattoStore.inksValidation
+        validation: createTattoStore.inksValidation
     },
     {
         name: 'tattoo',
-        validation : createTattoStore.tattooPhotoValidation
+        validation: createTattoStore.tattooPhotoValidation
     },
     {
         name: 'sign',
-        validation : createTattoStore.signValidation
+        validation: createTattoStore.signValidation
     },
 ]
 

@@ -29,19 +29,19 @@ const links = [
     name: "Home",
   },
   {
-    link: "/tattoo",
+    link: "/tattoos",
     icon: "Palette",
-    name: "Tattoo",
+    name: "Tattoos",
+  },
+  {
+    link: "/inks",
+    icon: "Droplet",
+    name: "Inchiostro",
   },
   {
     link: "/user",
     icon: "UserRound",
-    name: "Accont",
-  },
-  {
-    link: "/inks",
-    icon: "Warehouse",
-    name: "Inchiostro",
+    name: "Accuont",
   },
 ]
 

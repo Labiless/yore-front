@@ -19,7 +19,7 @@
             v-for="user in usersStore.allUsers">
             <p class="font-bold text-2xl pr-4 w-16 text-center">{{ user.id }}</p>
             <div class="border-l-1 border-black pl-4">
-                <p class="font-bold">{{ user.uuid }}</p>
+                <p class="font-bold">{{ user.email }}</p>
                 <p>{{ new Date(user.createdAt).toDateString() }}</p>
             </div>
         </div>
@@ -32,7 +32,7 @@
 <script setup lang="ts">
 
 import { ref, watch, onMounted } from 'vue';
-import { getAllUsers } from "@/services/api.user.service";
+import { getAllUsers, getUserByUuid } from "@/services/api.user.service";
 import { Search, Plus } from 'lucide-vue-next';
 import { useUiStore } from '@/stores/ui';
 import { useUsersStore } from '@/stores/users.store';
@@ -51,44 +51,22 @@ const isValidUuid = (uuid: string) => {
 }
 
 watch(searchUuid, async (newSearchUuid, oldSearchUuid) => {
-    newSearchUuid = newSearchUuid.replace(/\s+/g, '');
-    if (isValidUuid(newSearchUuid)) {
-        const ink = await getInkByUuid(newSearchUuid);
-        if (ink.batchId) {
-            warehouseStore.batchUuid = ink.batchId;
-            warehouseStore.batchData = [ink];
-            // warehouseStore.inkData = ink;
-        }
-        else {
-            const batch = await getBatchByUuid(newSearchUuid);
-            if (batch.length) {
-                warehouseStore.batchUuid = newSearchUuid;
-                warehouseStore.batchData = batch;
-            }
-        }
-    }
+
 })
 
 onMounted(async () => {
     uiStore.title = "Utenti";
     uiStore.loading = true;
     if (!usersStore.allUsers.length) {
-        usersStore.allUsers = await getAllUsers();
-        console.log(usersStore.allUsers)
+        const allUsers = await getAllUsers();
+        usersStore.allUsers = allUsers.sort((a: any, b: any) => b.id - a.id);
     }
     uiStore.loading = false;
 });
 
-const showBatch = async (uuid: string) => {
+const showUser = async (uuid: string) => {
     transitionDirection.value = 'next';
-    warehouseStore.batchUuid = uuid;
-    warehouseStore.batchData = await getBatchByUuid(warehouseStore.batchUuid);
-}
-
-const showInk = async (uuid: string) => {
-    transitionDirection.value = 'next';
-    warehouseStore.inkUuid = uuid;
-    warehouseStore.inkData = await getInkByUuid(uuid);
+    usersStore.userUuid = uuid;
 }
 
 </script>

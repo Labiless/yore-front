@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 export const useUsersStore = defineStore('users', {
   state: () => ({
     allUsers : [],
+    userData: null,
     userUuid : '',
   }),
 
@@ -11,6 +12,12 @@ export const useUsersStore = defineStore('users', {
   },
 
   actions: {
+    resetUsersStore(){
+      this.allUsers = [];
+      this.userData = null;
+      this.userUuid = '';
+    },
+    
     resetSearch(){
         this.userUuid = '';
     }

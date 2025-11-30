@@ -66,23 +66,18 @@
                 </Label>
             </div>
         </div>
-        <div id="kirbyDesay" class="overflow-y-scroll flex flex-col gap-4 h-1/2 pb-16 pt-8"
-            v-if="activeStep === 'kirbyDesay'">
+        <div 
+            id="kirbyDesay"
+            class="overflow-y-scroll flex flex-col gap-4 h-1/2 pb-16 pt-8"
+            v-if="activeStep === 'kirbyDesay'"
+        >
             <p class="text-center font-bold mb-2 w-fit flex items-center mx-auto">
                 <ClipboardList class="text-black mr-2" />
                 Kirby-Desai data
-            <div class="rounded-full bg-green-700 p-1 w-2 h-2 ml-2"
-                :class="`${createTattoStore.kirbyDesayValidation() ? '' : 'bg-amber-500!'}`"></div>
+                <div class="rounded-full bg-green-700 p-1 w-2 h-2 ml-2" :class="`${createTattoStore.kirbyDesayValidation() ? '' : 'bg-amber-500!'}`"></div>
             </p>
-            <hr>
-            </hr>
-            <div class="grid grid-cols-3 gap-2 ">
-                <Button v-for="skinType in skinTypes" class="h-fit shadow-xl bg-white text-black flex flex-col">
-                    <p class="text-center rounded-sm p-1" :class="`${skinType.bg}`">{{ skinType.name }}</p>
-                    <p class="text-center text-xs block whitespace-normal">{{ skinType.description }}</p>
-                </Button>
-            </div>
-
+            <hr />
+            <KirbyDesay />
         </div>
         <div id="ink" v-if="activeStep === 'ink'">
             <h1>ink</h1>
@@ -99,53 +94,20 @@
 import Button from '@shared/components/ui/button/button.vue';
 import Input from '@shared/components/ui/input/input.vue';
 import Checkbox from '@shared/components/ui/checkbox/Checkbox.vue';
+import KirbyDesay from '@/components/createTattoo/KirbyDesay.vue';
 import { Brush, Calendar, ClipboardList, Droplet, PenTool, PersonStanding } from 'lucide-vue-next';
 import { useUiStore } from '@/stores/ui';
 import { onMounted, ref } from 'vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from '@shared/components/ui/accordion'
 
 const uiStore = useUiStore();
 const createTattoStore = useCreateTattoStore();
-
-const skinTypes = [
-    {
-        id: 1,
-        name: 'molto chiara',
-        description: 'descrizione della pelle',
-        bg: 'bg-red-500'
-    },
-    {
-        id: 1,
-        name: 'molto chiara',
-        description: 'descrizione della pelle',
-        bg: 'bg-red-500'
-    },
-    {
-        id: 1,
-        name: 'molto chiara',
-        description: 'descrizione della pelle',
-        bg: 'bg-red-500'
-    },
-    {
-        id: 1,
-        name: 'molto chiara',
-        description: 'descrizione della pelle',
-        bg: 'bg-red-500'
-    },
-    {
-        id: 1,
-        name: 'molto chiara',
-        description: 'descrizione della pelle',
-        bg: 'bg-red-500'
-    },
-    {
-        id: 1,
-        name: 'molto chiara',
-        description: 'descrizione della pelle',
-        bg: 'bg-red-500'
-    },
-]
-
 
 const activeStep = ref('info');
 const allSteps = [

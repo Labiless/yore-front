@@ -15,12 +15,12 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             contractConsent: false,
         },
         kirbyDesay: {
-            skinType: '',
-            position: '',
-            color: '',
-            inkAmount: '',
-            scars: '',
-            inkLayers: '',
+            skinType: 0,
+            position: 0,
+            color: 0,
+            inkAmount: 0,
+            scars: 0,
+            inkLayers: 0,
         },
         inks: [],
         tattoo: {
@@ -76,12 +76,12 @@ export const useCreateTattoStore = defineStore('createTattoo', {
                 && this.info.contractConsent
         },
         kirbyDesayValidation() {
-            return this.kirbyDesay.skinType.length > 0
-            && this.kirbyDesay.position.length > 0
-            && this.kirbyDesay.color.length > 0
-            && this.kirbyDesay.inkAmount.length > 0
-            && this.kirbyDesay.scars.length > 0
-            && this.kirbyDesay.inkLayers.length > 0
+            return this.kirbyDesay.skinType > 0
+            && this.kirbyDesay.position > 0
+            && this.kirbyDesay.color > 0
+            && this.kirbyDesay.inkAmount > 0
+            && this.kirbyDesay.scars > 0
+            && this.kirbyDesay.inkLayers > 0
         },
         inksValidation() {
             return this.inks.length > 0

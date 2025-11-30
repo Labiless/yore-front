@@ -1,6 +1,6 @@
 <template>
     <div class="mx-auto pt-48  mb-4 flex px-4 w-full">
-        <router-link to="createlabels">
+        <router-link to="createUser">
             <Button>
                 <Plus /> Crea Nuovo utente
             </Button>

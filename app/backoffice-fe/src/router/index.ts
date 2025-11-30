@@ -11,6 +11,7 @@ import Users from '@/pages/Users.vue';
 import InkBatch from '@/pages/InkBatch.vue';
 import Ink from '@/pages/Ink.vue';
 import LabelBatch from '@/pages/LabelBatch.vue';
+import CreateUser from '@/pages/CreateUser.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -74,6 +75,12 @@ const router = createRouter({
       component: Users,
       meta: { requiresAuth: true },
     },
+    {
+      path: '/createuser',
+      name: 'CreateUser',
+      component: CreateUser,
+      meta: { requiresAuth: true },
+    },    
     {
       path: '/:pathMatch(.*)*',
       redirect: to => {

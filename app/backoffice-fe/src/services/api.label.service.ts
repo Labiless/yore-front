@@ -1,10 +1,7 @@
 import api from "./api.service";
 
-export const createLabels = async (amount: number, inkTypeUuid: string) => {
-    const data = await api.post("/labels", {
-        amount,
-        inkTypeUuid
-    });
+export const createLabels = async (labelsData: any) => {
+    const data = await api.post("/labels", labelsData);
     return data.data;
 };
 

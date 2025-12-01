@@ -13,6 +13,7 @@ export const useCreatingLabelsStore = defineStore('creatingLabels', {
     sterilizationCertUrl: '',
     chemistryAnalysisUrl: '',
     microbiologicalAnalysisUrl: '',
+    userUuid: '',
   }),
 
   getters: {
@@ -30,15 +31,12 @@ export const useCreatingLabelsStore = defineStore('creatingLabels', {
       this.sterilizationCertUrl = '';
       this.chemistryAnalysisUrl = '';
       this.microbiologicalAnalysisUrl = '';
+      this.userUuid = '';
     },
     initLabelsCreation(data : {
-      color: string,
-      inkType: string,
       inkTypeUuid: string,
       amount: number,
     }) {
-      this.color = data.color;
-      this.inkType = data.inkType;
       this.amount = data.amount;
       this.inkTypeUuid = data.inkTypeUuid;
     }

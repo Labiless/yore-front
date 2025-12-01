@@ -1,0 +1,1 @@
+export * as apiLabelService from '../../../backoffice-fe/src/services/api.label.service';

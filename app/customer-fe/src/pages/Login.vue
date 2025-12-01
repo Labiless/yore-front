@@ -11,10 +11,12 @@ import { useAuthStore } from '@/stores/auth';
 import { ref } from 'vue';
 import router from '@/router';
 import { useUiStore } from '@/stores/ui';
+import { userUserStore } from '@/stores/user.store';
 
 const error = ref("");
 const authStore = useAuthStore();
 const uiStore = useUiStore();
+const userStore = userUserStore();
 
 const onsubmit = async (data: { username: string; password: string }) => {
     uiStore.loading = true;
@@ -26,6 +28,7 @@ const onsubmit = async (data: { username: string; password: string }) => {
             password
         })
         if (res.data.accessToken) {
+            userStore.init(res.data)
             onLogin(res.data.accessToken);
         }
     } catch (e : any) {

@@ -15,6 +15,11 @@ export const getLabelByUuid = async (uuid: string) => {
     return data.data;
 }
 
+export const getLabelsByUser = async (uuid: string) => {
+    const data = await api.get(`labels/users/${uuid}`);
+    return data.data;
+}
+
 export const getBatchByUuid = async (uuid: string) => {
     const data = await api.get(`/labels/batch/${uuid}`);
     return data.data;

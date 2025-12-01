@@ -7,6 +7,7 @@ export const useCreateTattoStore = defineStore('createTattoo', {
         info: {
             name: '',
             surname: '',
+            email: '',
             cf: '',
             country: '',
             city: '',

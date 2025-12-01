@@ -7,49 +7,75 @@
     </p>
     <hr>
     </hr>
-    <label>
-        Nome
-        <Input v-model="createTattoStore.info.name" />
-    </label>
-    <label>
-        Cognome
-        <Input v-model="createTattoStore.info.surname" />
-    </label>
+    <form @submit.prevent="onsubmit" class="">
+        <label>
+            Nome
+            <Input required v-model="createTattoStore.info.name" />
+        </label>
+        <label>
+            Cognome
+            <Input required v-model="createTattoStore.info.surname" />
+        </label>
 
-    <label>
-        Codice Fiscale
-        <Input v-model="createTattoStore.info.cf" />
-    </label>
+        <label>
+            Codice Fiscale
+            <Input required v-model="createTattoStore.info.cf" />
+        </label>
+        <label>
+            Email
+            <Input required v-model="createTattoStore.info.email" />
+        </label>
+        <label>
+            Paese di residenza
+            <Input required v-model="createTattoStore.info.country" />
+        </label>
 
-    <label>
-        Paese di residenza
-        <Input v-model="createTattoStore.info.country" />
-    </label>
+        <label>
+            Città di residenza
+            <Input required v-model="createTattoStore.info.city" />
+        </label>
 
-    <label>
-        Città di residenza
-        <Input v-model="createTattoStore.info.city" />
-    </label>
-
-    <label>
-        Indirizzo di residenza
-        <Input v-model="createTattoStore.info.street" />
-    </label>
-    <div class="flex flex-col justify-around mt-2">
-        <Label for="terms" class="text-xs mb-4">
-            <Checkbox v-model="createTattoStore.info.dataConsent" />
-            Do il consenso per il trattamento dati
-        </Label>
-        <Label for="terms" class="text-xs">
-            <Checkbox v-model="createTattoStore.info.contractConsent" />
-            Do il consenso per la liberatoria
-        </Label>
-    </div>
-
+        <label>
+            Indirizzo di residenza
+            <Input required v-model="createTattoStore.info.street" />
+        </label>
+        <div class="flex flex-col justify-around mt-2">
+            <Label for="terms" class="text-xs mb-4">
+                <Checkbox required v-model="createTattoStore.info.dataConsent" />
+                Do il consenso per il trattamento dati
+            </Label>
+            <Label for="terms" class="text-xs">
+                <Checkbox required v-model="createTattoStore.info.contractConsent" />
+                Do il consenso per la liberatoria
+            </Label>
+        </div>
+        <Button type="submit" class="mt-4">Registra cliente</Button>
+    </form>
 </template>
+
 <script setup lang="ts">
 import { useCreateTattoStore } from '@/stores/createTatto.store';
 import Input from '@shared/components/ui/input/input.vue';
+import Button from '@shared/components/ui/Button/Button.vue';
 import Checkbox from '@shared/components/ui/checkbox/Checkbox.vue';
+import { createCustomer } from '@/services/api.customer.service';
+import { watch } from 'vue';
+import { createTattoo } from '@/services/api.tattoo.service';
+import { userUserStore } from '@/stores/user.store';
+
 const createTattoStore = useCreateTattoStore();
+const userStore = userUserStore();
+
+const onsubmit = async() => {
+    if (createTattoStore.infoValidation()) {
+        const newCustomer = await createCustomer(createTattoStore.info);
+        console.log(newCustomer)
+        const newTattoo = await createTattoo({
+            status: "READY",
+            customerUuid: newCustomer.uuid,
+            userUuid: userStore.uuid
+        });
+        console.log(newTattoo);
+    }
+}
 </script>

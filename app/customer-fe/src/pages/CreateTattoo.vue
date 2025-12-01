@@ -44,7 +44,7 @@ import Tattoo from '@/components/createTattoo/Tattoo.vue';
 import Signs from '@/components/createTattoo/Signs.vue';
 import { Brush, Calendar, ClipboardList, Droplet, PenTool, PersonStanding } from 'lucide-vue-next';
 import { useUiStore } from '@/stores/ui';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
 
 const uiStore = useUiStore();

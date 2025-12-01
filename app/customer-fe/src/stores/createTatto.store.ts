@@ -2,16 +2,17 @@ import { defineStore } from 'pinia';
 
 export const useCreateTattoStore = defineStore('createTattoo', {
     state: () => ({
-        date: '',
-        user: null,
+        uuid: undefined,
+        date: undefined,
+        user: undefined,
         info: {
-            name: '',
-            surname: '',
-            email: '',
-            cf: '',
-            country: '',
-            city: '',
-            street: '',
+            name: undefined,
+            surname: undefined,
+            email: undefined,
+            cf: undefined,
+            country: undefined,
+            city: undefined,
+            address: undefined,
             dataConsent: false,
             contractConsent: false,
         },
@@ -39,23 +40,27 @@ export const useCreateTattoStore = defineStore('createTattoo', {
 
     actions: {
         resetTattoo() {
+            this.uuid = undefined;
+            this.date = undefined;
+            this.user = undefined;
             this.info = {
-                name: '',
-                surname: '',
-                cf: '',
-                country: '',
-                city: '',
-                street: '',
+                name: undefined,
+                email: undefined,
+                surname: undefined,
+                cf: undefined,
+                country: undefined,
+                city: undefined,
+                address: undefined,
                 dataConsent: false,
                 contractConsent: false,
             };
             this.kirbyDesay = {
-                skinType: '',
-                position: '',
-                color: '',
-                inkAmount: '',
-                scars: '',
-                inkLayers: '',
+                skinType: 0,
+                position: 0,
+                color: 0,
+                inkAmount: 0,
+                scars: 0,
+                inkLayers: 0,
             };
             this.inks = [];
             this.tattoo = {
@@ -67,22 +72,30 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             };
         },
         infoValidation() {
-            return this.info.name.length > 0
-                && this.info.surname.length > 0
-                && this.info.cf.length > 0
-                && this.info.country.length > 0
-                && this.info.city.length > 0
-                && this.info.street.length > 0
-                && this.info.dataConsent
+            return this.info.cf
+                && this.info.city
                 && this.info.contractConsent
+                && this.info.country
+                && this.info.dataConsent
+                && this.info.email
+                && this.info.address
+                && this.info.surname
         },
         kirbyDesayValidation() {
             return this.kirbyDesay.skinType > 0
-            && this.kirbyDesay.position > 0
-            && this.kirbyDesay.color > 0
-            && this.kirbyDesay.inkAmount > 0
-            && this.kirbyDesay.scars > 0
-            && this.kirbyDesay.inkLayers > 0
+                && this.kirbyDesay.position > 0
+                && this.kirbyDesay.color > 0
+                && this.kirbyDesay.inkAmount > 0
+                && this.kirbyDesay.scars > 0
+                && this.kirbyDesay.inkLayers > 0
+        },
+        updateKirbyDesay(data: any) {
+            this.kirbyDesay.color = data.color;
+            this.kirbyDesay.inkAmount = data.inkAmount;
+            this.kirbyDesay.inkLayers = data.inkLayers;
+            this.kirbyDesay.position = data.position;
+            this.kirbyDesay.scars = data.scars;
+            this.kirbyDesay.skinType = data.skinType;
         },
         inksValidation() {
             return this.inks.length > 0

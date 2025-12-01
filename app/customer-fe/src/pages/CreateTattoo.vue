@@ -21,7 +21,8 @@
         <div id="info" class="overflow-y-scroll flex flex-col gap-4 h-1/2 pb-16 pt-8" v-if="activeStep === 'info'">
             <CustomerInfo />
         </div>
-        <div id="kirbyDesay" class="overflow-y-scroll flex flex-col gap-4 h-1/2 pb-16 pt-8" v-if="activeStep === 'kirbyDesay'">
+        <div id="kirbyDesay" class="overflow-y-scroll flex flex-col gap-4 h-1/2 pb-16 pt-8"
+            v-if="activeStep === 'kirbyDesay'">
             <KirbyDesay />
         </div>
         <div id="ink" class="overflow-y-scroll flex flex-col gap-4 h-1/2 pb-16 pt-8" v-if="activeStep === 'ink'">
@@ -46,6 +47,9 @@ import { Brush, Calendar, ClipboardList, Droplet, PenTool, PersonStanding } from
 import { useUiStore } from '@/stores/ui';
 import { onMounted, ref, watch } from 'vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
+import { getTattoByUuid } from '@/services/api.tattoo.service';
+import { getCustomerByUuid } from '@/services/api.customer.service';
+import { getLabelByUuid } from '../../../backoffice-fe/src/services/api.label.service';
 
 const uiStore = useUiStore();
 const createTattoStore = useCreateTattoStore();
@@ -74,8 +78,41 @@ const allSteps = [
     },
 ]
 
-onMounted(() => {
+onMounted(async () => {
+    uiStore.loading = true;
     uiStore.title = "Crea Tatuaggio";
+    if (createTattoStore.uuid) {
+        const tattoo = await getTattoByUuid(createTattoStore.uuid);
+        if (tattoo.customerUuid) {
+            const customer = await getCustomerByUuid(tattoo.customerUuid)
+            createTattoStore.info.name = customer.name
+            createTattoStore.info.surname = customer.surname
+            createTattoStore.info.email = customer.email
+            createTattoStore.info.cf = customer.cf
+            createTattoStore.info.country = customer.country
+            createTattoStore.info.city = customer.city
+            createTattoStore.info.address = customer.address
+            createTattoStore.info.dataConsent = customer.consent
+            createTattoStore.info.contractConsent = customer.consent
+        }
+        if (tattoo.inks.length > 0) {
+            for (let i = 0; i < tattoo.inks.length; i++) {
+                const ink = await getLabelByUuid(tattoo.inks[i]);
+                createTattoStore.inks.push(ink);
+            }
+        }
+        if (tattoo.color > 0) {
+            createTattoStore.updateKirbyDesay({
+                color: tattoo.color,
+                inkAmount: tattoo.inkAmount,
+                inkLayers: tattoo.inkLayers,
+                position: tattoo.position,
+                scars: tattoo.scars,
+                skinType: tattoo.skinType,
+            });
+        }
+    }
+    uiStore.loading = false;
 });
 
 </script>

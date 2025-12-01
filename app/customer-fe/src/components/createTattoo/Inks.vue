@@ -11,8 +11,7 @@
     <div class="" v-if="createTattoStore.inks.length">
         <p>Inchostri scansionati</p>
     </div>
-    <div
-        class="flex justify-start items-center mx-4 shadow-2xl p-4 bg-white mb-4 rounded-2xl w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
+    <div class="flex justify-start items-center mx-4 shadow-2xl p-4 bg-white mb-4 rounded-2xl w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
         v-for="ink in createTattoStore.inks">
         <p class="font-bold text-2xl pr-4 w-16 text-center">{{ ink.id }}</p>
         <div class="border-l-1 border-black pl-4">
@@ -25,20 +24,41 @@
 import Button from '@shared/components/ui/button/button.vue';
 import Input from '@shared/components/ui/input/input.vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { apiLabelService } from '@/services/api.inks.service';
+import { createTattoo, getTattoByUuid, updateTattoo } from '@/services/api.tattoo.service';
+import { userUserStore } from '@/stores/user.store';
 
 // 2c7a1f6a-975a-4a38-9cf2-8b02ff72c271
 
 const createTattoStore = useCreateTattoStore();
 const inkUuid = ref('');
+const userStore = userUserStore();
+
 // TODO add scan tattoo logic
 const addInk = async () => {
     const ink = await apiLabelService.getLabelByUuid(inkUuid.value);
-    console.log(ink)
-    if (ink){
+    if (ink) {
+        const updateLabel = await apiLabelService.updateLabelByUuid(ink.uuid, {
+            burningDate: new Date(),
+            tattooUuid: createTattoStore.uuid
+        });
         createTattoStore.inks.push(ink);
         inkUuid.value = '';
+        if (!createTattoStore.uuid) {
+            const tatto = await createTattoo({
+                userUuid: userStore.uuid,
+                inks: [ink.uuid]
+            })
+        }
+        else {
+            const getTatto = await getTattoByUuid(createTattoStore.uuid);
+            const tatto = await updateTattoo(
+                createTattoStore.uuid,
+                {
+                    inks: [...getTatto.inks, ink.uuid]
+                })
+        }
     }
 }
 

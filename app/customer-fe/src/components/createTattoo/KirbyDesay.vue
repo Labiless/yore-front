@@ -11,12 +11,11 @@
             <AccordionTrigger>Tipo di pelle</AccordionTrigger>
             <AccordionContent>
                 <div class="grid grid-cols-2 gap-2">
-                    <Button @click="createTattoStore.kirbyDesay.skinType = skinType.id" 
-                    v-for="skinType in skinTypes" 
-                    class="h-28 shadow-xl bg-white text-black flex flex-col"
-                    :class="`${createTattoStore.kirbyDesay.skinType === skinType.id ? 'border-2 border-blue-400' : ''}`"
-                    >
-                        <p class="text-center text-sm lowercase w-full rounded-sm p-1" :style="`background-color: ${skinType.bg}`">{{ skinType.name }}</p>
+                    <Button @click="createTattoStore.kirbyDesay.skinType = skinType.id" v-for="skinType in skinTypes"
+                        class="h-28 shadow-xl bg-white text-black flex flex-col"
+                        :class="`${createTattoStore.kirbyDesay.skinType === skinType.id ? 'border-2 border-blue-400' : ''}`">
+                        <p class="text-center text-sm lowercase w-full rounded-sm p-1"
+                            :style="`background-color: ${skinType.bg}`">{{ skinType.name }}</p>
                         <p class="text-center text-xs block whitespace-normal">{{ skinType.description }}</p>
                     </Button>
                 </div>
@@ -26,11 +25,9 @@
             <AccordionTrigger>Localizzazione Tatuaggio</AccordionTrigger>
             <AccordionContent>
                 <div class="grid grid-cols-3 gap-2">
-                    <Button @click="createTattoStore.kirbyDesay.position = position.id"
-                    v-for="position in positions"
-                    class="h-fit shadow-xl bg-white text-black flex flex-col"
-                    :class="`${createTattoStore.kirbyDesay.position === position.id ? 'border-2 border-blue-400' : ''}`"
-                    >
+                    <Button @click="createTattoStore.kirbyDesay.position = position.id" v-for="position in positions"
+                        class="h-fit shadow-xl bg-white text-black flex flex-col"
+                        :class="`${createTattoStore.kirbyDesay.position === position.id ? 'border-2 border-blue-400' : ''}`">
                         <img class="" :src="`img/kirby_desay/location-${position.id}.svg`" />
                     </Button>
                 </div>
@@ -40,11 +37,9 @@
             <AccordionTrigger>Colore dell'inchiostro</AccordionTrigger>
             <AccordionContent>
                 <div class="grid grid-cols-3 gap-2">
-                    <Button @click="createTattoStore.kirbyDesay.color = color.id"
-                    v-for="color in colors"
-                    class="h-24 shadow-xl bg-white text-black flex"
-                    :class="`${createTattoStore.kirbyDesay.color === color.id ? 'border-2 border-blue-400' : ''}`"
-                    >
+                    <Button @click="createTattoStore.kirbyDesay.color = color.id" v-for="color in colors"
+                        class="h-24 shadow-xl bg-white text-black flex"
+                        :class="`${createTattoStore.kirbyDesay.color === color.id ? 'border-2 border-blue-400' : ''}`">
                         <div v-for="bgColor in color.colors" :style="`background-color: ${bgColor};`"
                             class="w-8 h-8 rounded-full border-1"></div>
                     </Button>
@@ -56,10 +51,9 @@
             <AccordionContent>
                 <div class="grid grid-cols-3 gap-2">
                     <Button @click="createTattoStore.kirbyDesay.inkAmount = inkAmount.id"
-                    v-for="inkAmount in inkAmounts"
-                    class="h-40 shadow-xl bg-white text-black flex flex-col justify-start"
-                    :class="`${createTattoStore.kirbyDesay.inkAmount === inkAmount.id ? 'border-2 border-blue-400' : ''}`"
-                    >
+                        v-for="inkAmount in inkAmounts"
+                        class="h-40 shadow-xl bg-white text-black flex flex-col justify-start"
+                        :class="`${createTattoStore.kirbyDesay.inkAmount === inkAmount.id ? 'border-2 border-blue-400' : ''}`">
                         <p class="text-center rounded-sm p-1 whitespace-normal">{{ inkAmount.title }}</p>
                         <p class="text-center text-xs block whitespace-normal">{{ inkAmount.description }}</p>
                     </Button>
@@ -70,11 +64,9 @@
             <AccordionTrigger>Presenza cicatrici</AccordionTrigger>
             <AccordionContent>
                 <div class="grid grid-cols-3 gap-2">
-                    <Button @click="createTattoStore.kirbyDesay.scars = scar.id"
-                    v-for="scar in scars"
-                    class="h-40 shadow-xl bg-white text-black flex flex-col justify-start"
-                    :class="`${createTattoStore.kirbyDesay.scars === scar.id ? 'border-2 border-blue-400' : ''}`"
-                    >
+                    <Button @click="createTattoStore.kirbyDesay.scars = scar.id" v-for="scar in scars"
+                        class="h-40 shadow-xl bg-white text-black flex flex-col justify-start"
+                        :class="`${createTattoStore.kirbyDesay.scars === scar.id ? 'border-2 border-blue-400' : ''}`">
                         <p class="text-center rounded-sm p-1 whitespace-normal">{{ scar.title }}</p>
                         <p class="text-center text-xs block whitespace-normal">{{ scar.description }}</p>
                     </Button>
@@ -85,11 +77,9 @@
             <AccordionTrigger>Stratificazione inchiostro</AccordionTrigger>
             <AccordionContent>
                 <div class="grid grid-cols-2 gap-2">
-                    <Button @click="createTattoStore.kirbyDesay.inkLayers = inkLayer.id"
-                    v-for="inkLayer in inkLayers"
-                    class="h-30 shadow-xl bg-white text-black flex flex-col justify-start"
-                    :class="`${createTattoStore.kirbyDesay.inkLayers === inkLayer.id ? 'border-2 border-blue-400' : ''}`"
-                    >
+                    <Button @click="createTattoStore.kirbyDesay.inkLayers = inkLayer.id" v-for="inkLayer in inkLayers"
+                        class="h-30 shadow-xl bg-white text-black flex flex-col justify-start"
+                        :class="`${createTattoStore.kirbyDesay.inkLayers === inkLayer.id ? 'border-2 border-blue-400' : ''}`">
                         <p class="text-center rounded-sm p-1 whitespace-normal">{{ inkLayer.title }}</p>
                         <p class="text-center text-xs block whitespace-normal">{{ inkLayer.description }}</p>
                     </Button>
@@ -97,6 +87,7 @@
             </AccordionContent>
         </AccordionItem>
     </Accordion>
+    <Button @click="submit"> Conferma</Button>
 </template>
 <script setup lang="ts">
 import {
@@ -107,8 +98,34 @@ import {
 } from '@shared/components/ui/accordion'
 import Button from '@shared/components/ui/button/button.vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
+import { userUserStore } from '@/stores/user.store';
+import { updateTattoo } from '@/services/api.tattoo.service';
+import { createTattoo } from '@/services/api.tattoo.service';
 
 const createTattoStore = useCreateTattoStore();
+const userStore = userUserStore();
+
+const submit = async () => {
+    if (createTattoStore.kirbyDesayValidation()) {
+        const kirbyDesayData = {
+            color: createTattoStore.kirbyDesay.color,
+            inkAmount: createTattoStore.kirbyDesay.inkAmount,
+            inkLayers: createTattoStore.kirbyDesay.inkLayers,
+            position: createTattoStore.kirbyDesay.position,
+            scars: createTattoStore.kirbyDesay.scars,
+            skinType: createTattoStore.kirbyDesay.skinType,
+        }
+        if (!createTattoStore.uuid) {
+            const tatto = await createTattoo({
+                userUuid: userStore.uuid,
+                ...kirbyDesayData
+            })
+        }
+        else {
+            const tattoo = await updateTattoo(createTattoStore.uuid, kirbyDesayData);
+        }
+    }
+}
 
 const skinTypes = [
     {
@@ -224,7 +241,7 @@ const inkAmounts = [
 
 const scars = [
     {
-        id:1,
+        id: 1,
         name: 'blue_black',
         title: 'Pelle normale',
         description: 'Nessuna cicatrice o alterazione'
@@ -275,11 +292,11 @@ const inkLayers = [
         description: 'Nuovo tatuaggio sopra il precedente'
     },
 ]
- 
+
 </script>
 
 <style scoped>
-.selected{
-    border: 2px solid blue;    
+.selected {
+    border: 2px solid blue;
 }
 </style>

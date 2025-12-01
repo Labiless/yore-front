@@ -4,7 +4,7 @@
     </div>
     <div class="mx-auto w-full items-start overflow-y-auto h-1/2" v-if="inks.length">
         <div @click="activeInk = ink.uuid" :class="`${ink.uuid === activeInk ? 'h-80! items-start' : ''}`"
-            class="flex justify-start items-center mx-4 shadow-2xl p-4 bg-white mb-4 rounded-2xl w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
+            class="flex justify-start items-center shadow-2xl p-4 bg-white mb-4 rounded-2xl w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
             v-for="ink in inks">
             <p class="font-bold text-2xl pr-4 w-16 text-center">{{ ink.id }}</p>
             <div class="border-l-1 border-black pl-4">
@@ -29,9 +29,7 @@ const activeInk = ref('');
 onMounted(async () => {
     uiStore.loading = true;
     uiStore.title = "Inchiostro";
-    console.log(userStore.getUiid);
     inks.value = await apiLabelService.getLabelsByUser(userStore.getUiid);
-    console.log(inks.value);
     uiStore.loading = false;
 });
 

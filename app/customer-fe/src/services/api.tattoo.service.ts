@@ -9,3 +9,13 @@ export const getAllTattoos = async () => {
     const data = await api.get("/tattoos");
     return data.data;
 }
+
+export const getTattoByUuid = async (uuid: string) =>{
+    const data = await api.get(`/tattoos/${uuid}`);
+    return data.data;
+}
+
+export const updateTattoo = async (uuid: string, updateData: any) => {
+    const data = await api.patch(`tattoos/${uuid}`, updateData);
+    return data.data;
+}

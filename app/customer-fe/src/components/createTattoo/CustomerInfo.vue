@@ -37,7 +37,7 @@
 
         <label>
             Indirizzo di residenza
-            <Input required v-model="createTattoStore.info.street" />
+            <Input required v-model="createTattoStore.info.address" />
         </label>
         <div class="flex flex-col justify-around mt-2">
             <Label for="terms" class="text-xs mb-4">
@@ -49,7 +49,7 @@
                 Do il consenso per la liberatoria
             </Label>
         </div>
-        <Button type="submit" class="mt-4">Registra cliente</Button>
+        <Button type="submit" class="mt-8 w-full">Conferma</Button>
     </form>
 </template>
 
@@ -62,20 +62,26 @@ import { createCustomer } from '@/services/api.customer.service';
 import { watch } from 'vue';
 import { createTattoo } from '@/services/api.tattoo.service';
 import { userUserStore } from '@/stores/user.store';
+import { useTatoosStore } from '@/stores/tattoos.store';
 
 const createTattoStore = useCreateTattoStore();
 const userStore = userUserStore();
+const tattoosStore = useTatoosStore();
 
 const onsubmit = async() => {
     if (createTattoStore.infoValidation()) {
-        const newCustomer = await createCustomer(createTattoStore.info);
-        console.log(newCustomer)
+        
+        const newCustomer = await createCustomer({
+            ...createTattoStore.info,
+            consent: true
+        });
         const newTattoo = await createTattoo({
             status: "READY",
             customerUuid: newCustomer.uuid,
             userUuid: userStore.uuid
         });
-        console.log(newTattoo);
+        // @ts-ignore
+        tattoosStore.tattoos.push(newTattoo);
     }
 }
 </script>

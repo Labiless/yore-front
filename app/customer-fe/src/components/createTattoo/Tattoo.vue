@@ -7,8 +7,9 @@
     </p>
     <hr>
     </hr>
-    <div class="pt-4">
-        <Button class="w-1/3 bg-white text-lack shadow-2xl border-1 whitespace-normal flex flex-col h-30">
+    <div class="grid grid-cols-3 gap-2">
+        <img :src="createTattoStore.photoUrl" v-if="createTattoStore.photoUrl" class="w-30 bg-white text-lack shadow-2xl border-1 whitespace-normal flex flex-col h-30 rounded-xl" />
+        <Button class="w-30 bg-white text-lack shadow-2xl border-1 whitespace-normal flex flex-col h-30" @click="selectFile">
             Aggiungi foto del tatuaggio
             <Plus class="border-1 rounded-full scale-150 mt-2" />
         </Button>
@@ -18,6 +19,29 @@
 import Button from '@shared/components/ui/button/button.vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
 import { Plus } from 'lucide-vue-next';
+import { onMounted, ref } from 'vue';
+import { addImage } from '@/services/api.tattoo.service';
 
 const createTattoStore = useCreateTattoStore();
+const imgs = ref([]);
+
+const selectFile = () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.onchange = async (e: any) => {
+
+        await uploadImage(e.target.files[0]);
+    }
+    input.click();
+}
+
+const uploadImage = async (img :any) => {
+    const res = await addImage(createTattoStore.uuid, img);
+    createTattoStore.photoUrl = res.url;
+}
+
+onMounted(async () => {
+
+});
+
 </script>

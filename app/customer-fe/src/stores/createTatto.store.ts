@@ -25,9 +25,7 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             inkLayers: 0,
         },
         inks: [],
-        tattoo: {
-            photo: []
-        },
+        photoUrl: undefined,
         sign: {
             customer: null,
             tattoArtist: null,
@@ -63,9 +61,7 @@ export const useCreateTattoStore = defineStore('createTattoo', {
                 inkLayers: 0,
             };
             this.inks = [];
-            this.tattoo = {
-                photo: []
-            };
+            this.photoUrl = undefined,
             this.sign = {
                 customer: null,
                 tattoArtist: null,
@@ -101,7 +97,7 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             return this.inks.length > 0
         },
         tattooPhotoValidation() {
-            return this.tattoo.photo.length > 0
+            return this.photoUrl
         },
         signValidation() {
             return this.sign.customer

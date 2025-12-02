@@ -111,6 +111,9 @@ onMounted(async () => {
                 skinType: tattoo.skinType,
             });
         }
+        if (tattoo.photoUrl) {
+            createTattoStore.photoUrl = tattoo.photoUrl;
+        }
     }
     uiStore.loading = false;
 });

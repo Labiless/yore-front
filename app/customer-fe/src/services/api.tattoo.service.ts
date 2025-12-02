@@ -23,13 +23,32 @@ export const updateTattoo = async (uuid: string, updateData: any) => {
 export const addImage = async (tattooUuid: string, img: any) => {
     const formData = new FormData();
     formData.append("file", img);
-    const data = await api.post(`tattoos/img`, formData, {
+    const data = await api.post(`tattoos/img/${tattooUuid}`, formData, {
         headers: {
             "Content-Type": "multipart/form-data",
         },
     });
     await updateTattoo(tattooUuid, {
-        photoUrl: `http://localhost:3000/public/img/${img.name}`
+        photoUrl: `http://localhost:3000/public/img/tattoo/${tattooUuid}.png`
+    });
+    return data.data;
+}
+
+export const generateContract = async(tattooUuid: string) => {
+    const data = await updateTattoo(tattooUuid, {
+        status: 'CLOSE',
+    });
+    return data.data;
+}
+
+export const saveSigns = async (tattooUuid : string, customerSign: string, userSign: string) => {
+    const data = await api.post(`tattoos/sign/${tattooUuid}`, {
+        customerSign,
+        userSign
+    });
+    await updateTattoo(tattooUuid, {
+        customerSign: data.data.customerUrl,
+        userSign: data.data.userUrl, 
     });
     return data.data;
 }

@@ -1,6 +1,6 @@
 <template>
     <div class="h-full pt-32">
-        <Button disabled class="mb-8 w-full">Genera certificato</Button>
+        <Button @click="submit" :disabled="false" class="mb-8 w-full">Genera certificato</Button>
         <p class="flex text-xl font-bold w-fit m-auto">
             <Calendar class="mr-2" /> 01/01/2026
         </p>
@@ -47,7 +47,7 @@ import { Brush, Calendar, ClipboardList, Droplet, PenTool, PersonStanding } from
 import { useUiStore } from '@/stores/ui';
 import { onMounted, ref, watch } from 'vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
-import { getTattoByUuid } from '@/services/api.tattoo.service';
+import { getTattoByUuid, generateContract } from '@/services/api.tattoo.service';
 import { getCustomerByUuid } from '@/services/api.customer.service';
 import { getLabelByUuid } from '../../../backoffice-fe/src/services/api.label.service';
 
@@ -114,9 +114,18 @@ onMounted(async () => {
         if (tattoo.photoUrl) {
             createTattoStore.photoUrl = tattoo.photoUrl;
         }
+        if (tattoo.customerSign && tattoo.userSign) {
+            createTattoStore.customerSign = tattoo.customerSign;
+            createTattoStore.userSign = tattoo.userSign;
+        }
     }
     uiStore.loading = false;
 });
+
+const submit = async() => {
+    const res = await generateContract(createTattoStore.uuid);
+    console.log(res);
+}
 
 </script>
 <style></style>

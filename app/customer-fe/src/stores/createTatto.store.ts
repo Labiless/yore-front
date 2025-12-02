@@ -26,10 +26,8 @@ export const useCreateTattoStore = defineStore('createTattoo', {
         },
         inks: [],
         photoUrl: undefined,
-        sign: {
-            customer: null,
-            tattoArtist: null,
-        },
+        customerSign: undefined,
+        userSign: undefined
     }),
 
     getters: {
@@ -61,11 +59,9 @@ export const useCreateTattoStore = defineStore('createTattoo', {
                 inkLayers: 0,
             };
             this.inks = [];
-            this.photoUrl = undefined,
-            this.sign = {
-                customer: null,
-                tattoArtist: null,
-            };
+            this.photoUrl = undefined;
+            this.customerSign = undefined;
+            this.userSign = undefined;
         },
         infoValidation() {
             return this.info.cf
@@ -100,8 +96,8 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             return this.photoUrl
         },
         signValidation() {
-            return this.sign.customer
-                && this.sign.tattoArtist
+            return this.customerSign
+                && this.userSign
         }
     },
 })

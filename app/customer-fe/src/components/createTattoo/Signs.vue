@@ -3,17 +3,44 @@
         <ClipboardList class="text-black mr-2" />
         Firma
     <div class="rounded-full bg-green-700 p-1 w-2 h-2 ml-2"
-        :class="`${createTattoStore.signValidation() ? '' : 'bg-amber-500!'}`"></div>
+        :class="`${createTattooStore.signValidation() ? '' : 'bg-amber-500!'}`"></div>
     </p>
     <hr>
     </hr>
-    <div class="w-full h-36 rounded-2xl shadow-md border-1 flex items-center justify-center">Firma 1</div>
-    <div class="w-full h-36 rounded-2xl shadow-md border-1 flex items-center justify-center">Firma 2</div>
+    <div v-if="!createTattooStore.customerSign && !createTattooStore.userSign">
+        <Sign ref="customerSign" :width="400" :height="200" />
+        <hr>
+        </hr>
+        <Sign ref="userSign" :width="400" :height="200" />
+        <Button @click="saveSignature">Conferma</Button>
+    </div>
+    <div v-else>
+        <img class="bg-white" :src="createTattooStore.customerSign"></img>
+        <hr>
+        </hr>
+        <img class="bg-white" :src="createTattooStore.userSign"></img>
+    </div>
 </template>
 <script setup lang="ts">
-import Button from '@shared/components/ui/button/button.vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
-import { Plus } from 'lucide-vue-next';
+import Button from '@shared/components/ui/button/button.vue';
+import Sign from './Sign.vue';
+import { onMounted, ref } from 'vue';
+import { saveSigns } from '@/services/api.tattoo.service';
 
-const createTattoStore = useCreateTattoStore();
+const customerSign = ref(null);
+const userSign = ref(null);
+const createTattooStore = useCreateTattoStore();
+
+onMounted(() => {
+    console.log(createTattooStore.customerSign);
+})
+
+const saveSignature = async () => {
+    const sign1 = customerSign.value.saveSignature();
+    const sign2 = userSign.value.saveSignature();
+    const res = await saveSigns(createTattooStore.uuid, sign1, sign2);
+    createTattooStore.customerSign = res.customerUrl;
+    createTattooStore.userSign = res.userUrl;
+}
 </script>

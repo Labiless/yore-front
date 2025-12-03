@@ -70,7 +70,7 @@
                             <p>{{ selectedUser.taxCode }}</p>
                         </div>
                         <div class="mb-4">
-                            <p class="font-bold">Inchiostri associato</p>
+                            <p class="font-bold">Etichette associate</p>
                             <p v-if="selectedUser.inks.length === 0">Nessun inchiostro associato</p>
                             <p v-for="ink in selectedUser.inks">{{ ink }}</p>
                         </div>

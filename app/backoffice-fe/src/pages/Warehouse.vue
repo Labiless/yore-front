@@ -51,10 +51,27 @@
                     <div class="flex items-center mb-4">
                         <ArrowLeft @click="warehouseStore.batchUuid = '';" class="hover:cursor-pointer mr-2" />
                         <p class="font-bold text-md flex -translate-x-2">
-                            <Calendar class="scale-75" /> {{ warehouseStore.batchData[0].creationDate.split('T')[0] }} / {{ warehouseStore.batchUuid }}
+                            <Calendar class="scale-75" /> {{ warehouseStore.batchData[0].creationDate.split('T')[0] }} /
+                            {{ warehouseStore.batchUuid }}
                         </p>
                     </div>
-
+                    <div class="flex gap-2 mb-4">
+                        <a target="_blank" :href="warehouseStore.batchData[0].inkFormulaUrl">
+                            <Button class="text-xs">Formula Inchiostro</Button>
+                        </a>
+                        <a target="_blank" :href="warehouseStore.batchData[0].sdsUrl">
+                            <Button class="text-xs">Sds</Button>
+                        </a>
+                        <a target="_blank" :href="warehouseStore.batchData[0].sterilizationCertUrl">
+                            <Button class="text-xs">Certificato sterilizzazione</Button>
+                        </a>
+                        <a target="_blank" :href="warehouseStore.batchData[0].chemistryAnalysisUrl">
+                            <Button class="text-xs">Analisi chimiche</Button>
+                        </a>
+                        <a target="_blank" :href="warehouseStore.batchData[0].microbiologicalAnalysisUrl">
+                            <Button class="text-xs">Analisi microbiologiche</Button>
+                        </a>
+                    </div>
                     <div @click="showBatch(batch.uuid)"
                         class="flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:p-6"
                         :class="`${''}`" v-for="ink in warehouseStore.batchData">

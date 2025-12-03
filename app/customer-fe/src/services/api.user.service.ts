@@ -1,0 +1,1 @@
+export * as userService from '../../../backoffice-fe/src/services/api.user.service';

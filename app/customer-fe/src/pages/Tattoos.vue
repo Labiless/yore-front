@@ -82,7 +82,7 @@ onMounted(async () => {
 }); 
 
 const showTattoo = async(tattoo: any) => {
-    if(activeDelete){
+    if(activeDelete.value){
         const deleted = await deleteTattoo(tattoo.uuid);
         tattoosStore.tattoos = tattoosStore.tattoos.filter(el => el.uuid !== tattoo.uuid);
         return;

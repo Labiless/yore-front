@@ -7,11 +7,10 @@ export const createUser = async (userData: any) => {
 
 export const getAllUsers = async () => {
     const data = await api.get("/users");
-    console.log(data);
     return data.data;
 };
 
 export const getUserByUuid = async (uuid: string) => {
-    const data = await api.get(`labels/${uuid}`);
+    const data = await api.get(`/users/${uuid}`);
     return data.data;
 }

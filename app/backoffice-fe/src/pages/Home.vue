@@ -1,7 +1,7 @@
 <template>
     <div class="flex justify-center items-center h-full">
         <HomeButton icon="Upload" link="/loadbatch">Carica Lotto</HomeButton>
-        <HomeButton icon="Barcode" link="/">Genera etichette</HomeButton>
+        <HomeButton icon="Barcode" link="/createlabels">Genera etichette</HomeButton>
     </div>
 </template>
 <script setup lang="ts">

@@ -1,67 +1,70 @@
 <template>
-    <div class="mx-auto pt-48  mb-4 flex px-4 w-full">
-        <router-link to="createlabels">
-            <Button>
-                <Plus />
-                <Download /> Crea nuove etichette
+    <div class="mx-auto mt-30 w-full items-start overflow-y-auto h-full">
+        <router-link to="/createlabels">
+            <Button class="w-full h-12 mb-4">
+                <Plus /> Crea etichette
             </Button>
         </router-link>
-    </div>
-    <div class="mx-auto flex px-4 w-full">
-        <h1 class="font-bold text-lg">Storico creazione etichette</h1>
-    </div>
-    <div class="p-4 flex justify-start items-center">
-        <Input v-model="searchUuid" class="w-1/3 shadow-xl" type="text" />
-        <Search class="ml-2" />
-    </div>
-    <div class="mx-auto w-full items-start overflow-y-auto h-1/2" v-if="labelsStore.allBatches.length">
-        <transition :name="transitionDirection">
-            <div v-if="!labelsStore.batchUuid && !labelsStore.inkUuid">
-                <div @click="showBatch(batch.uuid)"
-                    class="flex justify-start items-center mx-4 shadow-2xl p-4 bg-white mb-4 rounded-2xl w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
-                    v-for="batch in labelsStore.allBatches">
-                    <p class="font-bold text-2xl pr-4 w-16 text-center">x {{ batch.amount }}</p>
-                    <div class="border-l-1 border-black pl-4">
-                        <p class="font-bold">N°{{ batch.id }}</p>
-                        <p>{{ new Date(batch.creationDate).toDateString() }}</p>
-                        <p class="text-xs">{{ batch.uuid }}</p>
+        <div class="flex justify-start items-center">
+            <Input v-model="searchUuid" class="w-1/3 shadow-xl" type="text" />
+            <Search class="ml-2" />
+        </div>
+        <div class="flex items-center gap-2 p-2 my-4 mx-auto rounded-md bg-slate-200">
+            <Button @click="showTab = 0" class="text-xs w-fit h-8 bg-transparent text-black"
+                :class="`${showTab === 0 ? 'bg-white!' : 'shadow-none'}`">Lotti etichette</Button>
+        </div>
+
+        <div v-show="showTab === 0">
+            <Transition>
+                <div v-if="!labelsStore.batchUuid">
+                    <div  @click="showBatch(labelBatch.uuid)" class="flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:p-6"
+                        v-for="labelBatch in labelsStore.allBatches">
+                        <p class="font-bold text-2xl">x{{ labelBatch.amount }}</p>
+                        <div class="pl-4 flex justify-between items-center w-11/12">
+                            <div>
+                                <p class="flex capitalize text-sm">
+                                    #{{ labelBatch.id }}
+                                </p>
+                                <p class="flex capitalize text-sm -translate-x-2">
+                                    <Calendar class="scale-75" />{{ labelBatch.creationDate.split('T')[0] }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div v-else>
-                <div class="flex py-4">
-                    <ArrowLeft @click="transitionDirection = 'back'; labelsStore.resetSearch()"
-                        class="hover:cursor-pointer ml-4 mb-4 mr-4" />
-                    <p class="font-bold text-xl">{{ labelsStore.batchUuid }}</p>
-                </div>
-                <div class="flex gap-2 mb-4 p-4">
-                    <Button @click="getPrintFileUrl">
-                        <Printer class="hover:cursor-pointer mt-1 mr-2" />
-                        Stampa etichette
-                    </Button>
-                </div>
-                <div @click="showLabel(label.uuid)"
-                    :class="`${labelsStore.labelUuid === label.uuid ? 'h-80! items-start' : ''}`"
-                    class="flex justify-start items-center mx-4 shadow-2xl p-4 bg-white mb-4 rounded-2xl w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
-                    v-for="label in labelsStore.batchData">
-                    <p class="font-bold text-2xl pr-4 w-16 text-center">{{ label.id }}</p>
-                    <div class="border-l-1 border-black pl-4">
-                        <p class="font-bold">{{ label.uuid }}</p>
-                        <p>{{ new Date(label.creationDate).toDateString() }}</p>
+                <div v-else>
+                    <div class="flex items-center mb-4">
+                        <ArrowLeft @click="labelsStore.batchUuid = '';" class="hover:cursor-pointer mr-2" />
+                        <p class="font-bold text-md flex -translate-x-2">
+                            <Calendar class="scale-75" /> {{ labelsStore.batchData[0].creationDate.split('T')[0] }} /
+                            {{ labelsStore.batchUuid }}
+                        </p>
+                    </div>
+
+                    <div
+                        class="flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all"
+                        :class="`${''}`" v-for="label in labelsStore.batchData">
+                        <p class="font-bold text-md">{{ label.id }}</p>
+                        <div class="pl-4 flex justify-between items-center w-11/12">
+                            <div>
+                                <p class="flex items-center text-xs" v-if="label.userUuid">
+                                    <User class="scale-50" />{{ label.userUuid }}
+                                </p>
+                            </div>
+                            <p class="w-3 h-3 rounded-full"
+                                :class="`${label.userUuid ? 'bg-orange-500' : 'bg-green-500'}`"></p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </transition>
-    </div>
-    <div v-else>
-        <h1>Nessun lotto creato</h1>
+            </Transition>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
 
 import { onMounted, ref, watch } from 'vue';
-import { Search, Printer, ArrowLeft, Plus } from 'lucide-vue-next';
+import { Search, Printer, User, ArrowLeft, Plus, Calendar } from 'lucide-vue-next';
 import { getAllBatches, getBatchByUuid, getLabelByUuid, getPrintFile } from "@/services/api.label.service";
 import { useUiStore } from '@/stores/ui';
 import { useLabelsStore } from '@/stores/lables.store';
@@ -72,6 +75,8 @@ import router from '@/router';
 const uiStore = useUiStore();
 const labelsStore = useLabelsStore();
 const transitionDirection = ref('next');
+
+const showTab = ref(0);
 
 const searchUuid = ref('');
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -105,7 +110,7 @@ watch(searchUuid, async (newSearchUuid, oldSearchUuid) => {
 onMounted(async () => {
     uiStore.title = "Etichette";
     uiStore.loading = true;
-    if(batchUuid) {
+    if (batchUuid) {
         showBatch(batchUuid);
         router.replace("/labels");
     }
@@ -119,7 +124,6 @@ const showBatch = async (uuid: string) => {
     transitionDirection.value = 'next';
     labelsStore.batchUuid = uuid;
     labelsStore.batchData = await getBatchByUuid(labelsStore.batchUuid);
-    console.log(labelsStore.batchData)
 }
 
 const showLabel = async (uuid: string) => {

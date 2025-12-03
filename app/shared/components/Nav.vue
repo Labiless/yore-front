@@ -1,6 +1,6 @@
 <template>
     <nav
-        class="fixed flex items-center align-center bottom-8 shadow-xl p-4 w-fit rounded-2xl left-1/2 -translate-x-1/2 bg-white">
+        class="fixed flex items-center align-center bottom-8 shadow-xl p-4 w-fit rounded-sm left-1/2 -translate-x-1/2 bg-white">
         <Transition>
             <p class="absolute -top-8 text-sm" v-if="linkIndex > -1">{{ links[linkIndex].name }}</p>
         </Transition>

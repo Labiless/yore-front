@@ -8,16 +8,22 @@
             <h1>Nessun inchiostro disponibile per creazione etichette</h1>
         </div>
     </div>
-    <div v-else class="flex flex-col justify-center items-center w-full h-full">
+    <div v-else class="flex flex-col justify-center items-start w-full h-full">
         <p class="text-xl font-bold text-left mb-4">Associa le etichette a uno studio</p>
-        <div class="mx-auto w-full items-start overflow-y-auto h-1/2" v-if="usersStore.allUsers.length">
-            <div @click="addUser(user.uuid)" :class="`${usersStore.userUuid === user.uuid ? 'h-80! items-start' : ''}`"
-                class="flex justify-start items-center mx-4 shadow-2xl p-4 bg-white mb-4 rounded-2xl w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
-                v-for="user in usersStore.allUsers">
-                <p class="font-bold text-2xl pr-4 w-16 text-center">{{ user.id }}</p>
-                <div class="border-l-1 border-black pl-4">
-                    <p class="font-bold">{{ user.email }}</p>
-                    <p>{{ new Date(user.createdAt).toDateString() }}</p>
+        <div class="w-full flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:p-6"
+            @click="addUser(user.uuid)" :class="`${''}`" v-for="user in usersStore.allUsers">
+            <p class="font-bold text-md">{{ user.id }}</p>
+            <div class="pl-4 items-center w-11/12">
+                <p class="flex items-center text-md font-bold" v-if="user.businessName">
+                    <User class="scale-50" />{{ user.businessName }}
+                </p>
+                <div class="flex">
+                    <p class="flex items-center text-xs" v-if="user.email">
+                        <BookMarked class="scale-50" />{{ user.piva }}
+                    </p>
+                    <p class="flex items-center text-xs" v-if="user.email">
+                        <Mail class="scale-50" />{{ user.email }}
+                    </p>
                 </div>
             </div>
         </div>
@@ -33,6 +39,7 @@ import { createLabels } from '@/services/api.label.service';
 import { useUiStore } from '@/stores/ui';
 import { useCreatingLabelsStore } from '@/stores/creatingLabels';
 import { useUsersStore } from '@/stores/users.store';
+import { User, Mail, BookMarked } from 'lucide-vue-next';
 import inkTypeSelector from '@/components/inkTypeSelector.vue';
 import router from '@/router';
 

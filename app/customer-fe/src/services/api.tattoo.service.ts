@@ -1,5 +1,6 @@
 import api from "./api.service";
 import { getCustomerByUuid } from "./api.customer.service";
+import Tattoo from "@/components/createTattoo/Tattoo.vue";
 
 export const createTattoo = async (createTattooData: any) => {
     const data = await api.post("/tattoos", createTattooData);
@@ -56,5 +57,10 @@ export const saveSigns = async (tattooUuid : string, customerSign: string, userS
         customerSign: data.data.customerUrl,
         userSign: data.data.userUrl, 
     });
+    return data.data;
+}
+
+export const deleteTattoo = async (tattooUuid: string) => {
+    const data = await api.delete(`tattoos/${tattooUuid}`);
     return data.data;
 }

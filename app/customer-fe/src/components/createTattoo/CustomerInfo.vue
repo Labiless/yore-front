@@ -81,7 +81,8 @@ const onsubmit = async() => {
             userUuid: userStore.uuid
         });
         // @ts-ignore
-        tattoosStore.tattoos.push(newTattoo);
+        const res = await getAllTattoos();
+        tattoosStore.tattoos = res.sort((a: any, b: any) => b.id - a.id);
     }
 }
 </script>

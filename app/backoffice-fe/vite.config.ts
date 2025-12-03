@@ -17,4 +17,8 @@ export default defineConfig({
       '@shared': fileURLToPath(new URL('.././shared', import.meta.url))
     },
   },
+  server: {
+    port: 5175,     // la porta che vuoi
+    host: true      // opzionale: permette accesso da rete locale
+  }
 })

@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="onSubmit" class="bg-white flex gap-4 mx-4 flex-col p-4 rounded-2xl shadow-2xl w-1/3 max-w-xs">
+    <form @submit.prevent="onSubmit" class="bg-white flex gap-4 mx-4 flex-col p-4 rounded-2xl shadow-2xl w-80 max-w-xs">
         <h2 class="font-bold capitalize text-xl">{{ inkType.name }}</h2>
         <p class="text-xs">{{ inkType.creationDate }}</p>
         <hr></hr>

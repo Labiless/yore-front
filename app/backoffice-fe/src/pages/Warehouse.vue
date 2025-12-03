@@ -1,90 +1,80 @@
 <template>
-    <div class="mx-auto flex pt-48 w-full mb-8">
-        <h1 class="font-bold text-2xl">Inchiostri disponibili</h1>
-    </div>
-    <div class="grid grid-cols-3 gap-4 mx-auto w-full items-start" v-if="warehouseStore.warehouse.length">
-        <div class="shadow-2xl p-4 bg-white rounded-2xl flex justify-center items-center"
+    <div class="mx-auto mt-30 w-full items-start overflow-y-auto h-full">
+        <router-link to="/loadbatch">
+            <Button class="w-full h-12 mb-4">
+                <Plus /> Carica inchiostro
+            </Button>
+        </router-link>
+        <div class="flex justify-start items-center">
+            <Input v-model="searchUuid" class="w-1/3 shadow-xl" type="text" />
+            <Search class="ml-2" />
+        </div>
+        <div class="flex items-center gap-2 p-2 my-4 mx-auto rounded-md bg-slate-200">
+            <Button @click="showTab = 0" class="text-xs w-fit h-8 bg-transparent text-black"
+                :class="`${showTab === 0 ? 'bg-white!' : 'shadow-none'}`">Magazzino</Button>
+            <Button @click="showTab = 1" class="text-xs w-fit h-8 bg-transparent text-black"
+                :class="`${showTab === 1 ? 'bg-white!' : 'shadow-none'}`">
+                Lotti caricamento
+            </Button>
+        </div>
+        <div v-show="showTab === 0"
+            class="flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:p-6"
             v-for="inks in warehouseStore.warehouse">
-            <p class="font-bold text-xl pr-4 w-16 text-center">X {{ inks.amount }}</p>
-            <div class="border-l-1 border-black pl-4">
-                <p class="font-bold capitalize text-2xl">{{ inks.name }}</p>
-                <p :style="`color: ${inks.color}`">{{ inks.color }}</p>
-                <p class="text-xs">{{ inks.uuid }}</p>
+            <p class="font-bold text-2xl">x{{ inks.amount }}</p>
+            <div class="pl-4 flex justify-between items-center w-11/12">
+                <div>
+                    <p class="flex capitalize text-md font-bold -translate-x-2">
+                        <Droplet class="scale-75" />{{ inks.name }}
+                    </p>
+                    <p class="capitalize text-xs">{{ inks.color }}</p>
+                </div>
             </div>
         </div>
-    </div>
-    <div v-else>
-        <h1>Magazzino vuoto</h1>
-    </div>
-    <div class="mx-auto flex pt-8 px-4 w-full">
-        <h1 class="font-bold text-lg">Storico caricamenti</h1>
-    </div>
-    <div class="p-4 flex justify-start items-center">
-        <Input v-model="searchUuid" class="w-1/3 shadow-xl" type="text" />
-        <Search class="ml-2" />
-    </div>
-    <div class="mx-auto w-full items-start overflow-y-auto h-1/2" v-if="warehouseStore.allBatches.length">
-        <transition :name="transitionDirection">
-            <div v-if="!warehouseStore.batchUuid && !warehouseStore.inkUuid">
-                <div @click="showBatch(batch.uuid)"
-                    class="flex justify-start items-center mx-4 shadow-2xl p-4 bg-white mb-4 rounded-2xl w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
-                    v-for="batch in warehouseStore.allBatches">
-                    <p class="font-bold text-2xl pr-4 w-16 text-center">x {{ batch.amount }}</p>
-                    <div class="border-l-1 border-black pl-4">
-                        <p class="font-bold">N°{{ batch.id }}</p>
-                        <p>{{ new Date(batch.creationDate).toDateString() }}</p>
-                        <p class="text-xs">{{ batch.uuid }}</p>
+        <div v-show="showTab === 1">
+            <Transition>
+                <div v-if="!warehouseStore.batchUuid">
+                    <div @click="showBatch(batch.uuid)"
+                        class="flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:p-6"
+                        v-for="batch in warehouseStore.allBatches">
+                        <p class="font-bold text-2xl">x{{ batch.amount }}</p>
+                        <div class="pl-4 flex justify-between items-center w-11/12">
+                            <div>
+                                <p class="flex capitalize text-md font-bold -translate-x-2">
+                                    <Calendar class="scale-75" />{{ batch.creationDate.split('T')[0] }}
+                                </p>
+                                <p class="flex capitalize text-xs -translate-x-2">{{ batch.uuid }}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div v-else>
-                <div class="flex py-4">
-                    <ArrowLeft @click="transitionDirection = 'back'; warehouseStore.resetSearch()"
-                        class="hover:cursor-pointer ml-4 mb-4 mr-4" />
-                    <p class="font-bold text-xl">{{ warehouseStore.batchUuid }}</p>
-                </div>
-                <div class="flex gap-2 mb-4 p-4">
-                    <a :href="warehouseStore.batchData[0].chemistryAnalysisUrl" target="_blank">
-                        <Button>
-                            <Download /> Chemistry Analysis
-                        </Button>
-                    </a>
-                    <a :href="warehouseStore.batchData[0].inkFormulaUrl" target="_blank">
-                        <Button>
-                            <Download /> inkFormulaUrl
-                        </Button>
-                    </a>
-                    <a :href="warehouseStore.batchData[0].microbiologicalAnalysisUrl" target="_blank">
-                        <Button>
-                            <Download /> microbiologicalAnalysisUrl
-                        </Button>
-                    </a>
-                    <a :href="warehouseStore.batchData[0].sterilizationCertUrl" target="_blank">
-                        <Button>
-                            <Download /> sterilizationCertUrl
-                        </Button>
-                    </a>
-                    <a :href="warehouseStore.batchData[0].sdsUrl" target="_blank">
-                        <Button>
-                            <Download /> sdsUrl
-                        </Button>
-                    </a>
-                </div>
-                <div @click="showInk(ink.uuid)"
-                    :class="`${warehouseStore.inkUuid === ink.uuid ? 'h-80! items-start' : ''}`"
-                    class="flex justify-start items-center mx-4 shadow-2xl p-4 bg-white mb-4 rounded-2xl w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
-                    v-for="ink in warehouseStore.batchData">
-                    <p class="font-bold text-2xl pr-4 w-16 text-center">{{ ink.id }}</p>
-                    <div class="border-l-1 border-black pl-4">
-                        <p class="font-bold">{{ ink.uuid }}</p>
-                        <p>{{ new Date(ink.creationDate).toDateString() }}</p>
+                <div v-else>
+                    <div class="flex items-center mb-4">
+                        <ArrowLeft @click="warehouseStore.batchUuid = '';" class="hover:cursor-pointer mr-2" />
+                        <p class="font-bold text-md flex -translate-x-2">
+                            <Calendar class="scale-75" /> {{ warehouseStore.batchData[0].creationDate.split('T')[0] }} / {{ warehouseStore.batchUuid }}
+                        </p>
+                    </div>
+
+                    <div @click="showBatch(batch.uuid)"
+                        class="flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:p-6"
+                        :class="`${''}`" v-for="ink in warehouseStore.batchData">
+                        <p class="font-bold text-md">{{ ink.id }}</p>
+                        <div class="pl-4 flex justify-between items-center w-11/12">
+                            <div>
+                                <p class="flex items-center text-xs" v-if="ink.color">
+                                    <Pipette class="scale-50" />{{ ink.color }}
+                                </p>
+                                <p class="flex items-center text-xs" v-if="ink.labelUuid">
+                                    <Tag class="scale-50" />{{ ink.labelUuid }}
+                                </p>
+                            </div>
+                            <p class="w-3 h-3 rounded-full"
+                                :class="`${ink.labelUuid ? 'bg-orange-500' : 'bg-green-500'}`"></p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </transition>
-    </div>
-    <div v-else>
-        <h1>Nessun lotto creato</h1>
+            </Transition>
+        </div>
     </div>
 </template>
 
@@ -92,12 +82,15 @@
 
 import { ref, watch, onMounted } from 'vue';
 import { getAllBatches, getAvailableInksByType, getInkTypes, getBatchByUuid, getInkByUuid } from "@/services/api.ink.service";
-import { ArrowLeft, Download, Search } from 'lucide-vue-next';
+import { ArrowLeft, Pipette, Tag, Download, Search, Plus, Droplet, Warehouse, Calendar } from 'lucide-vue-next';
 import { useUiStore } from '@/stores/ui';
 import { useWharehouseStore } from '@/stores/warehouse.store';
 import Input from '@shared/components/ui/input/input.vue';
 import Button from '@shared/components/ui/button/button.vue';
 import router from '@/router';
+
+const showTab = ref(0);
+
 
 const batchUuid = router.resolve().params.labelsUuid as string;
 
@@ -119,7 +112,6 @@ watch(searchUuid, async (newSearchUuid, oldSearchUuid) => {
         if (ink.batchId) {
             warehouseStore.batchUuid = ink.batchId;
             warehouseStore.batchData = [ink];
-            // warehouseStore.inkData = ink;
         }
         else {
             const batch = await getBatchByUuid(newSearchUuid);
@@ -132,7 +124,7 @@ watch(searchUuid, async (newSearchUuid, oldSearchUuid) => {
 })
 
 onMounted(async () => {
-    uiStore.title = "Magazzino Inchiostri";
+    uiStore.title = "Magazzino";
     uiStore.loading = true;
     if (!warehouseStore.allBatches.length) {
         warehouseStore.allBatches = await getAllBatches();

@@ -2,6 +2,11 @@
   <div class="flex justify-center items-center w-full h-full fixed z-10 bg-gray-500 opacity-35" v-if="uiStore.loading">
     <div class="w-16 h-16 bg-white rounded-full animate-bounce"></div>
   </div>
+  <Transition>
+    <div v-if="uiStore.toast.length" class="fixed bottom-48 -translate-x-[50%] left-[50%] p-4 bg-green-500 text-white rounded-2xl shadow-2xl">
+      {{ uiStore.toast }}
+    </div>
+  </Transition>
   <Header v-if="authStore.isAuthenticated" :title="uiStore.title" />
   <main class="h-screen w-4/6 mx-auto" :class="`${uiStore.loading ? 'blur' : ''}`">
     <Transition>
@@ -54,7 +59,6 @@ const links = [
     name: "Utenti",
   }
 ]
-
 </script>
 
 

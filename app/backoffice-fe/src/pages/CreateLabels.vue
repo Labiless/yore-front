@@ -89,6 +89,7 @@ const create = async () => {
             amount: creatingLabelsStore.amount,
         });
         router.push(`labels/${res}`);
+        uiStore.setToast("Etichette cerate correttamente");
     } catch (error) {
         alert(error.message);
         uiStore.loading = false;

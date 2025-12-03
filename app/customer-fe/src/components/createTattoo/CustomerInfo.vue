@@ -63,10 +63,12 @@ import { watch } from 'vue';
 import { createTattoo } from '@/services/api.tattoo.service';
 import { userUserStore } from '@/stores/user.store';
 import { useTatoosStore } from '@/stores/tattoos.store';
+import { useUiStore } from '@/stores/ui';
 
 const createTattoStore = useCreateTattoStore();
 const userStore = userUserStore();
 const tattoosStore = useTatoosStore();
+const uiStore = useUiStore();
 
 const onsubmit = async() => {
     if (createTattoStore.infoValidation()) {
@@ -80,6 +82,7 @@ const onsubmit = async() => {
             customerUuid: newCustomer.uuid,
             userUuid: userStore.uuid
         });
+        uiStore.setToast('Cliente aggiunto correttamente');
         // @ts-ignore
         const res = await getAllTattoos();
         tattoosStore.tattoos = res.sort((a: any, b: any) => b.id - a.id);

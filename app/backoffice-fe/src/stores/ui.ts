@@ -4,6 +4,7 @@ export const useUiStore = defineStore('ui', {
   state: () => ({
     title: "",
     loading: false,
+    toast : '',
   }),
 
   getters: {
@@ -11,5 +12,11 @@ export const useUiStore = defineStore('ui', {
   },
 
   actions: {
+    setToast(text: string){
+      this.toast = text;
+      setTimeout(() => {
+        this.toast = '';
+      }, 3000)
+    }
   },
 })

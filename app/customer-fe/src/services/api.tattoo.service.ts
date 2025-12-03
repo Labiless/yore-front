@@ -1,4 +1,5 @@
 import api from "./api.service";
+import { getCustomerByUuid } from "./api.customer.service";
 
 export const createTattoo = async (createTattooData: any) => {
     const data = await api.post("/tattoos", createTattooData);
@@ -7,6 +8,11 @@ export const createTattoo = async (createTattooData: any) => {
 
 export const getAllTattoos = async () => {
     const data = await api.get("/tattoos");
+    for(let i = 0; i < data.data.length; i++){
+        if(data.data[i].customerUuid){
+            data.data[i].customer = await getCustomerByUuid(data.data[i].customerUuid);
+        } 
+    }
     return data.data;
 }
 

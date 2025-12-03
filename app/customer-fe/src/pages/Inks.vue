@@ -14,7 +14,7 @@
                 <p>{{ new Date(ink.createdAt).toDateString() }}</p>
             </div>
         </div>-->
-        <p class="flex text-xl font-bold items-center mb-4">Inchiostro
+        <p class="flex text-xl font-bold items-center mb-4">Magazzino
             <droplet class="" />
         </p>
         <div class="flex items-center gap-2 p-2 my-4 mx-auto rounded-md bg-slate-200">
@@ -74,7 +74,7 @@ const showTab = ref(0)
 
 onMounted(async () => {
     uiStore.loading = true;
-    uiStore.title = "";
+    uiStore.title = "Inchiostri";
     inkTypes.value = await inkLabelService.getInkTypes();
     inks.value = await apiLabelService.getLabelsByUser(userStore.getUiid);
     availableInks.value = inks.value.filter(el => el.tattooUuid === null)

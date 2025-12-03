@@ -40,7 +40,9 @@
                             {{ labelsStore.batchUuid }}
                         </p>
                     </div>
-
+                    <div class="flex gap-2 mb-4">
+                        <Button @click="getPrintFileUrl" class="text-xs">Scarica etichette</Button>
+                    </div>
                     <div
                         class="flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all"
                         :class="`${''}`" v-for="label in labelsStore.batchData">
@@ -134,7 +136,8 @@ const showLabel = async (uuid: string) => {
 
 const getPrintFileUrl = async () => {
     const printFileUrl = await getPrintFile(labelsStore.batchUuid);
-    window.open(`http://localhost:3000/pdf/${printFileUrl}`, "_blank");
+    console.log(printFileUrl);
+    window.open(`http://localhost:3000/public/pdf/${printFileUrl}`, "_blank");
 }
 
 </script>

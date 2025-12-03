@@ -11,12 +11,11 @@
     <div class="" v-if="createTattoStore.inks.length">
         <p>Inchostri scansionati</p>
     </div>
-    <div class="flex justify-start items-center mx-4 shadow-2xl p-4 bg-white mb-4 rounded-2xl w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
+    <div class="w-full flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md h-fit transition-all"
         v-for="ink in createTattoStore.inks">
-        <p class="font-bold text-2xl pr-4 w-16 text-center">{{ ink.id }}</p>
-        <div class="border-l-1 border-black pl-4">
-            <p class="font-bold">{{ ink.uuid }}</p>
-            <p>{{ new Date(ink.createdAt).toDateString() }}</p>
+        <div class="">
+            <p class="text-xs font-bold">#000000</p>
+            <p class="text-xs">{{ ink.uuid }}</p>
         </div>
     </div>
 </template>

@@ -73,7 +73,7 @@
                 </div>
             </AccordionContent>
         </AccordionItem>
-        <AccordionItem value="item-5">
+        <AccordionItem value="item-6">
             <AccordionTrigger>Stratificazione inchiostro</AccordionTrigger>
             <AccordionContent>
                 <div class="grid grid-cols-2 gap-2">

@@ -70,7 +70,8 @@ const addAmount = async (data: {
     creatingLabelsStore.initLabelsCreation(data);
     if (!usersStore.allUsers.length) {
         const allUsers = await getAllUsers();
-        usersStore.allUsers = allUsers.sort((a: any, b: any) => b.id - a.id);
+
+        usersStore.allUsers = allUsers.filter(el => el.role !== 'admin').sort((a: any, b: any) => b.id - a.id);
     }
 }
 

@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full pt-32">
+    <div class="h-full mt-20">
         <Button @click="submit" :disabled="false" class="mb-8 w-full">Genera certificato</Button>
         <p class="flex text-xl font-bold w-fit m-auto">
             <Calendar class="mr-2" /> 01/01/2026

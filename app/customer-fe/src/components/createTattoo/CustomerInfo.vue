@@ -49,7 +49,7 @@
                 Do il consenso per la liberatoria
             </Label>
         </div>
-        <Button type="submit" class="mt-8 w-full">Conferma</Button>
+        <Button v-if="!createTattoStore.uuid" type="submit" class="mt-8 w-full">Conferma</Button>
     </form>
 </template>
 
@@ -59,8 +59,7 @@ import Input from '@shared/components/ui/input/input.vue';
 import Button from '@shared/components/ui/Button/Button.vue';
 import Checkbox from '@shared/components/ui/checkbox/Checkbox.vue';
 import { createCustomer } from '@/services/api.customer.service';
-import { watch } from 'vue';
-import { createTattoo } from '@/services/api.tattoo.service';
+import { createTattoo, getAllTattoos  } from '@/services/api.tattoo.service';
 import { userUserStore } from '@/stores/user.store';
 import { useTatoosStore } from '@/stores/tattoos.store';
 import { useUiStore } from '@/stores/ui';
@@ -71,8 +70,8 @@ const tattoosStore = useTatoosStore();
 const uiStore = useUiStore();
 
 const onsubmit = async() => {
+    uiStore.loading = true;
     if (createTattoStore.infoValidation()) {
-        
         const newCustomer = await createCustomer({
             ...createTattoStore.info,
             consent: true
@@ -82,10 +81,12 @@ const onsubmit = async() => {
             customerUuid: newCustomer.uuid,
             userUuid: userStore.uuid
         });
-        uiStore.setToast('Cliente aggiunto correttamente');
+        createTattoStore.uuid = newTattoo.uuid;
         // @ts-ignore
         const res = await getAllTattoos();
         tattoosStore.tattoos = res.sort((a: any, b: any) => b.id - a.id);
     }
+    uiStore.loading = false;
+    uiStore.setToast('Cliente aggiunto correttamente');
 }
 </script>

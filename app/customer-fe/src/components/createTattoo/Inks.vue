@@ -27,37 +27,46 @@ import { onMounted, ref } from 'vue';
 import { apiLabelService } from '@/services/api.inks.service';
 import { createTattoo, getTattoByUuid, updateTattoo } from '@/services/api.tattoo.service';
 import { userUserStore } from '@/stores/user.store';
+import { useUiStore } from '@/stores/ui';
 
 // 2c7a1f6a-975a-4a38-9cf2-8b02ff72c271
 
 const createTattoStore = useCreateTattoStore();
 const inkUuid = ref('');
 const userStore = userUserStore();
+const uiStore = useUiStore();
 
 // TODO add scan tattoo logic
 const addInk = async () => {
-    const ink = await apiLabelService.getLabelByUuid(inkUuid.value);
-    if (ink) {
-        const updateLabel = await apiLabelService.updateLabelByUuid(ink.uuid, {
-            burningDate: new Date(),
-            tattooUuid: createTattoStore.uuid
-        });
-        createTattoStore.inks.push(ink);
-        inkUuid.value = '';
-        if (!createTattoStore.uuid) {
-            const tatto = await createTattoo({
-                userUuid: userStore.uuid,
-                inks: [ink.uuid]
-            })
+    uiStore.loading = true;
+    if (inkUuid.value) {
+        try {
+            const ink = await apiLabelService.getLabelByUuid(inkUuid.value);
+            if (ink) {
+                await apiLabelService.updateLabelByUuid(ink.uuid, {
+                    burningDate: new Date(),
+                    tattooUuid: createTattoStore.uuid,
+                });
+                createTattoStore.inks.push(ink);
+                inkUuid.value = '';
+                const getTatto = await getTattoByUuid(createTattoStore.uuid);
+                const tatto = await updateTattoo(
+                    createTattoStore.uuid,
+                    {
+                        inks: [...getTatto.inks, ink.uuid]
+                    }
+                )
+            }
+            uiStore.loading = false;
+            uiStore.setToast('Inchiostro bruciato');
+        } catch (error) {
+            uiStore.loading = false;
+            uiStore.setToast('Inchiostro inesistente', 'error');
         }
-        else {
-            const getTatto = await getTattoByUuid(createTattoStore.uuid);
-            const tatto = await updateTattoo(
-                createTattoStore.uuid,
-                {
-                    inks: [...getTatto.inks, ink.uuid]
-                })
-        }
+    }
+    else {
+        uiStore.loading = false;
+        uiStore.setToast('Nessun id inchiostro', 'error');
     }
 }
 

@@ -40,6 +40,7 @@
                     <div class="flex justify-between w-full">
                         <div>
                             <p class="font-bold">{{ inkTypes[0].name }} - {{ inkTypes[0].color }}</p>
+                            <p class="text-xs text-gray-500">{{ ink.uuid}}</p>
                             <p class="text-xs text-gray-500">utilizzatato il: {{ ink.burningDate.split("T")[0] }}</p>
                         </div>
                         <router-link to="tattoos">

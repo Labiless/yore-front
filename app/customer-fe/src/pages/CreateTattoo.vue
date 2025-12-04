@@ -6,8 +6,8 @@
         </p>
         <p class="text-sm text-center">INK STUDIO - Tattoo studio</p>
         <div id="steps" class="py-4 flex justify-around w-5/6 mx-auto">
-            <Button @click="activeStep = status.name" v-for="status in allSteps"
-                class="w-10 h-14 bg-white flex flex-col"
+            <Button :disabled="status.name !== 'info' && !createTattoStore.uuid" @click="activeStep = status.name"
+                v-for="status in allSteps" class="w-10 h-14 bg-white flex flex-col"
                 :class="`${activeStep === status.name ? 'border-2 border-blue-500' : ''}`">
                 <ClipboardList class="text-black" v-if="status.name === 'info'" />
                 <PersonStanding class="text-black" v-if="status.name === 'kirbyDesay'" />
@@ -47,12 +47,15 @@ import { Brush, Calendar, ClipboardList, Droplet, PenTool, PersonStanding } from
 import { useUiStore } from '@/stores/ui';
 import { onMounted, ref, watch } from 'vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
-import { getTattoByUuid, generateContract } from '@/services/api.tattoo.service';
+import { getTattoByUuid, generateContract, getAllTattoos } from '@/services/api.tattoo.service';
 import { getCustomerByUuid } from '@/services/api.customer.service';
 import { getLabelByUuid } from '../../../backoffice-fe/src/services/api.label.service';
+import router from '@/router';
+import { useTatoosStore } from '@/stores/tattoos.store';
 
 const uiStore = useUiStore();
 const createTattoStore = useCreateTattoStore();
+const tattooStore = useTatoosStore();
 
 const activeStep = ref('info');
 const allSteps = [
@@ -96,10 +99,12 @@ onMounted(async () => {
             createTattoStore.info.contractConsent = customer.consent
         }
         if (tattoo.inks.length > 0) {
+            const inks = []
             for (let i = 0; i < tattoo.inks.length; i++) {
                 const ink = await getLabelByUuid(tattoo.inks[i]);
-                createTattoStore.inks.push(ink);
+                inks.push(ink);
             }
+            createTattoStore.inks = inks;
         }
         if (tattoo.color > 0) {
             createTattoStore.updateKirbyDesay({
@@ -122,9 +127,14 @@ onMounted(async () => {
     uiStore.loading = false;
 });
 
-const submit = async() => {
-    const res = await generateContract(createTattoStore.uuid);
-    console.log(res);
+const submit = async () => {
+    uiStore.loading = true;
+    await generateContract(createTattoStore.uuid);
+    const res = await getAllTattoos();
+    tattooStore.tattoos = res.sort((a: any, b: any) => b.id - a.id);
+    router.push('tattoos')
+    uiStore.loading = false;
+    uiStore.setToast('Tatuaggio completato!')
 }
 
 </script>

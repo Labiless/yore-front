@@ -19,25 +19,28 @@
 import Button from '@shared/components/ui/button/button.vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
 import { Plus } from 'lucide-vue-next';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, nextTick } from 'vue';
 import { addImage } from '@/services/api.tattoo.service';
+import { useUiStore } from '@/stores/ui';
 
 const createTattoStore = useCreateTattoStore();
-const imgs = ref([]);
+const uiStore = useUiStore();
 
 const selectFile = () => {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
     input.onchange = async (e: any) => {
-
         await uploadImage(e.target.files[0]);
     }
     input.click();
 }
 
 const uploadImage = async (img :any) => {
+    uiStore.loading = true;
     const res = await addImage(createTattoStore.uuid, img);
-    createTattoStore.photoUrl = res.url;
+    createTattoStore.photoUrl = `${res.url}?v=${Date.now()}`;
+    uiStore.loading = false;
+    uiStore.setToast('Imaggine aggiunta')
 }
 
 onMounted(async () => {

@@ -8,14 +8,14 @@
     <hr>
     </hr>
     <div v-if="!createTattooStore.customerSign && !createTattooStore.userSign">
-        <Sign ref="customerSign" :width="400" :height="200" />
+        <Sign class="mb-4" ref="customerSign" :width="400" :height="200" />
         <hr>
         </hr>
-        <Sign ref="userSign" :width="400" :height="200" />
-        <Button @click="saveSignature">Conferma</Button>
+        <Sign class="mb-4" ref="userSign" :width="400" :height="200" />
+        <Button class="w-full" @click="saveSignature">Conferma</Button>
     </div>
     <div v-else>
-        <img class="bg-white" :src="createTattooStore.customerSign"></img>
+        <img class="bg-white mb-4" :src="createTattooStore.customerSign"></img>
         <hr>
         </hr>
         <img class="bg-white" :src="createTattooStore.userSign"></img>
@@ -27,20 +27,27 @@ import Button from '@shared/components/ui/button/button.vue';
 import Sign from './Sign.vue';
 import { onMounted, ref } from 'vue';
 import { saveSigns } from '@/services/api.tattoo.service';
+import { useUiStore } from '@/stores/ui';
 
 const customerSign = ref(null);
 const userSign = ref(null);
 const createTattooStore = useCreateTattoStore();
+const uiStore = useUiStore();
 
 onMounted(() => {
     console.log(createTattooStore.customerSign);
 })
 
 const saveSignature = async () => {
+    uiStore.loading = true;
+
     const sign1 = customerSign.value.saveSignature();
     const sign2 = userSign.value.saveSignature();
     const res = await saveSigns(createTattooStore.uuid, sign1, sign2);
     createTattooStore.customerSign = res.customerUrl;
     createTattooStore.userSign = res.userUrl;
+
+    uiStore.loading = false;
+    uiStore.setToast('Firme agiunte correttmente')
 }
 </script>

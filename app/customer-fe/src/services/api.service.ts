@@ -28,8 +28,8 @@ api.interceptors.response.use(
       router.push('/login');
     }
     else {
-      alert("Error with BE");
-      router.push('/home');
+      // alert("Error with BE");
+      // router.push('/home');
     }
     uiStore.loading = false;
     return Promise.reject(error)

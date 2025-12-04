@@ -73,6 +73,20 @@ export const useCreateTattoStore = defineStore('createTattoo', {
                 && this.info.address
                 && this.info.surname
         },
+        addInfo(data: any){
+            this.uuid = data.uuid;
+            this.info = {
+                name: data.name,
+                email: data.email,
+                surname: data.surname,
+                cf: data.cf,
+                country: data.country,
+                city: data.city,
+                address: data.address,
+                dataConsent: data.dataConsent,
+                contractConsent: data.contractConsent,
+            };
+        },
         kirbyDesayValidation() {
             return this.kirbyDesay.skinType > 0
                 && this.kirbyDesay.position > 0

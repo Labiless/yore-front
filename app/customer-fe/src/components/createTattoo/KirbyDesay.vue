@@ -101,12 +101,15 @@ import { useCreateTattoStore } from '@/stores/createTatto.store';
 import { userUserStore } from '@/stores/user.store';
 import { updateTattoo } from '@/services/api.tattoo.service';
 import { createTattoo } from '@/services/api.tattoo.service';
+import { useUiStore } from '@/stores/ui';
 
 const createTattoStore = useCreateTattoStore();
 const userStore = userUserStore();
+const uiStore = useUiStore();
 
 const submit = async () => {
-    if (createTattoStore.kirbyDesayValidation()) {
+    uiStore.loading = true;
+    if (createTattoStore.kirbyDesayValidation() && createTattoStore.uuid) {
         const kirbyDesayData = {
             color: createTattoStore.kirbyDesay.color,
             inkAmount: createTattoStore.kirbyDesay.inkAmount,
@@ -115,15 +118,12 @@ const submit = async () => {
             scars: createTattoStore.kirbyDesay.scars,
             skinType: createTattoStore.kirbyDesay.skinType,
         }
-        if (!createTattoStore.uuid) {
-            const tatto = await createTattoo({
-                userUuid: userStore.uuid,
-                ...kirbyDesayData
-            })
-        }
-        else {
-            const tattoo = await updateTattoo(createTattoStore.uuid, kirbyDesayData);
-        }
+        const tattoo = await updateTattoo(createTattoStore.uuid, kirbyDesayData);
+        uiStore.loading = false;
+        uiStore.setToast('Kirby-Desay data aggiunti');
+    }else{
+        uiStore.loading = false;
+        uiStore.setToast('Compilare tutti i dati prima di inviare', 'error');
     }
 }
 

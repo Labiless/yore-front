@@ -70,7 +70,6 @@ const addAmount = async (data: {
     creatingLabelsStore.initLabelsCreation(data);
     if (!usersStore.allUsers.length) {
         const allUsers = await getAllUsers();
-
         usersStore.allUsers = allUsers.filter(el => el.role !== 'admin').sort((a: any, b: any) => b.id - a.id);
     }
 }
@@ -81,8 +80,8 @@ const addUser = async (userUuid: string) => {
 }
 
 const create = async () => {
+    uiStore.loading = true;
     try {
-        uiStore.loading = true;
         const res = await createLabels({
             userUuid: creatingLabelsStore.userUuid,
             inkTypeUuid: creatingLabelsStore.inkTypeUuid,
@@ -91,7 +90,7 @@ const create = async () => {
         router.push(`labels/${res}`);
         uiStore.setToast("Etichette cerate correttamente");
     } catch (error) {
-        alert(error.message);
+        uiStore.setToast('Errore nella creazione etichette', 'error')
         uiStore.loading = false;
     }
 }

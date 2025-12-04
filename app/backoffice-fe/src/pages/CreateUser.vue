@@ -1,5 +1,5 @@
 <template>
-    <div class="mt-48 h-2/3 overflow-y-scroll">
+    <div class="mt-48 h-2/3 overflow-y-scroll hide-scrollbar">
         <router-link to="users" class="hover:cursor-pointer mt-1 absolute -translate-x-6">
             <ArrowLeft />
         </router-link>
@@ -69,12 +69,16 @@ onMounted(async () => {
 });
 
 const submit = async () => {
+    uiStore.loading = true;
     try {
         const newUser = await createUser(createUSerStore.getAllData());
         usersStore.resetUsersStore();
-        router.push("users");
+        router.push(`users/${newUser.uuid}`);
+        uiStore.loading = false;
+        uiStore.setToast('Utente creato',);
     } catch (error) {
-        alert(error)
+        uiStore.loading = false;
+        uiStore.setToast('Errore nella creazione utente', 'error');
     }
 }
 

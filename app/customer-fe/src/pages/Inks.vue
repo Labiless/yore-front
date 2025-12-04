@@ -1,7 +1,7 @@
 <template>
 
 
-    <div class="mx-auto mt-20 w-full items-start overflow-y-auto h-full" v-if="inks.length">
+    <div class="mx-auto mt-20 w-full items-start overflow-y-auto h-full">
         <Button class="w-full h-12 mb-4">
             <Plus /> Carica Inchiostro
         </Button>
@@ -14,41 +14,44 @@
                 <p>{{ new Date(ink.createdAt).toDateString() }}</p>
             </div>
         </div>-->
-        <p class="flex text-xl font-bold items-center mb-4">Magazzino
+        <!--<p class="flex text-xl font-bold items-center mb-4">Magazzino
             <droplet class="" />
-        </p>
+        </p>-->
         <div class="flex items-center gap-2 p-2 my-4 mx-auto rounded-md bg-slate-200">
             <Button @click="showTab = 0" class="text-xs w-fit h-8 bg-transparent text-black"
                 :class="`${showTab === 0 ? 'bg-white!' : 'shadow-none'}`">Disponibili</Button>
             <Button @click="showTab = 1" class="text-xs w-fit h-8 bg-transparent text-black"
                 :class="`${showTab === 1 ? 'bg-white!' : 'shadow-none'}`">Utlizizzati</Button>
         </div>
-        <div v-if="showTab === 0"
-            class="flex justify-start items-center shadow-md p-2 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103">
-            <p class="text-2xl mx-2 font-bold">x{{ availableInks.length }}</p>
-            <div class="flex items-center border-l-1 border-black ml-2">
-                <droplet class="m-2" />
-                <p class="font-bold">{{ inkTypes[0].name }} - {{ inkTypes[0].color }}</p>
+        <div v-if="inks.length">
+            <div v-if="showTab === 0"
+                class="flex justify-start items-center shadow-md p-2 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103">
+                <p class="text-2xl mx-2 font-bold">x{{ availableInks.length }}</p>
+                <div class="flex items-center border-l-1 border-black ml-2">
+                    <droplet class="m-2" />
+                    <p class="font-bold">{{ inkTypes[0].name }} - {{ inkTypes[0].color }}</p>
+                </div>
             </div>
-        </div>
-        <div v-else>
-            <div @click="selectedink = selectedink === ink.uuid ? '' : ink.uuid"
-                class="flex justify-start items-center shadow-md p-2 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
-                v-for="ink in usedInks">
-                <droplet class="m-2" />
-                <div class="w-full">
-                    <div class="flex justify-between w-full">
-                        <div>
-                            <p class="font-bold">{{ inkTypes[0].name }} - {{ inkTypes[0].color }}</p>
-                            <p class="text-xs text-gray-500">{{ ink.uuid}}</p>
-                            <p class="text-xs text-gray-500">utilizzatato il: {{ ink.burningDate.split("T")[0] }}</p>
+            <div v-else>
+                <div @click="selectedink = selectedink === ink.uuid ? '' : ink.uuid"
+                    class="flex justify-start items-center shadow-md p-2 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
+                    v-for="ink in usedInks">
+                    <droplet class="m-2" />
+                    <div class="w-full">
+                        <div class="flex justify-between w-full">
+                            <div>
+                                <p class="font-bold">{{ inkTypes[0].name }} - {{ inkTypes[0].color }}</p>
+                                <p class="text-xs text-gray-500">{{ ink.uuid }}</p>
+                                <p class="text-xs text-gray-500">utilizzatato il: {{ ink.burningDate.split("T")[0] }}
+                                </p>
+                            </div>
+                            <router-link :to="`tattoos/${ink.tattooUuid}`">
+                                <SquareArrowOutUpRight />
+                            </router-link>
                         </div>
-                        <router-link to="tattoos">
-                            <SquareArrowOutUpRight />
-                        </router-link>
-                    </div>
-                    <div v-if="selectedink === ink.uuid">
-                        <p class="text-xs">{{ ink.uuid }}</p>
+                        <div v-if="selectedink === ink.uuid">
+                            <p class="text-xs">{{ ink.uuid }}</p>
+                        </div>
                     </div>
                 </div>
             </div>

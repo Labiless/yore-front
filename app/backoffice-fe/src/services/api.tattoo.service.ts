@@ -1,0 +1,1 @@
+export * as tattooService from '../../../customer-fe/src/services/api.tattoo.service';

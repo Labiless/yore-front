@@ -18,20 +18,20 @@
                 </div>
             </Button>
         </div>
-        <div id="info" class="overflow-y-scroll flex flex-col gap-4 h-1/2 pb-16 pt-8" v-if="activeStep === 'info'">
+        <div id="info" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 pb-16 pt-8" v-if="activeStep === 'info'">
             <CustomerInfo />
         </div>
-        <div id="kirbyDesay" class="overflow-y-scroll flex flex-col gap-4 h-1/2 pb-16 pt-8"
+        <div id="kirbyDesay" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 pb-16 pt-8"
             v-if="activeStep === 'kirbyDesay'">
             <KirbyDesay />
         </div>
-        <div id="ink" class="overflow-y-scroll flex flex-col gap-4 h-1/2 pb-16 pt-8" v-if="activeStep === 'ink'">
+        <div id="ink" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 pb-16 pt-8" v-if="activeStep === 'ink'">
             <Inks />
         </div>
-        <div id="tattoo" class="overflow-y-scroll flex flex-col gap-4 h-1/2 pb-16 pt-8" v-if="activeStep === 'tattoo'">
+        <div id="tattoo" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 pb-16 pt-8" v-if="activeStep === 'tattoo'">
             <Tattoo />
         </div>
-        <div id="sign" class="overflow-y-scroll flex flex-col gap-4 h-1/2 pb-16 pt-8" v-if="activeStep === 'sign'">
+        <div id="sign" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 pb-16 pt-8" v-if="activeStep === 'sign'">
             <Signs />
         </div>
     </div>
@@ -132,9 +132,9 @@ const submit = async () => {
     await generateContract(createTattoStore.uuid);
     const res = await getAllTattoos();
     tattooStore.tattoos = res.sort((a: any, b: any) => b.id - a.id);
-    router.push('tattoos')
+    router.push(`tattoos/${createTattoStore.uuid}`);
     uiStore.loading = false;
-    uiStore.setToast('Tatuaggio completato!')
+    uiStore.setToast('Tatuaggio completato!');
 }
 
 </script>

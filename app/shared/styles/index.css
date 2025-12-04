@@ -16,6 +16,25 @@ input{
   background-color: white !important;
 }
 
+.hide-scrollbar {
+    /* Assicurati che l'elemento possa scorrere */
+    overflow-y: scroll;
+    
+    /* 1. Per Firefox */
+    scrollbar-width: none;
+    
+    /* 2. Per Internet Explorer e Edge */
+    -ms-overflow-style: none;
+}
+
+/* 3. Per WebKit (Chrome, Safari, Edge) */
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+    width: 0; /* Assicurati che non prenda spazio */
+    height: 0;
+}
+
+
 button[data-slot="checkbox"]{
   background-color: white;
   color: black;

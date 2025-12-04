@@ -42,7 +42,7 @@ const router = createRouter({
     {
       path: '/warehouse/:batchUuid',
       name: 'inkBatch',
-      component: InkBatch,
+      component: Warehouse,
       meta: { requiresAuth: true },
     },
     {
@@ -72,6 +72,12 @@ const router = createRouter({
     {
       path: '/users',
       name: 'users',
+      component: Users,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/users/:userUuid',
+      name: 'user',
       component: Users,
       meta: { requiresAuth: true },
     },

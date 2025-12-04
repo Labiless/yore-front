@@ -1,7 +1,8 @@
 <template>
     <Transition>
         <div v-if="!loadingBatchStore.amount" class="w-full flex justify-center items-center h-full">
-            <inkTypeSelector @submit="addAmount" v-for="inkType in inkTypes" :inkType="inkType" >Carica inchiostro</inkTypeSelector>
+            <inkTypeSelector @submit="addAmount" v-for="inkType in inkTypes" :inkType="inkType">Carica inchiostro
+            </inkTypeSelector>
         </div>
         <div v-else class="flex justify-center items-center w-full h-full mx-auto">
             <ArrowLeft @click="loadingBatchStore.resetLoadingBatch()" class="hover:cursor-pointer mt-1" />
@@ -19,10 +20,13 @@ import { getInkTypes, loadInks } from '@/services/api.ink.service';
 import { useLoadingBatchStore } from '@/stores/loadingBatch';
 import { onMounted, ref } from 'vue';
 import router from '@/router';
+import { useWharehouseStore } from '@/stores/warehouse.store';
+import { getAvailableInksByType, getAllBatches } from '@/services/api.ink.service';
 
 const loadingBatchStore = useLoadingBatchStore();
 const inkTypes: any = ref(null);
 const uiStore = useUiStore();
+const warehouseStore = useWharehouseStore();
 
 onMounted(async () => {
     uiStore.loading = true;
@@ -42,13 +46,29 @@ const addAmount = (data: {
 }
 
 const loadBatch = async () => {
+    uiStore.loading = true;
     const data = loadingBatchStore.$state;
     const date = new Date(data.expirationDate);
     data.expirationDate = date.toISOString();
     const res = await loadInks(data);
     if (res) {
         loadingBatchStore.resetLoadingBatch()
-        router.push('/warehouse');
+        warehouseStore.allBatches = await getAllBatches();
+        const inkTypes = await getInkTypes();
+        for (let i = 0; i < inkTypes.length; i++) {
+            const availableAmount = await getAvailableInksByType(inkTypes[i].uuid);
+            //@ts-ignore
+            if (availableAmount.length) warehouseStore.warehouse[i] = {
+                ...inkTypes[i],
+                amount: availableAmount.length
+            }
+        }
+        router.push(`/warehouse/${res.batchId}`);
+        uiStore.loading = false;
+        uiStore.setToast('Inchiostri caricati correttamente');
+    } else {
+        uiStore.loading = false;
+        uiStore.setToast('Errore nel caricamento inchiostri');
     }
 }
 

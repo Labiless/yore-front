@@ -109,7 +109,7 @@ import router from '@/router';
 const showTab = ref(0);
 
 
-const batchUuid = router.resolve().params.labelsUuid as string;
+const batchUuid = router.resolve().params.batchUuid as string;
 
 const uiStore = useUiStore();
 const warehouseStore = useWharehouseStore();
@@ -155,6 +155,10 @@ onMounted(async () => {
             }
         }
     }
+    if(batchUuid){
+        await showBatch(batchUuid);
+        showTab.value = 1;
+    }
     uiStore.loading = false;
 });
 
@@ -162,6 +166,8 @@ const showBatch = async (uuid: string) => {
     transitionDirection.value = 'next';
     warehouseStore.batchUuid = uuid;
     warehouseStore.batchData = await getBatchByUuid(warehouseStore.batchUuid);
+    console.log(warehouseStore.batchUuid)
+    console.log(warehouseStore.batchData)
 }
 
 const showInk = async (uuid: string) => {

@@ -23,7 +23,7 @@
                 <Trash />
             </Button>
         </div>
-        <div class="overflow-y-scroll h-[60vh]">
+        <div class="overflow-y-scroll hide-scrollbar h-[60vh]">
             <Transition>
                 <div v-if="!activeTattoo">
                     <div v-show="showIfStatus(tattoo.status)" @click="showTattoo(tattoo)" :class="''"
@@ -45,7 +45,7 @@
                         </div>
                     </div>
                 </div>
-                <div v-else class="overflow-y-scroll h-[60vh]">
+                <div v-else class="overflow-y-scroll hide-scrollbar h-[60vh]">
                     <div class="flex items-center mb-4">
                         <ArrowLeft @click="activeTattoo = null;" class="hover:cursor-pointer mr-2" />
                     </div>
@@ -100,6 +100,8 @@ const createTattooStore = useCreateTattoStore();
 const activeTattoo = ref(null);
 const activeDelete = ref(false);
 
+const tattooUuid = router.resolve().params.tattooUuid as string;
+
 const showIfStatus = (status: string) => {
     if (showTab.value === 0) return true;
     if (showTab.value === 1) return status === 'CLOSE';
@@ -119,6 +121,9 @@ onMounted(async () => {
         tattoosStore.tattoos = res.sort((a: any, b: any) => b.id - a.id);
         console.log(tattoosStore.tattoos)
     }
+    if(tattooUuid){
+        await showClosedTattoo(tattooUuid);
+    }
     uiStore.loading = false;
 });
 
@@ -132,7 +137,7 @@ const showTattoo = async (tattoo: any) => {
         goToTatto(tattoo.uuid);
         return
     } else {
-        await showCloseTattoo(tattoo);
+        await showClosedTattoo(tattoo.uuid);
     }
 }
 
@@ -141,13 +146,14 @@ const goToTatto = (tattooUuid: string) => {
     router.push('createtattoo');
 }
 
-const showCloseTattoo = async (tattoo) => {
+const showClosedTattoo = async (tattooUuid) => {
     uiStore.loading = true;
-    activeTattoo.value = tattoosStore.tattoos.filter(el => el.uuid === tattoo.uuid)[0];
+    activeTattoo.value = tattoosStore.tattoos.filter(el => el.uuid === tattooUuid)[0];
     const customer = await getCustomerByUuid(activeTattoo.value.customerUuid);
     activeTattoo.value.customer = customer;
     uiStore.loading = false;
 }
+
 </script>
 <style scoped>
 .green {

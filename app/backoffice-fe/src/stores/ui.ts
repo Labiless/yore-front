@@ -5,6 +5,7 @@ export const useUiStore = defineStore('ui', {
     title: "",
     loading: false,
     toast : '',
+    toastType: ''
   }),
 
   getters: {
@@ -12,8 +13,9 @@ export const useUiStore = defineStore('ui', {
   },
 
   actions: {
-    setToast(text: string){
+    setToast(text: string, type: string = 'success'){
       this.toast = text;
+      this.toastType = type;
       setTimeout(() => {
         this.toast = '';
       }, 3000)

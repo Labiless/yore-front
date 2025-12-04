@@ -3,12 +3,14 @@
     <div class="w-16 h-16 bg-white rounded-full animate-bounce"></div>
   </div>
   <Transition>
-    <div v-if="uiStore.toast.length" class="fixed bottom-48 -translate-x-[50%] left-[50%] p-4 bg-green-500 text-white rounded-2xl shadow-2xl">
+    <div v-if="uiStore.toast.length"
+      class="fixed bottom-48 w-10/12 max-w-96 text-center shadow-black -translate-x-[50%] left-[50%] p-4 bg-green-500 text-white rounded-2xl shadow-2xl"
+      :class="`${uiStore.toastType === 'error' ? 'bg-red-500!' : ''}`">
       {{ uiStore.toast }}
     </div>
   </Transition>
   <Header v-if="authStore.isAuthenticated" :title="uiStore.title" />
-  <main class="h-screen w-4/6 mx-auto" :class="`${uiStore.loading ? 'blur' : ''}`">
+  <main class="h-screen sm:w-4/6 lg:w-1/2 mx-auto" :class="`${uiStore.loading ? 'blur' : ''}`">
     <Transition>
       <RouterView />
     </Transition>

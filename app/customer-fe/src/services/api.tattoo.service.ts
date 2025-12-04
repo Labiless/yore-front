@@ -1,6 +1,5 @@
 import api from "./api.service";
 import { getCustomerByUuid } from "./api.customer.service";
-import Tattoo from "@/components/createTattoo/Tattoo.vue";
 
 export const createTattoo = async (createTattooData: any) => {
     const data = await api.post("/tattoos", createTattooData);

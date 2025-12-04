@@ -28,6 +28,12 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: '/tattoos/:tattooUuid',
+      name: 'tattoo',
+      component: Tattoos,
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/inks',
       name: 'inks',
       component: Inks,

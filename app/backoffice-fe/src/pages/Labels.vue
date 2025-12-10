@@ -135,9 +135,7 @@ const showLabel = async (uuid: string) => {
 }
 
 const getPrintFileUrl = async () => {
-    const printFileUrl = await getPrintFile(labelsStore.batchUuid);
-    console.log(printFileUrl);
-    window.open(`http://localhost:3000/public/pdf/${printFileUrl}`, "_blank");
+    window.open(`https://res.cloudinary.com/dctifrnyc/labels/printfile_${labelsStore.batchUuid}.pdf`, "_blank");
 }
 
 </script>

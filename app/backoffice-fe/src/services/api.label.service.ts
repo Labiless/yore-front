@@ -33,8 +33,6 @@ export const getBatchByUuid = async (uuid: string) => {
 };
 
 export const getPrintFile = async (uuid: string) => {
-    const data = await api.post(`/labels/pdf`,{
-        batchId: uuid
-    });
+    const data = await api.get(`/labels/pdf/${uuid}`);
     return data.data;
 }

@@ -34,9 +34,6 @@ export const addImage = async (tattooUuid: string, img: any) => {
             "Content-Type": "multipart/form-data",
         },
     });
-    await updateTattoo(tattooUuid, {
-        photoUrl: `http://localhost:3000/public/img/tattoo/${tattooUuid}.png`
-    });
     return data.data;
 }
 
@@ -51,10 +48,6 @@ export const saveSigns = async (tattooUuid : string, customerSign: string, userS
     const data = await api.post(`tattoos/sign/${tattooUuid}`, {
         customerSign,
         userSign
-    });
-    await updateTattoo(tattooUuid, {
-        customerSign: data.data.customerUrl,
-        userSign: data.data.userUrl, 
     });
     return data.data;
 }

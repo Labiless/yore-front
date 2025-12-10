@@ -102,7 +102,7 @@ import { getAllBatches, getAvailableInksByType, getInkTypes, getBatchByUuid, get
 import { ArrowLeft, Pipette, Tag, Download, Search, Plus, Droplet, Warehouse, Calendar } from 'lucide-vue-next';
 import { useUiStore } from '@/stores/ui';
 import { useWharehouseStore } from '@/stores/warehouse.store';
-import Input from '@shared/components/ui/input/input.vue';
+import Input from '@shared/components/ui/input/Input.vue';
 import Button from '@shared/components/ui/button/button.vue';
 import router from '@/router';
 

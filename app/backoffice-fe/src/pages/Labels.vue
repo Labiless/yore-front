@@ -70,7 +70,7 @@ import { Search, Printer, User, ArrowLeft, Plus, Calendar } from 'lucide-vue-nex
 import { getAllBatches, getBatchByUuid, getLabelByUuid, getPrintFile } from "@/services/api.label.service";
 import { useUiStore } from '@/stores/ui';
 import { useLabelsStore } from '@/stores/lables.store';
-import Input from '@shared/components/ui/input/input.vue';
+import Input from '@shared/components/ui/input/Input.vue';
 import Button from '@shared/components/ui/button/button.vue';
 import router from '@/router';
 

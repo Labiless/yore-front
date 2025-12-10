@@ -117,7 +117,7 @@ import { getAllUsers, getUserByUuid } from "@/services/api.user.service";
 import { Search, Plus, BookMarked, User, Mail, ArrowLeft, MapPinHouse } from 'lucide-vue-next';
 import { useUiStore } from '@/stores/ui';
 import { useUsersStore } from '@/stores/users.store';
-import Input from '@shared/components/ui/input/input.vue';
+import Input from '@shared/components/ui/input/Input.vue';
 import Button from '@shared/components/ui/button/button.vue';
 import { getLabelByUuid } from '@/services/api.label.service';
 import { tattooService } from '@/services/api.tattoo.service'

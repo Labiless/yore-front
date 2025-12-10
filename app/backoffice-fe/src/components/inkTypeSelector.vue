@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import Input from '@shared/components/ui/input/input.vue';
+import Input from '@shared/components/ui/input/Input.vue';
 import Button from '@shared/components/ui/button/button.vue';
 import { ref } from 'vue';
 

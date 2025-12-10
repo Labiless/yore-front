@@ -5,7 +5,7 @@ import { useUiStore } from '@/stores/ui'
 import router from '@/router';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api', // cambia con il tuo BE
+  baseURL: import.meta.env.BASE_URL,
 })
 
 api.interceptors.request.use((config) => {

@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import { useUiStore } from '@/stores/ui';
-import Button from '@shared/components/ui/button/button.vue';
+import Button from '@shared/components/ui/button/Button.vue';
 import { onMounted, ref } from 'vue';
 import { getBatchByUuid, getPrintFile } from '@/services/api.label.service';
 import { Printer, ArrowLeft } from 'lucide-vue-next';

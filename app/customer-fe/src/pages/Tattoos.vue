@@ -89,7 +89,7 @@ import { onMounted, ref } from 'vue';
 import { useTatoosStore } from '@/stores/tattoos.store';
 import { deleteTattoo, getAllTattoos } from '@/services/api.tattoo.service';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
-import Button from '@shared/components/ui/button/button.vue';
+import Button from '@shared/components/ui/button/Button.vue';
 import router from '@/router';
 import { getCustomerByUuid } from '@/services/api.customer.service';
 

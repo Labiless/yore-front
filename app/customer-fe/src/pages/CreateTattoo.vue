@@ -37,7 +37,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import Button from '@shared/components/ui/button/button.vue';
+import Button from '@shared/components/ui/button/Button.vue';
 import CustomerInfo from '@/components/createTattoo/CustomerInfo.vue';
 import KirbyDesay from '@/components/createTattoo/KirbyDesay.vue';
 import Inks from '@/components/createTattoo/Inks.vue';

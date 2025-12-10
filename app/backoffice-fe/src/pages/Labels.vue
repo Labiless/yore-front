@@ -71,7 +71,7 @@ import { getAllBatches, getBatchByUuid, getLabelByUuid, getPrintFile } from "@/s
 import { useUiStore } from '@/stores/ui';
 import { useLabelsStore } from '@/stores/lables.store';
 import Input from '@shared/components/ui/input/Input.vue';
-import Button from '@shared/components/ui/button/button.vue';
+import Button from '@shared/components/ui/button/Button.vue';
 import router from '@/router';
 
 const uiStore = useUiStore();

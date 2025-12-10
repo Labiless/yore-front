@@ -23,7 +23,7 @@
 </template>
 <script setup lang="ts">
 import { useCreateTattoStore } from '@/stores/createTatto.store';
-import Button from '@shared/components/ui/button/button.vue';
+import Button from '@shared/components/ui/button/Button.vue';
 import Sign from './Sign.vue';
 import { onMounted, ref } from 'vue';
 import { saveSigns } from '@/services/api.tattoo.service';

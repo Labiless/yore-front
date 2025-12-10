@@ -46,7 +46,7 @@
 
 <script setup lang="ts">
 import Input from '@shared/components/ui/input/Input.vue';
-import Button from '@shared/components/ui/button/button.vue';
+import Button from '@shared/components/ui/button/Button.vue';
 import Checkbox from '@shared/components/ui/checkbox/Checkbox.vue';
 import { createUser } from '@/services/api.user.service';
 import { ArrowLeft } from 'lucide-vue-next';

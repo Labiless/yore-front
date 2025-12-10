@@ -59,7 +59,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import Button from '@shared/components/ui/button/button.vue';
+import Button from '@shared/components/ui/button/Button.vue';
 import { useUiStore } from '@/stores/ui';
 import { onMounted, ref } from 'vue';
 import { Droplet, Plus, SquareArrowOutUpRight } from 'lucide-vue-next';

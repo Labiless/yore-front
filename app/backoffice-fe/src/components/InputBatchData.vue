@@ -38,7 +38,7 @@
 <script setup lang="ts">
 
 import Input from '@shared/components/ui/input/Input.vue';
-import Button from '@shared/components/ui/button/button.vue';
+import Button from '@shared/components/ui/button/Button.vue';
 
 import { useLoadingBatchStore } from '@/stores/loadingBatch';
 const loadingBatchStore = useLoadingBatchStore();

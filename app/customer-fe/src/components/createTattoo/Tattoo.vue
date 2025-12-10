@@ -16,7 +16,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import Button from '@shared/components/ui/button/button.vue';
+import Button from '@shared/components/ui/button/Button.vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
 import { Plus } from 'lucide-vue-next';
 import { onMounted, ref, nextTick } from 'vue';

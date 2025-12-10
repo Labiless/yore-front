@@ -103,7 +103,7 @@ import { ArrowLeft, Pipette, Tag, Download, Search, Plus, Droplet, Warehouse, Ca
 import { useUiStore } from '@/stores/ui';
 import { useWharehouseStore } from '@/stores/warehouse.store';
 import Input from '@shared/components/ui/input/Input.vue';
-import Button from '@shared/components/ui/button/button.vue';
+import Button from '@shared/components/ui/button/Button.vue';
 import router from '@/router';
 
 const showTab = ref(0);

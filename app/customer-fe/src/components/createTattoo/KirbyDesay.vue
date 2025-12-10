@@ -96,7 +96,7 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from '@shared/components/ui/accordion'
-import Button from '@shared/components/ui/button/button.vue';
+import Button from '@shared/components/ui/button/Button.vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
 import { userUserStore } from '@/stores/user.store';
 import { updateTattoo } from '@/services/api.tattoo.service';

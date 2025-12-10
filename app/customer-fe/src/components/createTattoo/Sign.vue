@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import Button from '@shared/components/ui/button/button.vue';
+import Button from '@shared/components/ui/button/Button.vue';
 import { ref, onMounted, defineEmits } from 'vue';
 
 // Definisci le proprietà (props) per larghezza e altezza del canvas

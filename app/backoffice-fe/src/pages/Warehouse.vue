@@ -108,8 +108,13 @@ import router from '@/router';
 
 const showTab = ref(0);
 
-
-const batchUuid = router.resolve().params.batchUuid as string;
+const batchUuid = (() => {
+    try {
+        return router.resolve().params.batchUuid as string;
+    } catch {
+        return '';
+    }
+})()
 
 const uiStore = useUiStore();
 const warehouseStore = useWharehouseStore();

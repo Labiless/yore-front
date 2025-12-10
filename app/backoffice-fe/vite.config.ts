@@ -20,5 +20,9 @@ export default defineConfig({
   server: {
     port: 5175,     // la porta che vuoi
     host: true      // opzionale: permette accesso da rete locale
-  }
+  },
+  build: {
+    minify: false,      // 🔴 niente minificazione
+    sourcemap: true,    // ✅ utile per capire gli errori
+  },
 })

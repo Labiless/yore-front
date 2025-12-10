@@ -83,7 +83,13 @@ const showTab = ref(0);
 const searchUuid = ref('');
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-const batchUuid = router.resolve().params.labelsUuid as string;
+const batchUuid = (() => {
+    try {
+        return router.resolve().params.labelsUuid as string;
+    } catch {
+        return '';
+    }
+})()
 
 const isValidUuid = (uuid: string) => {
     return uuidRegex.test(uuid);

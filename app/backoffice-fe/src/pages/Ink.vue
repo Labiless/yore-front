@@ -13,7 +13,13 @@ import router from '@/router';
 const uiStore = useUiStore();
 const inkData = ref(null);
 
-const inkUuid = router.resolve().params.inkUuid as string;
+const inkUuid = (() => {
+    try {
+        return router.resolve().params.inkUuid as string;
+    } catch {
+        return '';
+    }
+})()
 
 onMounted(async () => {
     uiStore.title = "Singolo inchiostro";

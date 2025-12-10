@@ -133,7 +133,13 @@ const searchUuid = ref('');
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const selectedUser = ref(null);
 
-const userUuid = router.resolve().params.userUuid as string;
+const userUuid = (() => {
+    try {
+        return router.resolve().params.userUuid as string;
+    } catch {
+        return '';
+    }
+})()
 
 const isValidUuid = (uuid: string) => {
     return uuidRegex.test(uuid);

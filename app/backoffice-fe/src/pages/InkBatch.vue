@@ -26,7 +26,13 @@ import router from '@/router';
 const uiStore = useUiStore();
 const batchData = ref(null);
 
-const batchUuid = router.resolve().params.batchUuid as string;
+const batchUuid = (() => {
+    try {
+        return router.resolve().params.batchUuid as string;
+    } catch {
+        return '';
+    }
+})()
 
 onMounted(async () => {
     uiStore.title = "Lotto caricato";

@@ -56,7 +56,7 @@
 <script setup lang="ts">
 import { useCreateTattoStore } from '@/stores/createTatto.store';
 import Input from '@shared/components/ui/input/Input.vue';
-import Button from '@shared/components/ui/Button/Button.vue';
+import Button from '@shared/components/ui/button/Button.vue';
 import Checkbox from '@shared/components/ui/checkbox/Checkbox.vue';
 import { createCustomer } from '@/services/api.customer.service';
 import { createTattoo, getAllTattoos  } from '@/services/api.tattoo.service';

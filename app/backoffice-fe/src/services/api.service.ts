@@ -5,7 +5,7 @@ import { useUiStore } from '@/stores/ui'
 import router from '@/router';
 
 const api = axios.create({
-  baseURL: "https://yore-back.onrender.com",
+  baseURL: "https://yore-back.onrender.com/api",
 })
 
 api.interceptors.request.use((config) => {

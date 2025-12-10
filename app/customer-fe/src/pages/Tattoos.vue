@@ -100,7 +100,13 @@ const createTattooStore = useCreateTattoStore();
 const activeTattoo = ref(null);
 const activeDelete = ref(false);
 
-const tattooUuid = router.resolve().params.tattooUuid as string;
+const tattooUuid = (() => {
+    try {
+        return router.resolve().params.tattooUuid as string;
+    } catch {
+        return '';
+    }
+})()
 
 const showIfStatus = (status: string) => {
     if (showTab.value === 0) return true;

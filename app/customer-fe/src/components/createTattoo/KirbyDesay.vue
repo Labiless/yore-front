@@ -52,7 +52,7 @@
                 <div class="grid grid-cols-3 gap-2">
                     <Button @click="createTattoStore.kirbyDesay.inkAmount = inkAmount.id"
                         v-for="inkAmount in inkAmounts"
-                        class="h-40 shadow-xl bg-white text-black flex flex-col justify-start"
+                        class="h-40 shadow-xl bg-white text-black flex flex-col justify-start lg:justify-center"
                         :class="`${createTattoStore.kirbyDesay.inkAmount === inkAmount.id ? 'border-2 border-blue-400' : ''}`">
                         <p class="text-center rounded-sm p-1 whitespace-normal">{{ inkAmount.title }}</p>
                         <p class="text-center text-xs block whitespace-normal">{{ inkAmount.description }}</p>
@@ -65,7 +65,7 @@
             <AccordionContent>
                 <div class="grid grid-cols-3 gap-2">
                     <Button @click="createTattoStore.kirbyDesay.scars = scar.id" v-for="scar in scars"
-                        class="h-40 shadow-xl bg-white text-black flex flex-col justify-start"
+                        class="h-40 shadow-xl bg-white text-black flex flex-col justify-start lg:justify-center"
                         :class="`${createTattoStore.kirbyDesay.scars === scar.id ? 'border-2 border-blue-400' : ''}`">
                         <p class="text-center rounded-sm p-1 whitespace-normal">{{ scar.title }}</p>
                         <p class="text-center text-xs block whitespace-normal">{{ scar.description }}</p>
@@ -78,7 +78,7 @@
             <AccordionContent>
                 <div class="grid grid-cols-2 gap-2">
                     <Button @click="createTattoStore.kirbyDesay.inkLayers = inkLayer.id" v-for="inkLayer in inkLayers"
-                        class="h-30 shadow-xl bg-white text-black flex flex-col justify-start"
+                        class="h-30 shadow-xl bg-white text-black flex flex-col justify-start lg:justify-center"
                         :class="`${createTattoStore.kirbyDesay.inkLayers === inkLayer.id ? 'border-2 border-blue-400' : ''}`">
                         <p class="text-center rounded-sm p-1 whitespace-normal">{{ inkLayer.title }}</p>
                         <p class="text-center text-xs block whitespace-normal">{{ inkLayer.description }}</p>

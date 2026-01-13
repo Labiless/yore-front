@@ -18,7 +18,7 @@
                 </div>
             </Button>
         </div>
-        <div id="info" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 pb-16 pt-8" v-if="activeStep === 'info'">
+        <div id="info" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 md:h-full pb-16 pt-8" v-if="activeStep === 'info'">
             <CustomerInfo />
         </div>
         <div id="kirbyDesay" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 pb-16 pt-8"

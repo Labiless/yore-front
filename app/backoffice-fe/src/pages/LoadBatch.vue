@@ -1,19 +1,20 @@
 <template>
-    <Transition>
-        <div v-if="!loadingBatchStore.amount" class="w-full flex justify-center items-center h-full">
-            <inkTypeSelector @submit="addAmount" v-for="inkType in inkTypes" :inkType="inkType">Carica inchiostro
-            </inkTypeSelector>
-        </div>
-        <div v-else class="flex justify-center items-center w-full h-full mx-auto">
-            <ArrowLeft @click="loadingBatchStore.resetLoadingBatch()" class="hover:cursor-pointer mt-1" />
-            <InputBatchData @loadBatch="loadBatch" />
-        </div>
-    </Transition>
+    <div class="mx-auto w-full px-4 flex items-center justify-center overflow-y-auto h-full">
+        <Transition>
+            <div v-if="!loadingBatchStore.amount"
+                class="w-full flex flex-col md:flex-row justify-center items-center overflow-y-auto pt-80 pb-40 md:pt-0">
+                <inkTypeSelector @submit="addAmount" v-for="inkType in inkTypes" :inkType="inkType">Carica inchiostro
+                </inkTypeSelector>
+            </div>
+            <div v-else class="flex flex-col justify-center items-center w-full h-full mx-auto px-4 overflow-y-auto pt-100 pb-40 md:pt-0">
+                <InputBatchData @loadBatch="loadBatch" />
+            </div>
+        </Transition>
+    </div>
 </template>
 
 <script setup lang="ts">
 import { useUiStore } from '@/stores/ui';
-import { ArrowLeft } from 'lucide-vue-next';
 import inkTypeSelector from '@/components/inkTypeSelector.vue';
 import InputBatchData from '@/components/InputBatchData.vue';
 import { getInkTypes, loadInks } from '@/services/api.ink.service';

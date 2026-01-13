@@ -48,6 +48,6 @@ const saveSignature = async () => {
     createTattooStore.userSign = res.userUrl;
 
     uiStore.loading = false;
-    uiStore.setToast('Firme agiunte correttmente')
+    uiStore.setToast('Firme aggiunte correttamente')
 }
 </script>

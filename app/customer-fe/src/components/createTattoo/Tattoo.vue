@@ -40,7 +40,7 @@ const uploadImage = async (img :any) => {
     const res = await addImage(createTattoStore.uuid, img);
     createTattoStore.photoUrl = `${res.url}?v=${Date.now()}`;
     uiStore.loading = false;
-    uiStore.setToast('Imaggine aggiunta')
+    uiStore.setToast('immagine aggiunta')
 }
 
 onMounted(async () => {

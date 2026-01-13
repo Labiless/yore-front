@@ -1,5 +1,5 @@
 <template>
-    <div class="mx-auto mt-30 w-full items-start overflow-y-auto h-full">
+    <div class="mx-auto mt-30 w-full items-start overflow-y-auto h-full px-4">
         <router-link to="/createuser">
             <Button class="w-full h-12 mb-4">
                 <Plus /> Crea nuovo utente

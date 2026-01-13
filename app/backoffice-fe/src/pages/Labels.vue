@@ -1,12 +1,12 @@
 <template>
-    <div class="mx-auto mt-30 w-full items-start overflow-y-auto h-full">
+    <div class="mx-auto mt-30 w-full items-start overflow-y-auto h-full px-4">
         <router-link to="/createlabels">
             <Button class="w-full h-12 mb-4">
                 <Plus /> Crea etichette
             </Button>
         </router-link>
         <div class="flex justify-start items-center">
-            <Input v-model="searchUuid" class="w-1/3 shadow-xl" type="text" />
+            <Input v-model="searchUuid" class="w-2/3 shadow-xl" type="text" />
             <Search class="ml-2" />
         </div>
         <div class="flex items-center gap-2 p-2 my-4 mx-auto rounded-md bg-slate-200">
@@ -14,7 +14,7 @@
                 :class="`${showTab === 0 ? 'bg-white!' : 'shadow-none'}`">Lotti etichette</Button>
         </div>
 
-        <div v-show="showTab === 0">
+        <div v-show="showTab === 0" class="pb-50">
             <Transition>
                 <div v-if="!labelsStore.batchUuid">
                     <div  @click="showBatch(labelBatch.uuid)" class="flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:p-6"

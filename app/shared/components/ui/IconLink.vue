@@ -1,5 +1,5 @@
 <template>
-    <router-link class="m-2 hover:scale-120 transition-all" :to="link">
+    <router-link class="m-2 flex items-center justify-center hover:scale-120 transition-all" :to="link">
         <component :is="icon" />
     </router-link>
 </template>

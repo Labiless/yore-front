@@ -68,7 +68,7 @@ const links = [
   {
     link: "/user",
     icon: "UserRound",
-    name: "Accuont",
+    name: "Account",
   },
 ]
 

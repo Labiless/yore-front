@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!creatingLabelsStore.inkTypeUuid" class="w-full flex justify-center items-center h-full">
+    <div v-if="!creatingLabelsStore.inkTypeUuid" class="w-full flex flex-col md:flex-row justify-center h-full">
         <div class="w-full flex justify-center items-center h-full" v-if="warehouse.length">
             <inkTypeSelector @submit="addAmount" v-for="inkType in warehouse" :ink-type="inkType">Crea etichette
             </inkTypeSelector>
@@ -88,7 +88,7 @@ const create = async () => {
             amount: creatingLabelsStore.amount,
         });
         router.push(`labels/${res}`);
-        uiStore.setToast("Etichette cerate correttamente");
+        uiStore.setToast("Etichette create correttamente");
     } catch (error) {
         uiStore.setToast('Errore nella creazione etichette', 'error')
         uiStore.loading = false;

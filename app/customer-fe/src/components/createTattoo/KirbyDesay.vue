@@ -120,7 +120,7 @@ const submit = async () => {
         }
         const tattoo = await updateTattoo(createTattoStore.uuid, kirbyDesayData);
         uiStore.loading = false;
-        uiStore.setToast('Kirby-Desay data aggiunti');
+        uiStore.setToast('Kirby-Desai data aggiunti');
     }else{
         uiStore.loading = false;
         uiStore.setToast('Compilare tutti i dati prima di inviare', 'error');

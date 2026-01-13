@@ -1,12 +1,12 @@
 <template>
-    <div class="mx-auto mt-30 w-full items-start overflow-y-auto h-full">
+    <div class="mx-auto mt-30 w-full px-4 items-start overflow-y-auto h-full">
         <router-link to="/loadbatch">
             <Button class="w-full h-12 mb-4">
                 <Plus /> Carica inchiostro
             </Button>
         </router-link>
-        <div class="flex justify-start items-center">
-            <Input v-model="searchUuid" class="w-1/3 shadow-xl" type="text" />
+        <div class="flex  justify-start items-center">
+            <Input v-model="searchUuid" class="w-2/3 shadow-xl" type="text" />
             <Search class="ml-2" />
         </div>
         <div class="flex items-center gap-2 p-2 my-4 mx-auto rounded-md bg-slate-200">
@@ -17,20 +17,21 @@
                 Lotti caricamento
             </Button>
         </div>
-        <div v-show="showTab === 0"
-            class="flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:p-6"
-            v-for="inks in warehouseStore.warehouse">
-            <p class="font-bold text-2xl">x{{ inks.amount }}</p>
-            <div class="pl-4 flex justify-between items-center w-11/12">
-                <div>
-                    <p class="flex capitalize text-md font-bold -translate-x-2">
-                        <Droplet class="scale-75" />{{ inks.name }}
-                    </p>
-                    <p class="capitalize text-xs">{{ inks.color }}</p>
+        <div v-show="showTab === 0" class="pb-50">
+            <div class="flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:p-6"
+                v-for="inks in warehouseStore.warehouse">
+                <p class="font-bold text-2xl">x{{ inks.amount }}</p>
+                <div class="pl-4 flex justify-between items-center w-11/12">
+                    <div>
+                        <p class="flex capitalize text-md font-bold -translate-x-2">
+                            <Droplet class="scale-75" />{{ inks.name }}
+                        </p>
+                        <p class="capitalize text-xs">{{ inks.color }}</p>
+                    </div>
                 </div>
             </div>
         </div>
-        <div v-show="showTab === 1">
+        <div v-show="showTab === 1" class="pb-50">
             <Transition>
                 <div v-if="!warehouseStore.batchUuid">
                     <div @click="showBatch(batch.uuid)"
@@ -55,7 +56,7 @@
                             {{ warehouseStore.batchUuid }}
                         </p>
                     </div>
-                    <div class="flex gap-2 mb-4">
+                    <div class="flex flex-wrap gap-2 mb-4">
                         <a target="_blank" :href="warehouseStore.batchData[0].inkFormulaUrl">
                             <Button class="text-xs">Formula Inchiostro</Button>
                         </a>
@@ -160,7 +161,7 @@ onMounted(async () => {
             }
         }
     }
-    if(batchUuid){
+    if (batchUuid) {
         await showBatch(batchUuid);
         showTab.value = 1;
     }

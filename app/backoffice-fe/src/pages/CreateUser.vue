@@ -29,7 +29,7 @@
                     required />
                 <label for="expiration-date">Telefono</label>
                 <Input class="bg-white" v-model="createUSerStore.phone" name="expiration-date" type="text" required />
-                <p class="font-bold text-xl py-4">Sede Lgale</p>
+                <p class="font-bold text-xl py-4">Sede Legale</p>
                 <label for="expiration-date">Città</label>
                 <Input class="bg-white" v-model="createUSerStore.city" name="expiration-date" type="text" required />
                 <label for="expiration-date">Indirizzo</label>

@@ -10,7 +10,7 @@
     </div>
   </Transition>
   <Header v-if="authStore.isAuthenticated" :title="uiStore.title" />
-  <main class="h-screen sm:w-4/6 lg:w-1/2 mx-auto" :class="`${uiStore.loading ? 'blur' : ''}`">
+  <main class="h-screen flex sm:w-4/6 lg:w-1/2 mx-auto" :class="`${uiStore.loading ? 'blur' : ''}`">
     <Transition>
       <RouterView />
     </Transition>

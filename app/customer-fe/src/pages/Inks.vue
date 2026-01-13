@@ -21,7 +21,7 @@
             <Button @click="showTab = 0" class="text-xs w-fit h-8 bg-transparent text-black"
                 :class="`${showTab === 0 ? 'bg-white!' : 'shadow-none'}`">Disponibili</Button>
             <Button @click="showTab = 1" class="text-xs w-fit h-8 bg-transparent text-black"
-                :class="`${showTab === 1 ? 'bg-white!' : 'shadow-none'}`">Utlizizzati</Button>
+                :class="`${showTab === 1 ? 'bg-white!' : 'shadow-none'}`">Utilizzati</Button>
         </div>
         <div v-if="inks.length">
             <div v-if="showTab === 0"
@@ -42,7 +42,7 @@
                             <div>
                                 <p class="font-bold">{{ inkTypes[0].name }} - {{ inkTypes[0].color }}</p>
                                 <p class="text-xs text-gray-500">{{ ink.uuid }}</p>
-                                <p class="text-xs text-gray-500">utilizzatato il: {{ ink.burningDate.split("T")[0] }}
+                                <p class="text-xs text-gray-500">utilizzato il: {{ ink.burningDate.split("T")[0] }}
                                 </p>
                             </div>
                             <router-link :to="`tattoos/${ink.tattooUuid}`">

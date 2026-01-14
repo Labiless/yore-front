@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center h-[100vh]">
+    <div class="flex items-center h-[100vh] mx-auto">
         <LoginForm :error="error" @submit="onsubmit">Click me</LoginForm>
     </div>
 </template>

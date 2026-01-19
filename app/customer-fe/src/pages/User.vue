@@ -1,5 +1,5 @@
 <template>
-    <div v-if="user" class="mx-auto mt-30 w-full items-start overflow-y-auto h-full">
+    <div v-if="user" class="mx-auto w-full items-start">
         <div class="mb-4">
             <p class="text-xl font-bold flex items-center mb-2">
                 <User /> {{ user.businessName }}

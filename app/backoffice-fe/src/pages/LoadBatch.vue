@@ -1,8 +1,8 @@
 <template>
-    <div class="mx-auto w-full px-4 flex items-center justify-center overflow-y-auto h-full">
+    <div class="mx-auto w-full px-4 flex items-center justify-center overflow-y-auto">
         <Transition>
             <div v-if="!loadingBatchStore.amount"
-                class="w-full flex flex-col md:flex-row justify-center items-center overflow-y-auto pt-80 pb-40 md:pt-0">
+                class="w-full flex flex-col md:flex-row justify-center items-center overflow-y-auto">
                 <inkTypeSelector @submit="addAmount" v-for="inkType in inkTypes" :inkType="inkType">Carica inchiostro
                 </inkTypeSelector>
             </div>

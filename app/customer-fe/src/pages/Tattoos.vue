@@ -1,5 +1,5 @@
 <template>
-    <div class="mx-auto mt-20 w-full items-start h-[100vh]">
+    <div class="items-start">
         <router-link to="/createtattoo" @click="createTattooStore.resetTattoo">
             <Button class="w-full h-12 mb-4">
                 <Plus />Nuovo tatuaggio

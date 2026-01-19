@@ -9,13 +9,15 @@
       {{ uiStore.toast }}
     </div>
   </Transition>
-  <Header v-if="authStore.isAuthenticated" :title="uiStore.title" />
-  <main class="h-screen flex sm:w-4/6 lg:w-1/2 mx-auto" :class="`${uiStore.loading ? 'blur' : ''}`">
+  <main class="h-screen" :class="`${uiStore.loading ? 'blur' : ''}`">
     <Transition>
-      <RouterView />
+      <RouterView class="lg:w-1/2 mx-auto pt-12 pb-24 px-4" />
     </Transition>
+    <div class="fixed bottom-0 w-full">
+      <Header v-if="authStore.isAuthenticated" :title="uiStore.title" />
+      <Nav firstIndex="0" v-if="authStore.isAuthenticated" :links />
+    </div>
   </main>
-  <Nav firstIndex="0" v-if="authStore.isAuthenticated" :links />
 </template>
 
 <script setup lang="ts">

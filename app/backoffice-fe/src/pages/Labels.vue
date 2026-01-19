@@ -1,5 +1,5 @@
 <template>
-    <div class="mx-auto mt-30 w-full items-start overflow-y-auto h-full px-4">
+    <div class="mx-auto w-full items-start overflow-y-auto h-full px-4">
         <router-link to="/createlabels">
             <Button class="w-full h-12 mb-4">
                 <Plus /> Crea etichette
@@ -14,7 +14,7 @@
                 :class="`${showTab === 0 ? 'bg-white!' : 'shadow-none'}`">Lotti etichette</Button>
         </div>
 
-        <div v-show="showTab === 0" class="pb-50">
+        <div v-show="showTab === 0">
             <Transition>
                 <div v-if="!labelsStore.batchUuid">
                     <div  @click="showBatch(labelBatch.uuid)" class="flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:p-6"

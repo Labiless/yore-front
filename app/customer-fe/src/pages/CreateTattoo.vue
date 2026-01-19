@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full mt-20">
+    <div>
         <Button @click="submit" :disabled="false" class="mb-8 w-full">Genera certificato</Button>
         <p class="flex text-xl font-bold w-fit m-auto">
             <Calendar class="mr-2" /> 01/01/2026
@@ -18,7 +18,7 @@
                 </div>
             </Button>
         </div>
-        <div id="info" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 md:h-full pb-16 pt-8" v-if="activeStep === 'info'">
+        <div id="info" class="flex flex-col gap-4 h-1/2 pt-8 pb-12" v-if="activeStep === 'info'">
             <CustomerInfo />
         </div>
         <div id="kirbyDesay" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 pb-16 pt-8"

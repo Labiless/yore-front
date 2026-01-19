@@ -8,7 +8,7 @@
 @custom-variant dark (&:is(.dark *));
 
 body{
-  overflow: hidden;
+  /*overflow: hidden;*/
   background-color: rgb(218, 218, 218);
 }
 

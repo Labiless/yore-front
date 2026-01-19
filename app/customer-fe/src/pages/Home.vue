@@ -1,5 +1,5 @@
 <template>
-    <div class="flex justify-center items-center h-full">
+    <div class="flex justify-center items-center min-h-full">
         <HomeButton icon="Plus" link="/createtattoo" @click="createTattoStore.resetTattoo">Nuovo tatuaggio</HomeButton>
     </div>
 </template>

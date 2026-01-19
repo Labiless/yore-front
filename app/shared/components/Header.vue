@@ -1,6 +1,6 @@
 <template>
-    <div class="p-4 fixed top-0 w-full">
-        <h1 class="w-fit mx-auto text-2xl font-bold py-2 px-4 border-black text-black rounded-md">{{ title }}</h1>
+    <div class="w-full bg-white flex pt-2 justify-between items-center h-4 ">
+        <h1 class="w-fit mx-auto text-md px-4 py-1 font-bold text-white -translate-y-4 bg-black rounded-full ">{{ title }}</h1>
     </div>
 </template>
 <script setup lang="ts">

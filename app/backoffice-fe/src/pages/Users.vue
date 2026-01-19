@@ -1,5 +1,5 @@
 <template>
-    <div class="mx-auto mt-30 w-full items-start overflow-y-auto h-full px-4">
+    <div class="mx-auto w-full items-start overflow-y-auto h-full px-4">
         <router-link to="/createuser">
             <Button class="w-full h-12 mb-4">
                 <Plus /> Crea nuovo utente
@@ -39,7 +39,7 @@
                     <div class="items-center mb-4 gap-2">
                         <ArrowLeft @click="usersStore.userUuid = '';" class="hover:cursor-pointer mr-2" />
                     </div>
-                    <div class="flex flex-col overflow-y-scroll h-[60vh] hide-scrollbar">
+                    <div class="flex flex-col overflow-y-scroll h-[60vh] hide-scrollbar pb-24">
                         <div class="mb-4 bg-white rounded-xl w-full p-4 flex gap-2 h-fit">
                             <p class="text-xl font-bold flex items-center mb-2">
                                 <User /> {{ selectedUser.businessName }}
@@ -49,7 +49,7 @@
                                 <p class="text-xs opacity-60">{{ selectedUser.createdAt.split('T')[0] }}</p>
                             </div>
                         </div>
-                        <div class="flex w-full gap-2 h-fit">
+                        <div class="flex flex-wrap w-full gap-2 h-fit">
                             <div class="mb-4 bg-white rounded-xl w-full p-4">
                                 <p class="font-bold">Contatti</p>
                                 <p>{{ selectedUser.email }}</p>

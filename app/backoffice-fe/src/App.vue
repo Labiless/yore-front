@@ -9,6 +9,9 @@
       {{ uiStore.toast }}
     </div>
   </Transition>
+  <Transition>
+    <PopUp v-if="uiStore.popup.text.length && uiStore.popup.action" :uiStore="uiStore"/>
+  </Transition>
   <main class="h-screen" :class="`${uiStore.loading ? 'blur' : ''}`">
     <Transition>
       <RouterView class="lg:w-1/2 mx-auto pt-12 pb-24 px-4" />
@@ -25,6 +28,7 @@
 import { RouterView } from 'vue-router';
 import Header from '@shared/components/Header.vue';
 import Nav from '@shared/components/Nav.vue';
+import PopUp from '@shared/components/PopUp.vue';
 import { useUiStore } from '@/stores/ui';
 import { useAuthStore } from './stores/auth';
 
@@ -61,6 +65,17 @@ const links = [
     link: "/users",
     icon: "UserRoundCog",
     name: "Utenti",
+  },
+  {
+    action: () => {
+      uiStore.setPopoup('Sei sicuro di voler effettuare il logout?', async () => {
+        authStore.logout();
+        location.reload();
+      });
+    },
+    icon: "LogOut",
+    name: "Logout",
+    color: "red",
   }
 ]
 </script>

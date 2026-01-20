@@ -1,5 +1,5 @@
 <template>
-    <div class="mx-auto w-full px-4 flex items-center justify-center overflow-y-auto">
+    <div class="mx-auto w-full px-4 flex items-center justify-center overflow-y-auto min-h-full">
         <Transition>
             <div v-if="!loadingBatchStore.amount"
                 class="w-full flex flex-col md:flex-row justify-center items-center overflow-y-auto">

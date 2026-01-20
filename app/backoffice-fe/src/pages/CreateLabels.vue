@@ -4,7 +4,7 @@
             <inkTypeSelector @submit="addAmount" v-for="inkType in warehouse" :ink-type="inkType">Crea etichette
             </inkTypeSelector>
         </div>
-        <div v-else class="w-full flex justify-center items-center h-full">
+        <div v-else class="w-full flex justify-center items-center min-h-full">
             <h1>Nessun inchiostro disponibile per creazione etichette</h1>
         </div>
     </div>

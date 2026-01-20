@@ -17,7 +17,7 @@
                 :class="`${showTab === 2 ? 'bg-white!' : 'shadow-none'}`">
                 <p class="w-3 h-3 rounded-full bg-orange-500"></p>
             </Button>
-            <Button @click="activeDelete = !activeDelete"
+            <Button @click="startDeletion"
                 class="text-xs text-center w-fit h-8 bg-transparent text-black"
                 :class="`${activeDelete ? 'bg-red-500! text-white' : 'shadow-none'}`">
                 <Trash />
@@ -26,8 +26,9 @@
         <div class="overflow-y-scroll hide-scrollbar h-[60vh]">
             <Transition>
                 <div v-if="!activeTattoo">
-                    <div v-show="showIfStatus(tattoo.status)" @click="showTattoo(tattoo)" :class="''"
+                    <div v-show="showIfStatus(tattoo.status)" @click="onclickTattoo(tattoo)"
                         class="flex justify-start items-center shadow-md p-2 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
+                        :class="`${activeDelete ? 'active-delete' : ''}`"
                         v-for="tattoo in tattoosStore.tattoos">
                         <img v-if="tattoo.photoUrl" :src="tattoo.photoUrl"
                             class="w-[30px] h-[30px] rounded-full "></img>
@@ -114,6 +115,7 @@ const showIfStatus = (status: string) => {
     if (showTab.value === 0) return true;
     if (showTab.value === 1) return status === 'CLOSE';
     if (showTab.value === 2) return status !== 'CLOSE';
+    if (showTab.value === 3) return status !== 'CLOSE' && status !== 'PROGRESS';
 }
 
 const getStatusColor = (status: string) => {
@@ -125,10 +127,8 @@ onMounted(async () => {
     uiStore.loading = true;
     uiStore.title = "Tatuaggi";
     if (tattoosStore.tattoos.length === 0) {
-        console.log(userStore.uuid);
-        const res = await getTattoosByUserUuid(userStore.uuid);
+        const res = await getTattoosByUserUuid(userStore.getUiid);
         tattoosStore.tattoos = res.sort((a: any, b: any) => b.id - a.id);
-        console.log(tattoosStore.tattoos)
     }
     if(tattooUuid){
         await showClosedTattoo(tattooUuid);
@@ -136,7 +136,7 @@ onMounted(async () => {
     uiStore.loading = false;
 });
 
-const showTattoo = async (tattoo: any) => {
+const onclickTattoo = async (tattoo: any) => {
     if (activeDelete.value) {
         const deleted = await deleteTattoo(tattoo.uuid);
         tattoosStore.tattoos = tattoosStore.tattoos.filter(el => el.uuid !== tattoo.uuid);
@@ -163,9 +163,31 @@ const showClosedTattoo = async (tattooUuid) => {
     uiStore.loading = false;
 }
 
+const startDeletion = () => {
+    activeDelete.value = !activeDelete.value;
+    if(activeDelete.value){
+        showTab.value = 3;
+    }
+    else{
+        showTab.value = 0;
+    }
+}
+
 </script>
 <style scoped>
 .green {
     background-color: rgb(148, 255, 148);
 }
+.active-delete{
+    animation: shake-loop 0.3s ease-in-out infinite;
+    border: 1px solid red;
+}
+@keyframes shake-loop {
+  0%   { transform: translateX(0); }
+  25%  { transform: translateX(-1px); }
+  50%  { transform: translateX(1px); }
+  75%  { transform: translateX(-1px); }
+  100% { transform: translateX(0); }
+}
+
 </style>

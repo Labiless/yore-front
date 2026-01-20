@@ -67,7 +67,8 @@ const addInk = async () => {
                 const tatto = await updateTattoo(
                     createTattoStore.uuid,
                     {
-                        inks: [...getTatto.inks, ink.uuid]
+                        inks: [...getTatto.inks, ink.uuid],
+                        status: 'PROGRESS',
                     }
                 )
             }

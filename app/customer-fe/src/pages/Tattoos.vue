@@ -87,16 +87,18 @@ import { useUiStore } from '@/stores/ui';
 import { Calendar, Plus, Trash, ArrowLeft } from 'lucide-vue-next';
 import { onMounted, ref } from 'vue';
 import { useTatoosStore } from '@/stores/tattoos.store';
-import { deleteTattoo, getAllTattoos } from '@/services/api.tattoo.service';
+import { deleteTattoo, getTattoosByUserUuid } from '@/services/api.tattoo.service';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
 import Button from '@shared/components/ui/button/Button.vue';
 import router from '@/router';
 import { getCustomerByUuid } from '@/services/api.customer.service';
+import { userUserStore } from '@/stores/user.store';
 
 const showTab = ref(0)
 const uiStore = useUiStore();
 const tattoosStore = useTatoosStore();
 const createTattooStore = useCreateTattoStore();
+const userStore = userUserStore();
 const activeTattoo = ref(null);
 const activeDelete = ref(false);
 
@@ -123,7 +125,8 @@ onMounted(async () => {
     uiStore.loading = true;
     uiStore.title = "Tatuaggi";
     if (tattoosStore.tattoos.length === 0) {
-        const res = await getAllTattoos();
+        console.log(userStore.uuid);
+        const res = await getTattoosByUserUuid(userStore.uuid);
         tattoosStore.tattoos = res.sort((a: any, b: any) => b.id - a.id);
         console.log(tattoosStore.tattoos)
     }

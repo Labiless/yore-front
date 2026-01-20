@@ -10,7 +10,7 @@
     </div>
   </Transition>
   <Transition>
-    <PopUp v-if="uiStore.popup.text.length && uiStore.popup.action" :uiStore="uiStore"/>
+    <PopUp v-if="uiStore.popup.text.length && uiStore.popup.action" :uiStore="uiStore" />
   </Transition>
   <main class="h-screen" :class="`${uiStore.loading ? 'blur' : ''}`">
     <Transition>
@@ -40,20 +40,19 @@ const uiStore = useUiStore();
 const authStore = useAuthStore();
 const userStore = userUserStore();
 
-onMounted(async () => {
+(async () => {
   if (!userStore.getUiid) {
     authStore.logout();
     router.push('login');
-    return;
   }
-  else {
+  else if(userStore.getUiid && authStore.isAuthenticated) {
     const user = userStore.getUser;
     if (!user.email) {
       const user = await getUserByUuid(userStore.getUiid);
       userStore.init(user);
     }
   }
-})
+})()
 
 const links = [
   {

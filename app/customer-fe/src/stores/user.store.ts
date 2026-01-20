@@ -14,7 +14,6 @@ export const userUserStore = defineStore('user', {
       return state.uuid;
     },
     getUser: (state) => {
-      console.log(state);
       return {
         uuid: state.uuid,
         email: state.email,

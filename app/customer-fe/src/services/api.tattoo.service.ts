@@ -16,6 +16,16 @@ export const getAllTattoos = async () => {
     return data.data;
 }
 
+export const getTattoosByUserUuid = async (userUuid : string) => {
+    const data = await api.get("/tattoos/" + userUuid);
+    for(let i = 0; i < data.data.length; i++){
+        if(data.data[i].customerUuid){
+            data.data[i].customer = await getCustomerByUuid(data.data[i].customerUuid);
+        } 
+    }
+    return data.data;
+}
+
 export const getTattoByUuid = async (uuid: string) => {
     const data = await api.get(`/tattoos/${uuid}`);
     return data.data;

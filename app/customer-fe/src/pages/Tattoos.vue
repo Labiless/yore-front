@@ -110,19 +110,13 @@ watch(
     () => route.fullPath,
     (newPath, oldPath) => {
         if(newPath === '/tattoos') activeTattoo.value = null;
-        if(tattoUrlRegex.test(newPath) && activeTattoo.value === null){
-            showClosedTattoo(route.params.tattooUuid as string);
+        if(getTattooUuidFromUrl() && activeTattoo.value === null){
+            showClosedTattoo(getTattooUuidFromUrl());
         } 
     }
 )
 
-const tattooUuid = (() => {
-    try {
-        return router.resolve().params.tattooUuid as string;
-    } catch {
-        return '';
-    }
-})()
+const getTattooUuidFromUrl = () : string => router.resolve().params.tattooUuid;
 
 const showIfStatus = (status: string) => {
     if (showTab.value === 0) return true;
@@ -147,9 +141,8 @@ onMounted(async () => {
         const res = await getTattoosByUserUuid(userStore.getUiid);
         tattoosStore.tattoos = res.sort((a: any, b: any) => b.id - a.id);
     }
-    if (tattooUuid) {
-        router.push('tattoos/' + tattooUuid);
-        await showClosedTattoo(tattooUuid);
+    if (getTattooUuidFromUrl()) {
+        await showClosedTattoo(getTattooUuidFromUrl());
     }
     uiStore.loading = false;
 });

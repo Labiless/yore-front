@@ -1,7 +1,7 @@
 <template>
     <p class="text-center font-bold mb-2 w-fit flex items-center mx-auto">
         <ClipboardList class="text-black mr-2" />
-        Kirby-Desai data
+        Caratteristiche del tatuaggio
     <div class="rounded-full p-1 w-2 h-2 ml-2"
         :class="`${createTattoStore.kirbyDesayValidation() ? 'bg-green-700' : 'bg-amber-500'}`"></div>
     </p>
@@ -120,7 +120,7 @@ const submit = async () => {
         }
         const tattoo = await updateTattoo(createTattoStore.uuid, kirbyDesayData);
         uiStore.loading = false;
-        uiStore.setToast('Kirby-Desai data aggiunti');
+        uiStore.setToast('Caratteristiche del tatuaggio aggiunte');
     }else{
         uiStore.loading = false;
         uiStore.setToast('Compilare tutti i dati prima di inviare', 'error');

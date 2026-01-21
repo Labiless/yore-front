@@ -67,7 +67,7 @@
                         </div>
                         <img :src="activeTattoo.photoUrl" class="w-1/2 border-2 mb-4" />
                         <div class="mb-4">
-                            <p class="font-bold">Kirby Desay</p>
+                            <p class="font-bold">Caratteristiche del tatuaggio</p>
                             <p class="">color: {{ activeTattoo.color }}</p>
                             <p class="">inkAmount: {{ activeTattoo.inkAmount }}</p>
                             <p class="">inkLayers: {{ activeTattoo.inkLayers }}</p>

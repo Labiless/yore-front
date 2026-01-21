@@ -12,7 +12,7 @@
         <hr>
         </hr>
         <Sign class="mb-4" ref="userSign" :width="400" :height="200" />
-        <Button class="w-full" @click="saveSignature">Conferma</Button>
+        <Button class="w-full h-12" @click="saveSignature">Conferma</Button>
     </div>
     <div v-else>
         <img class="bg-white mb-4" :src="createTattooStore.customerSign"></img>

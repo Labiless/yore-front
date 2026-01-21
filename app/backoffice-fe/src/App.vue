@@ -18,20 +18,21 @@
     </Transition>
     <div class="fixed bottom-0 w-full">
       <Header v-if="authStore.isAuthenticated" :title="uiStore.title" />
-      <Nav firstIndex="0" v-if="authStore.isAuthenticated" :links />
+      <Nav firstIndex="0" v-if="authStore.isAuthenticated" :links :route="route" />
     </div>
   </main>
 </template>
 
 <script setup lang="ts">
 
-import { RouterView } from 'vue-router';
+import { RouterView, useRoute } from 'vue-router';
 import Header from '@shared/components/Header.vue';
 import Nav from '@shared/components/Nav.vue';
 import PopUp from '@shared/components/PopUp.vue';
 import { useUiStore } from '@/stores/ui';
 import { useAuthStore } from './stores/auth';
 
+const route = useRoute();
 const uiStore = useUiStore();
 const authStore = useAuthStore();
 

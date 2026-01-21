@@ -2,8 +2,8 @@ import { defineStore } from 'pinia';
 
 export const useCreateTattoStore = defineStore('createTattoo', {
     state: () => ({
-        uuid: undefined,
-        date: undefined,
+        uuid: undefined as string | undefined,
+        date: undefined as string | undefined,
         user: undefined,
         info: {
             name: undefined,

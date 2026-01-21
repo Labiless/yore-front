@@ -17,8 +17,7 @@
                 :class="`${showTab === 2 ? 'bg-white!' : 'shadow-none'}`">
                 <p class="w-3 h-3 rounded-full bg-orange-500"></p>
             </Button>
-            <Button @click="startDeletion"
-                class="text-xs text-center w-fit h-8 bg-transparent text-black"
+            <Button @click="startDeletion" class="text-xs text-center w-fit h-8 bg-transparent text-black"
                 :class="`${activeDelete ? 'bg-red-500! text-white' : 'shadow-none'}`">
                 <Trash />
             </Button>
@@ -28,7 +27,7 @@
                 <div v-if="!activeTattoo">
                     <div v-show="showIfStatus(tattoo.status)" @click="onclickTattoo(tattoo)"
                         class="flex justify-start items-center shadow-md p-2 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
-                        :class="`${activeDelete ? 'active-delete' : ''}`"
+                        :class="`${activeDelete && isDeletable(tattoo.status) ? 'active-delete' : ''}`"
                         v-for="tattoo in tattoosStore.tattoos">
                         <img v-if="tattoo.photoUrl" :src="tattoo.photoUrl"
                             class="w-[30px] h-[30px] rounded-full "></img>
@@ -48,7 +47,7 @@
                 </div>
                 <div v-else class="overflow-y-scroll hide-scrollbar h-[60vh]">
                     <div class="flex items-center mb-4">
-                        <ArrowLeft @click="activeTattoo = null;" class="hover:cursor-pointer mr-2" />
+                        <ArrowLeft @click="goBackToTattoosList" class="hover:cursor-pointer mr-2" />
                     </div>
                     <div class="flex gap-2 mb-4">
                         <a :href="activeTattoo.contractUrl" target="_blank">
@@ -86,12 +85,13 @@
 
 import { useUiStore } from '@/stores/ui';
 import { Calendar, Plus, Trash, ArrowLeft } from 'lucide-vue-next';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useTatoosStore } from '@/stores/tattoos.store';
 import { deleteTattoo, getTattoosByUserUuid } from '@/services/api.tattoo.service';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
 import Button from '@shared/components/ui/button/Button.vue';
 import router from '@/router';
+import { useRoute } from 'vue-router';
 import { getCustomerByUuid } from '@/services/api.customer.service';
 import { userUserStore } from '@/stores/user.store';
 
@@ -100,8 +100,21 @@ const uiStore = useUiStore();
 const tattoosStore = useTatoosStore();
 const createTattooStore = useCreateTattoStore();
 const userStore = userUserStore();
-const activeTattoo = ref(null);
+const activeTattoo = ref(null) as null | undefined | any;
 const activeDelete = ref(false);
+const route = useRoute();
+
+const tattoUrlRegex = /^\/tattoos\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+watch(
+    () => route.fullPath,
+    (newPath, oldPath) => {
+        if(newPath === '/tattoos') activeTattoo.value = null;
+        if(tattoUrlRegex.test(newPath) && activeTattoo.value === null){
+            showClosedTattoo(route.params.tattooUuid as string);
+        } 
+    }
+)
 
 const tattooUuid = (() => {
     try {
@@ -118,6 +131,10 @@ const showIfStatus = (status: string) => {
     if (showTab.value === 3) return status !== 'CLOSE' && status !== 'PROGRESS';
 }
 
+const isDeletable = (status: string) => {
+    return status !== 'CLOSE' && status !== 'PROGRESS';
+}
+
 const getStatusColor = (status: string) => {
     if (status === 'CLOSE') return "bg-green-500";
     return "bg-orange-500"
@@ -130,7 +147,8 @@ onMounted(async () => {
         const res = await getTattoosByUserUuid(userStore.getUiid);
         tattoosStore.tattoos = res.sort((a: any, b: any) => b.id - a.id);
     }
-    if(tattooUuid){
+    if (tattooUuid) {
+        router.push('tattoos/' + tattooUuid);
         await showClosedTattoo(tattooUuid);
     }
     uiStore.loading = false;
@@ -138,16 +156,32 @@ onMounted(async () => {
 
 const onclickTattoo = async (tattoo: any) => {
     if (activeDelete.value) {
-        const deleted = await deleteTattoo(tattoo.uuid);
-        tattoosStore.tattoos = tattoosStore.tattoos.filter(el => el.uuid !== tattoo.uuid);
+        if (!isDeletable(tattoo.status)) {
+            uiStore.setToast('Non è possibile eliminare tatuaggi con inchiostri associati', 'error');
+            return;
+        }
+        await tattoDeletion(tattoo);
         return;
     }
     if (tattoo.status !== 'CLOSE') {
         goToTatto(tattoo.uuid);
         return
     } else {
+        router.push('tattoos/' + tattoo.uuid);
         await showClosedTattoo(tattoo.uuid);
     }
+}
+
+const tattoDeletion = async (tattoo: any) => {
+    uiStore.setPopoup('Confermi di voler eliminare il tatuaggio?', async () => {
+        uiStore.loading = true;
+        await deleteTattoo(tattoo.uuid);
+        tattoosStore.tattoos = tattoosStore.tattoos.filter(el => el.uuid !== tattoo.uuid);
+        activeDelete.value = false;
+        showTab.value = 0;
+        uiStore.loading = false;
+        uiStore.setToast('Tatuaggio eliminato');
+    });
 }
 
 const goToTatto = (tattooUuid: string) => {
@@ -155,7 +189,7 @@ const goToTatto = (tattooUuid: string) => {
     router.push('createtattoo');
 }
 
-const showClosedTattoo = async (tattooUuid) => {
+const showClosedTattoo = async (tattooUuid: string) => {
     uiStore.loading = true;
     activeTattoo.value = tattoosStore.tattoos.filter(el => el.uuid === tattooUuid)[0];
     const customer = await getCustomerByUuid(activeTattoo.value.customerUuid);
@@ -163,12 +197,17 @@ const showClosedTattoo = async (tattooUuid) => {
     uiStore.loading = false;
 }
 
+const goBackToTattoosList = () => {
+    activeTattoo.value = null;
+    router.push('/tattoos');
+}
+
 const startDeletion = () => {
     activeDelete.value = !activeDelete.value;
-    if(activeDelete.value){
+    if (activeDelete.value) {
         showTab.value = 3;
     }
-    else{
+    else {
         showTab.value = 0;
     }
 }
@@ -178,16 +217,31 @@ const startDeletion = () => {
 .green {
     background-color: rgb(148, 255, 148);
 }
-.active-delete{
+
+.active-delete {
     animation: shake-loop 0.3s ease-in-out infinite;
     border: 1px solid red;
 }
-@keyframes shake-loop {
-  0%   { transform: translateX(0); }
-  25%  { transform: translateX(-1px); }
-  50%  { transform: translateX(1px); }
-  75%  { transform: translateX(-1px); }
-  100% { transform: translateX(0); }
-}
 
+@keyframes shake-loop {
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-1px);
+    }
+
+    50% {
+        transform: translateX(1px);
+    }
+
+    75% {
+        transform: translateX(-1px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
 </style>

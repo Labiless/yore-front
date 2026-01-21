@@ -6,7 +6,7 @@
         :class="`${createTattoStore.inksValidation() ? '' : 'bg-amber-500!'}`"></div>
     </p>
     <hr />
-    <Button @click="scanInk" class="w-full md:w-fit md:mr-auto">Scansiona Inchiostro</Button>
+    <Button @click="scanInk" class="w-full h-12">Scansiona Inchiostro</Button>
     <Input placeholder="Id inchiostro" v-model="inkUuid"></Input>
     <div class="" v-if="createTattoStore.inks.length">
         <p>Inchostri scansionati</p>

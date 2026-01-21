@@ -1,13 +1,13 @@
 <template>
     <div>
-        <Button @click="submit" :disabled="false" class="mb-8 w-full">Genera certificato</Button>
+        <Button @click="submit" :disabled="false" class="mb-8 w-full h-12">Genera certificato</Button>
         <p class="flex text-xl font-bold w-fit m-auto">
             <Calendar class="mr-2" /> 01/01/2026
         </p>
         <p class="text-sm text-center">INK STUDIO - Tattoo studio</p>
-        <div id="steps" class="py-4 flex justify-around w-5/6 mx-auto">
+        <div id="steps" class="py-4 flex justify-around md:justify-center w-5/6 mx-auto">
             <Button :disabled="status.name !== 'info' && !createTattoStore.uuid" @click="activeStep = status.name"
-                v-for="status in allSteps" class="w-10 h-14 bg-white flex flex-col"
+                v-for="status in allSteps" class="w-10 h-14 bg-white flex flex-col md:mx-4"
                 :class="`${activeStep === status.name ? 'border-2 border-blue-500' : ''}`">
                 <ClipboardList class="text-black" v-if="status.name === 'info'" />
                 <PersonStanding class="text-black" v-if="status.name === 'kirbyDesay'" />

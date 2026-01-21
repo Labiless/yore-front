@@ -22,7 +22,7 @@
             </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-2">
-            <AccordionTrigger>Localizzazione Tatuaggio</AccordionTrigger>
+            <AccordionTrigger>Localizzazione tatuaggio</AccordionTrigger>
             <AccordionContent>
                 <div class="grid grid-cols-3 gap-2">
                     <Button @click="createTattoStore.kirbyDesay.position = position.id" v-for="position in positions"
@@ -47,7 +47,7 @@
             </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-4">
-            <AccordionTrigger>Quantità Inchiostro</AccordionTrigger>
+            <AccordionTrigger>Quantità inchiostro</AccordionTrigger>
             <AccordionContent>
                 <div class="grid grid-cols-3 gap-2">
                     <Button @click="createTattoStore.kirbyDesay.inkAmount = inkAmount.id"
@@ -87,7 +87,7 @@
             </AccordionContent>
         </AccordionItem>
     </Accordion>
-    <Button @click="submit"> Conferma</Button>
+    <Button @click="submit" class="w-full h-12"> Conferma</Button>
 </template>
 <script setup lang="ts">
 import {

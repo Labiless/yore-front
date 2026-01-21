@@ -19,7 +19,7 @@
   </main>
   <div class="fixed bottom-0 w-full">
     <Header v-if="authStore.isAuthenticated" :title="uiStore.title" />
-    <Nav firstIndex="0" v-if="authStore.isAuthenticated" :links />
+    <Nav firstIndex="0" v-if="authStore.isAuthenticated" :links :route="route" />
   </div>
 </template>
 
@@ -35,10 +35,12 @@ import { onMounted } from 'vue';
 import { userUserStore } from './stores/user.store';
 import router from './router';
 import { getUserByUuid } from '../../backoffice-fe/src/services/api.user.service';
+import { useRoute } from 'vue-router';
 
 const uiStore = useUiStore();
 const authStore = useAuthStore();
 const userStore = userUserStore();
+const route = useRoute();
 
 (async () => {
   if (!userStore.getUiid) {

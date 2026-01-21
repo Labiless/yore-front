@@ -49,7 +49,7 @@
                 Do il consenso per la liberatoria
             </Label>
         </div>
-        <Button v-if="!createTattoStore.uuid" type="submit" class="mt-8 w-full">Conferma</Button>
+        <Button v-if="!createTattoStore.uuid" type="submit" class="mt-8 w-full h-12">Conferma</Button>
     </form>
 </template>
 

@@ -1,11 +1,13 @@
 <template>
-    <div class="mt-48 h-2/3 overflow-y-scroll hide-scrollbar">
-        <router-link to="users" class="hover:cursor-pointer mt-1 absolute -translate-x-6">
-            <ArrowLeft />
-        </router-link>
-        <form @submit.prevent="submit" class="w-full">
-            <div class="flex flex-col justify-center items-start gap-2 border-black pl-4">
-                <p class="font-bold text-xl py-4">Credenziali</p>
+    <div class="h-min-full overflow-y-scroll hide-scrollbar">
+        <form @submit.prevent="submit" class="w-full pb-8">
+            <div class="flex flex-col justify-center items-start gap-2 border-black">
+                <div class="flex justify-between items-center w-full">
+                    <p class="font-bold text-xl py-4">Credenziali</p>
+                    <router-link to="users" class="hover:cursor-pointer mt-1">
+                        <Trash2 color="red" />
+                    </router-link>
+                </div>
                 <label for="expiration-date">Indirizzo Mail</label>
                 <Input class="bg-white" v-model="createUSerStore.email" name="expiration-date" type="text" required />
                 <label for="expiration-date">Password</label>
@@ -38,7 +40,7 @@
                     <Checkbox required v-model="createUSerStore.consent" />
                     Do il consenso per la liberatoria
                 </Label>
-                <Button type="submit" class="mt-4">Crea utente</Button>
+                <Button type="submit" class="h-12 w-full">Crea utente</Button>
             </div>
         </form>
     </div>
@@ -49,7 +51,7 @@ import Input from '@shared/components/ui/input/Input.vue';
 import Button from '@shared/components/ui/button/Button.vue';
 import Checkbox from '@shared/components/ui/checkbox/Checkbox.vue';
 import { createUser } from '@/services/api.user.service';
-import { ArrowLeft } from 'lucide-vue-next';
+import { Trash2 } from 'lucide-vue-next';
 
 import { useUiStore } from '@/stores/ui';
 import { useCreateUserStore } from '@/stores/createUser.store.ts';

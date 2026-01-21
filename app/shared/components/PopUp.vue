@@ -23,8 +23,9 @@ const props = defineProps<{
 
 const onclick = async () => {
     props.uiStore.loading = true;
-    await props.uiStore.popup.action();
+    const action = props.uiStore.popup.action();
     props.uiStore.closePopup();
+    await action();
     props.uiStore.loading = false;
 }
 

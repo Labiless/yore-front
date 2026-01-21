@@ -11,7 +11,7 @@
     <div class="" v-if="createTattoStore.inks.length">
         <p>Inchostri scansionati</p>
     </div>
-    <div class="w-full flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md h-fit transition-all"
+    <div class="w-full flex justify-start items-center shadow-md p-4 pl-4 bg-white rounded-md h-fit transition-all"
         v-for="ink in createTattoStore.inks">
         <div class="">
             <p class="text-xs font-bold">#000000</p>
@@ -20,8 +20,8 @@
     </div>
     <div class="video-container flex flex-col items-center justify-center fixed top-0 left-0 w-full h-full bg-black z-50"
         v-if="isCameraOpen">
-        <p class="text-white mb-2">Inquadra il barcode dell'inchiostro</p>
-        <video ref="videoEl" class="video w-full" autoplay playsinline muted></video>
+        <p class="text-white mb-2">Inquadra il qrcode dell'inchiostro</p>
+        <video ref="videoEl" class="video w-full max-w-200" autoplay playsinline muted></video>
         <CircleX @click="stopScanner" color="red" class="mt-4" :size="30"></CircleX>
     </div>
 
@@ -56,7 +56,7 @@ const addInk = async () => {
     if (inkUuid.value) {
         try {
             const ink = await apiLabelService.getLabelByUuid(inkUuid.value);
-            if (ink) {
+            if (ink && ink.burningDate === null && ink.userUuid === userStore.getUiid) {
                 await apiLabelService.updateLabelByUuid(ink.uuid, {
                     burningDate: new Date(),
                     tattooUuid: createTattoStore.uuid,
@@ -71,12 +71,15 @@ const addInk = async () => {
                         status: 'PROGRESS',
                     }
                 )
+                uiStore.loading = false;
+                uiStore.setToast('Inchiostro bruciato');
             }
+            else {
+                throw new Error('Inchiostro già bruciato o inesistente');
+            }
+        } catch (error: Error | any) {
             uiStore.loading = false;
-            uiStore.setToast('Inchiostro bruciato');
-        } catch (error) {
-            uiStore.loading = false;
-            uiStore.setToast('Inchiostro inesistente', 'error');
+            uiStore.setToast('Inchiostro già bruciato o inesistente', 'error');
         }
     }
     else {
@@ -86,21 +89,26 @@ const addInk = async () => {
 }
 
 const scanInk = async () => {
+    if (inkUuid.value) {
+        uiStore.setPopoup('Sei sicuro di voler utilizzare questo l\'inchiostro? L\'operazione non è reversibile', () => {
+            addInk();
+        });
+        return;
+    }
     try {
         isCameraOpen.value = !isCameraOpen.value;
         codeReader = new BrowserQRCodeReader();
-        // opzionale: prova a prendere la back camera se disponibile
-        // su mobile spesso serve https + permessi
         controls = await codeReader.decodeFromVideoDevice(
-            undefined,            // null = scegli device "di default" (di solito back camera su mobile)
+            undefined,
             videoEl.value,
             (result, err) => {
                 if (result) {
                     stopScanner(); // chiudi dopo il primo match (comportamento tipico)
                     inkUuid.value = result.getText();
-                    addInk(); // aggiungi inchiostro
+                    uiStore.setPopoup('Sei sicuro di voler utilizzare questo l\'inchiostro? L\'operazione non è reversibile', () => {
+                        addInk();
+                    });
                 }
-                // err è spesso "NotFoundException" mentre cerca: ignoralo
             }
         );
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });

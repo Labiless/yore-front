@@ -77,15 +77,19 @@
                             <p class="font-bold mb-4">Etichette associate</p>
                             <p v-if="selectedUser.inks.length === 0">Nessun inchiostro associato</p>
                             <div v-else>
-                                <router-link to="/"
+                                <div
+                                    @click="copyUuidToClipboard(ink.uuid)"
                                     class="flex justify-between items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all"
                                     :class="`${''}`" v-for="ink in selectedUser.inks">
-                                    <p class="text-sm">{{ ink.uuid }}</p>
+                                    <div class="flex items-center justify-start gap-2">
+                                        <Copy :size="20" />
+                                        <p class="text-sm">{{ ink.uuid }}</p>
+                                    </div>
                                     <div>
                                         <div class="w-3 h-3 rounded-full mb-2 mr-4 bg-green-500"
                                             :class="`${ink.burningDate ? 'bg-red-500!' : ''}`"></div>
                                     </div>
-                                </router-link>
+                                </div>
                             </div>
 
                         </div>
@@ -114,7 +118,7 @@
 
 import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
 import { getAllUsers, getUserByUuid } from "@/services/api.user.service";
-import { Search, Plus, BookMarked, User, Mail, ArrowLeft, MapPinHouse } from 'lucide-vue-next';
+import { Search, Plus, BookMarked, User, Mail, ArrowLeft, MapPinHouse, Copy } from 'lucide-vue-next';
 import { useUiStore } from '@/stores/ui';
 import { useUsersStore } from '@/stores/users.store';
 import Input from '@shared/components/ui/input/Input.vue';
@@ -159,12 +163,12 @@ onMounted(async () => {
     uiStore.title = "Utenti";
     uiStore.loading = true;
     //if (!usersStore.allUsers.length) {
-        let allUsers = await getAllUsers();
-        allUsers = allUsers.filter(el => el.role !== 'admin');
-        usersStore.allUsers = allUsers.sort((a: any, b: any) => b.id - a.id);
-        console.log(usersStore.allUsers);
+    let allUsers = await getAllUsers();
+    allUsers = allUsers.filter(el => el.role !== 'admin');
+    usersStore.allUsers = allUsers.sort((a: any, b: any) => b.id - a.id);
+    console.log(usersStore.allUsers);
     //}
-    if(userUuid){
+    if (userUuid) {
         await showUser(userUuid);
     }
     uiStore.loading = false;
@@ -191,6 +195,15 @@ const showUser = async (uuid: string) => {
     }
     selectedUser.value.tattoos = tattoos.filter(el => el !== '');
     selectedUser.value.inks = inks;
+}
+
+const copyUuidToClipboard = async (uuid: string) => {
+    try {
+        await navigator.clipboard.writeText(uuid);
+        uiStore.setToast('UUID copiato negli appunti');
+    } catch (error) {
+        uiStore.setToast('Errore durante la copia dell\'UUID', 'error');
+    }
 }
 
 </script>

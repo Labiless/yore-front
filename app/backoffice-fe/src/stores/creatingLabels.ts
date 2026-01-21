@@ -23,6 +23,7 @@ export const useCreatingLabelsStore = defineStore('creatingLabels', {
     resetCreatingLabels() {
       this.color = '';
       this.inkType = '';
+      this.inkTypeUuid = '';
       this.amount = 0;
       this.expirationDate = '';
       this.productionId = '';

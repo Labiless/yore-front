@@ -87,10 +87,12 @@ const create = async () => {
             inkTypeUuid: creatingLabelsStore.inkTypeUuid,
             amount: creatingLabelsStore.amount,
         });
+        creatingLabelsStore.resetCreatingLabels();
         router.push(`labels/${res}`);
         uiStore.setToast("Etichette create correttamente");
     } catch (error) {
-        uiStore.setToast('Errore nella creazione etichette', 'error')
+        creatingLabelsStore.resetCreatingLabels();
+        uiStore.setToast('Errore nella creazione etichette', 'error');
         uiStore.loading = false;
     }
 }

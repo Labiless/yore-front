@@ -88,6 +88,7 @@ onMounted(async () => {
         const tattoo = await getTattoByUuid(createTattoStore.uuid);
         if (tattoo.customerUuid) {
             const customer = await getCustomerByUuid(tattoo.customerUuid)
+            createTattoStore.customerUuid = customer.uuid
             createTattoStore.info.name = customer.name
             createTattoStore.info.surname = customer.surname
             createTattoStore.info.email = customer.email

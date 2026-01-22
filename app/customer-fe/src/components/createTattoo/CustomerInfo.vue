@@ -49,7 +49,7 @@
                 Do il consenso per la liberatoria
             </Label>
         </div>
-        <Button v-if="!createTattoStore.uuid" type="submit" class="mt-8 w-full h-12">Conferma</Button>
+        <Button type="submit" class="mt-8 w-full h-12">Conferma</Button>
     </form>
 </template>
 
@@ -58,8 +58,8 @@ import { useCreateTattoStore } from '@/stores/createTatto.store';
 import Input from '@shared/components/ui/input/Input.vue';
 import Button from '@shared/components/ui/button/Button.vue';
 import Checkbox from '@shared/components/ui/checkbox/Checkbox.vue';
-import { createCustomer } from '@/services/api.customer.service';
-import { createTattoo, getAllTattoos  } from '@/services/api.tattoo.service';
+import { createCustomer, updateCustomer } from '@/services/api.customer.service';
+import { createTattoo, getAllTattoos } from '@/services/api.tattoo.service';
 import { userUserStore } from '@/stores/user.store';
 import { useTatoosStore } from '@/stores/tattoos.store';
 import { useUiStore } from '@/stores/ui';
@@ -69,24 +69,32 @@ const userStore = userUserStore();
 const tattoosStore = useTatoosStore();
 const uiStore = useUiStore();
 
-const onsubmit = async() => {
+const onsubmit = async () => {
     uiStore.loading = true;
     if (createTattoStore.infoValidation()) {
-        const newCustomer = await createCustomer({
-            ...createTattoStore.info,
-            consent: true
-        });
-        const newTattoo = await createTattoo({
-            status: "READY",
-            customerUuid: newCustomer.uuid,
-            userUuid: userStore.uuid
-        });
-        createTattoStore.uuid = newTattoo.uuid;
-        // @ts-ignore
-        const res = await getAllTattoos();
-        tattoosStore.tattoos = res.sort((a: any, b: any) => b.id - a.id);
+        if (createTattoStore.customerUuid) {
+            await updateCustomer(createTattoStore.customerUuid, {
+                ...createTattoStore.info,
+                consent: true
+            })
+        } else {
+            const newCustomer = await createCustomer({
+                ...createTattoStore.info,
+                consent: true
+            });
+            const newTattoo = await createTattoo({
+                status: "READY",
+                customerUuid: newCustomer.uuid,
+                userUuid: userStore.uuid
+            });
+            createTattoStore.customerUuid = newCustomer.uuid;
+            createTattoStore.uuid = newTattoo.uuid;
+        }
     }
+    // @ts-ignore
+    const res = await getAllTattoos();
+    tattoosStore.tattoos = res.sort((a: any, b: any) => b.id - a.id);
     uiStore.loading = false;
-    uiStore.setToast('Cliente aggiunto correttamente');
+    uiStore.setToast('Dati cliente aggiunti correttamente');
 }
 </script>

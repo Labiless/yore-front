@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 export const useCreateTattoStore = defineStore('createTattoo', {
     state: () => ({
         uuid: undefined as string | undefined,
+        customerUuid: undefined as string | undefined,
         date: undefined as string | undefined,
         user: undefined,
         info: {
@@ -37,6 +38,7 @@ export const useCreateTattoStore = defineStore('createTattoo', {
     actions: {
         resetTattoo() {
             this.uuid = undefined;
+            this.customerUuid = undefined;
             this.date = undefined;
             this.user = undefined;
             this.info = {
@@ -75,6 +77,7 @@ export const useCreateTattoStore = defineStore('createTattoo', {
         },
         addInfo(data: any){
             this.uuid = data.uuid;
+            this.customerUuid = data.customerUuid;
             this.info = {
                 name: data.name,
                 email: data.email,

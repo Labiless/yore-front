@@ -99,7 +99,7 @@
                             <div v-else>
                                 <div class="flex justify-between items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all"
                                     :class="`${''}`" v-for="tattoo in selectedUser.tattoos">
-                                    <p class="text-sm">{{ tattoo }}</p>
+                                    <p class="text-sm">{{ tattoo.uuid }}</p>
                                     <div>
                                         <div class="w-3 h-3 rounded-full mb-2 mr-4 bg-orange-500"
                                             :class="`${tattoo.customerSign ? 'bg-green-500!' : ''}`"></div>

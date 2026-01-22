@@ -80,11 +80,14 @@ const onsubmit = async () => {
             await updateTattoo(createTattoStore.uuid, {
                 customerName: `${createTattoStore.info.name} ${createTattoStore.info.surname}`
             })
+            const res = await getTattoByUuid(createTattoStore.uuid);
+            tattoosStore.tattoos = tattoosStore.tattoos.map(tattoo => tattoo.uuid === res.uuid ? res : tattoo).sort((a: any, b: any) => b.id - a.id)
         } else {
             const newCustomer = await createCustomer({
                 ...createTattoStore.info,
                 consent: true
             });
+            console.log(`${createTattoStore.info.name} ${createTattoStore.info.surname}`);
             const newTattoo = await createTattoo({
                 status: "READY",
                 customerName: `${createTattoStore.info.name} ${createTattoStore.info.surname}`,
@@ -97,7 +100,8 @@ const onsubmit = async () => {
     }
     // @ts-ignore
     const res = await getTattoByUuid(createTattoStore.uuid);
-    tattoosStore.tattoos = tattoosStore.tattoos.map(tattoo => tattoo.uuid === res.uuid ? res : tattoo).sort((a: any, b: any) => b.id - a.id)
+    tattoosStore.tattoos.push(res)
+    tattoosStore.tattoos = tattoosStore.tattoos.sort((a: any, b: any) => b.id - a.id)
     uiStore.loading = false;
     uiStore.setToast('Dati cliente aggiunti correttamente');
 }

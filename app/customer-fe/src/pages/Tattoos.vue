@@ -115,8 +115,9 @@ watch(
 )
 
 const getTattooUuidFromUrl = (): string => {
+    console.log(route.params.tattooUuid);
     try {
-        return router.resolve().params.tattooUuid as string;
+        return route.params.tattooUuid as string;
     } catch (error) {
         return '';
     }
@@ -141,10 +142,12 @@ const getStatusColor = (status: string) => {
 onMounted(async () => {
     uiStore.loading = true;
     uiStore.title = "Tatuaggi";
+
     if (tattoosStore.tattoos.length === 0) {
         const res = await getTattoosByUserUuid(userStore.getUiid);
         tattoosStore.tattoos = res.sort((a: any, b: any) => b.id - a.id);
     }
+
     try {
         if (getTattooUuidFromUrl().length > 0) {
             await showClosedTattoo(getTattooUuidFromUrl());

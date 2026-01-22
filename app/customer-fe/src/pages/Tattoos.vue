@@ -60,7 +60,7 @@
                     <div>
                         <div class="mb-4">
                             <p class="text-xl font-bold flex items-center mb-2 capitalize">
-                                <User /> {{ activeTattoo.customer.name }} {{ activeTattoo.customer.surname }}
+                                <User /> {{ activeTattoo.customerName }}
                             </p>
                             <p class="text-xs">{{ activeTattoo.creationDate.split('T')[0] }}</p>
                             <p class="text-xs opacity-60">{{ activeTattoo.uuid }}</p>

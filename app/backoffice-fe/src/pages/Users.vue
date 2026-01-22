@@ -73,40 +73,52 @@
                                 <p>{{ selectedUser.taxCode }}</p>
                             </div>
                         </div>
-                        <div class="mb-4 rounded-xl w-full">
-                            <p class="font-bold mb-4">Etichette associate</p>
-                            <p v-if="selectedUser.inks.length === 0">Nessun inchiostro associato</p>
-                            <div v-else>
-                                <div
-                                    @click="copyUuidToClipboard(ink.uuid)"
-                                    class="flex justify-between items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all"
-                                    :class="`${''}`" v-for="ink in selectedUser.inks">
-                                    <div class="flex items-center justify-start gap-2">
-                                        <Copy :size="20" />
-                                        <p class="text-sm">{{ ink.uuid }}</p>
+                        <Accordion type="single" collapsible class="w-full">
+                            <AccordionItem value="item-1">
+                                <AccordionTrigger>
+                                    <p class="font-bold text-xl">Etichette associate</p>
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                    <div class="mb-4 rounded-xl w-full">
+                                        <p v-if="selectedUser.inks.length === 0">Nessun inchiostro associato</p>
+                                        <div v-else>
+                                            <div @click="copyUuidToClipboard(ink.uuid)"
+                                                class="flex justify-between items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all"
+                                                :class="`${''}`" v-for="ink in selectedUser.inks">
+                                                <div class="flex items-center justify-start gap-2">
+                                                    <Copy :size="20" />
+                                                    <p class="text-sm">{{ ink.uuid }}</p>
+                                                </div>
+                                                <div>
+                                                    <div class="w-3 h-3 rounded-full mb-2 mr-4 bg-green-500"
+                                                        :class="`${ink.burningDate ? 'bg-red-500!' : ''}`"></div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <div class="w-3 h-3 rounded-full mb-2 mr-4 bg-green-500"
-                                            :class="`${ink.burningDate ? 'bg-red-500!' : ''}`"></div>
+                                </AccordionContent>
+                            </AccordionItem>
+                            <AccordionItem value="item-2">
+                                <AccordionTrigger>
+                                    <p class="font-bold text-xl">Tatuaggi</p>
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                    <div class="mb-4 rounded-xl w-full">
+                                        <p v-if="selectedUser.tattoos.length === 0">Nessun tatuaggio effettuato</p>
+                                        <div v-else>
+                                            <div class="flex justify-between items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all"
+                                                :class="`${''}`" v-for="tattoo in selectedUser.tattoos">
+                                                <p class="text-sm">{{ tattoo.uuid }}</p>
+                                                <div>
+                                                    <div class="w-3 h-3 rounded-full mb-2 mr-4 bg-orange-500"
+                                                        :class="`${tattoo.customerSign ? 'bg-green-500!' : ''}`"></div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="mb-4 rounded-xl w-full">
-                            <p class="font-bold mb-4">Tatuaggi</p>
-                            <p v-if="selectedUser.tattoos.length === 0">Nessun tatuaggio effettuato</p>
-                            <div v-else>
-                                <div class="flex justify-between items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all"
-                                    :class="`${''}`" v-for="tattoo in selectedUser.tattoos">
-                                    <p class="text-sm">{{ tattoo.uuid }}</p>
-                                    <div>
-                                        <div class="w-3 h-3 rounded-full mb-2 mr-4 bg-orange-500"
-                                            :class="`${tattoo.customerSign ? 'bg-green-500!' : ''}`"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                                </AccordionContent>
+                            </AccordionItem>
+                        </Accordion>
                     </div>
                 </div>
             </Transition>
@@ -126,6 +138,12 @@ import Button from '@shared/components/ui/button/Button.vue';
 import { getLabelsByUser } from '@/services/api.label.service';
 import { tattooService } from '@/services/api.tattoo.service'
 import router from '@/router';
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from '@shared/components/ui/accordion'
 
 const uiStore = useUiStore();
 const usersStore = useUsersStore();

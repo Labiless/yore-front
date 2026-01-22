@@ -104,8 +104,6 @@ const activeTattoo = ref(null) as null | undefined | any;
 const activeDelete = ref(false);
 const route = useRoute();
 
-const tattoUrlRegex = /^\/tattoos\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-
 watch(
     () => route.fullPath,
     (newPath, oldPath) => {
@@ -116,7 +114,13 @@ watch(
     }
 )
 
-const getTattooUuidFromUrl = (): string => router.resolve().params.tattooUuid;
+const getTattooUuidFromUrl = (): string => {
+    try {
+        return router.resolve().params.tattooUuid as string;
+    } catch (error) {
+        return '';
+    }
+}
 
 const showIfStatus = (status: string) => {
     if (showTab.value === 0) return true;
@@ -141,8 +145,13 @@ onMounted(async () => {
         const res = await getTattoosByUserUuid(userStore.getUiid);
         tattoosStore.tattoos = res.sort((a: any, b: any) => b.id - a.id);
     }
-    if (getTattooUuidFromUrl()) {
-        await showClosedTattoo(getTattooUuidFromUrl());
+    try {
+        if (getTattooUuidFromUrl().length > 0) {
+            await showClosedTattoo(getTattooUuidFromUrl());
+        }
+    } catch (error) {
+        console.log('error in showing closed tattoo');
+        console.log(error);
     }
     uiStore.loading = false;
 });

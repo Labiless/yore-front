@@ -87,6 +87,7 @@ const onsubmit = async () => {
             });
             const newTattoo = await createTattoo({
                 status: "READY",
+                customerName: `${createTattoStore.info.name} ${createTattoStore.info.surname}`,
                 customerUuid: newCustomer.uuid,
                 userUuid: userStore.uuid
             });

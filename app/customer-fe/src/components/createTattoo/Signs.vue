@@ -15,10 +15,10 @@
         <Button class="w-full h-12" @click="saveSignature">Conferma</Button>
     </div>
     <div v-else>
-        <img class="bg-white mb-4" :src="createTattooStore.customerSign"></img>
+        <img class="bg-white mb-4 mx-auto" :src="createTattooStore.customerSign"></img>
         <hr>
         </hr>
-        <img class="bg-white" :src="createTattooStore.userSign"></img>
+        <img class="bg-white mx-auto" :src="createTattooStore.userSign"></img>
     </div>
 </template>
 <script setup lang="ts">

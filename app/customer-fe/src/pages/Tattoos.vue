@@ -35,7 +35,7 @@
                         <div class="pl-4 flex justify-between items-center w-11/12">
                             <div>
                                 <p class="capitalize -mb-1 text-md font-bold"><span class="font-medium text-xs">#{{
-                                    tattoo.id }}</span> {{ tattoo.customer.name }} {{ tattoo.customer.surname }}</p>
+                                    tattoo.id }}</span> {{ tattoo.customerName }}</p>
                                 <p class="flex items-center text-xs -translate-x-1 opacity-60">
                                     <Calendar class="scale-50" />{{ tattoo.creationDate.split("T")[0] }}
                                 </p>

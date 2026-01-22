@@ -59,7 +59,7 @@ import Input from '@shared/components/ui/input/Input.vue';
 import Button from '@shared/components/ui/button/Button.vue';
 import Checkbox from '@shared/components/ui/checkbox/Checkbox.vue';
 import { createCustomer, updateCustomer } from '@/services/api.customer.service';
-import { createTattoo, getAllTattoos } from '@/services/api.tattoo.service';
+import { createTattoo, getAllTattoos, getTattoByUuid, updateTattoo } from '@/services/api.tattoo.service';
 import { userUserStore } from '@/stores/user.store';
 import { useTatoosStore } from '@/stores/tattoos.store';
 import { useUiStore } from '@/stores/ui';
@@ -72,10 +72,13 @@ const uiStore = useUiStore();
 const onsubmit = async () => {
     uiStore.loading = true;
     if (createTattoStore.infoValidation()) {
-        if (createTattoStore.customerUuid) {
+        if (createTattoStore.customerUuid && createTattoStore.uuid) {
             await updateCustomer(createTattoStore.customerUuid, {
                 ...createTattoStore.info,
                 consent: true
+            })
+            await updateTattoo(createTattoStore.uuid, {
+                customerName: `${createTattoStore.info.name} ${createTattoStore.info.surname}`
             })
         } else {
             const newCustomer = await createCustomer({
@@ -92,8 +95,8 @@ const onsubmit = async () => {
         }
     }
     // @ts-ignore
-    const res = await getAllTattoos();
-    tattoosStore.tattoos = res.sort((a: any, b: any) => b.id - a.id);
+    const res = await getTattoByUuid(createTattoStore.uuid);
+    tattoosStore.tattoos = tattoosStore.tattoos.map(tattoo => tattoo.uuid === res.uuid ? res : tattoo).sort((a: any, b: any) => b.id - a.id)
     uiStore.loading = false;
     uiStore.setToast('Dati cliente aggiunti correttamente');
 }

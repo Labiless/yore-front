@@ -109,14 +109,14 @@ const tattoUrlRegex = /^\/tattoos\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{
 watch(
     () => route.fullPath,
     (newPath, oldPath) => {
-        if(newPath === '/tattoos') activeTattoo.value = null;
-        if(getTattooUuidFromUrl() && activeTattoo.value === null){
+        if (newPath === '/tattoos') activeTattoo.value = null;
+        if (getTattooUuidFromUrl() && activeTattoo.value === null) {
             showClosedTattoo(getTattooUuidFromUrl());
-        } 
+        }
     }
 )
 
-const getTattooUuidFromUrl = () : string => router.resolve().params.tattooUuid;
+const getTattooUuidFromUrl = (): string => router.resolve().params.tattooUuid;
 
 const showIfStatus = (status: string) => {
     if (showTab.value === 0) return true;
@@ -179,14 +179,22 @@ const tattoDeletion = async (tattoo: any) => {
 
 const goToTatto = (tattooUuid: string) => {
     createTattooStore.uuid = tattooUuid;
-    router.push('createtattoo');
+    router.push('/createtattoo');
 }
 
 const showClosedTattoo = async (tattooUuid: string) => {
     uiStore.loading = true;
-    activeTattoo.value = tattoosStore.tattoos.filter(el => el.uuid === tattooUuid)[0];
-    const customer = await getCustomerByUuid(activeTattoo.value.customerUuid);
-    activeTattoo.value.customer = customer;
+    try {
+        activeTattoo.value = tattoosStore.tattoos.filter(el => el.uuid === tattooUuid)[0];
+        if (activeTattoo.value.status !== 'CLOSE') {
+            goToTatto(activeTattoo.value.uuid);
+        } else {
+            const customer = await getCustomerByUuid(activeTattoo.value.customerUuid);
+            activeTattoo.value.customer = customer;
+        }
+    } catch (error) {
+        router.push('/tattoos');
+    }
     uiStore.loading = false;
 }
 

@@ -1,13 +1,16 @@
 <template>
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-2 relative">
         <canvas class="bg-white rounded-2xl border-0 shadow-xl" ref="signatureCanvas" @mousedown="startDrawing"
             @mousemove="draw" @mouseup="stopDrawing" @mouseleave="stopDrawing" @touchstart.prevent="startDrawing"
             @touchmove.prevent="draw" @touchend="stopDrawing" :width="width" :height="height"></canvas>
+        <RotateCcw @click="clearSignature" class="absolute right-2 top-2 bg-red-500 rounded-full p-2 w-8 h-8"
+            color="white" />
     </div>
 </template>
 
 <script setup>
 import Button from '@shared/components/ui/button/Button.vue';
+import { RotateCcw } from 'lucide-vue-next';
 import { ref, onMounted, defineEmits } from 'vue';
 
 // Definisci le proprietà (props) per larghezza e altezza del canvas
@@ -30,47 +33,33 @@ const props = defineProps({
     },
 });
 
-// Definisci l'evento che esporrà i dati della firma
 const emit = defineEmits(['signature-saved']);
 
-// Riferimenti reattivi
 const signatureCanvas = ref(null);
-let ctx = null; // Il contesto del canvas 2D
+let ctx = null;
 let isDrawing = false;
-const isSigned = ref(false); // Stato per abilitare/disabilitare i pulsanti
-
+const isSigned = ref(false);
 onMounted(() => {
-    // 1. Inizializza il contesto 2D del canvas
     ctx = signatureCanvas.value.getContext('2d');
-
-    // 2. Configura le proprietà del tratto
     ctx.strokeStyle = props.lineColor;
     ctx.lineWidth = props.lineWidth;
-    ctx.lineCap = 'round'; // Linee più arrotondate e naturali
+    ctx.lineCap = 'round';
 });
 
-/**
- * Funzione per ottenere le coordinate (Mouse o Touch)
- * @param {Event} event - L'evento del mouse o del touch
- * @returns {{x: number, y: number}} - Le coordinate x e y relative al canvas
- */
 const getCoords = (event) => {
-    const rect = signatureCanvas.value.getBoundingClientRect();
-    let clientX, clientY;
+    const canvas = signatureCanvas.value;
+    const rect = canvas.getBoundingClientRect();
 
-    // Gestione specifica per gli eventi touch
-    if (event.touches) {
-        clientX = event.touches[0].clientX;
-        clientY = event.touches[0].clientY;
-    } else {
-        // Gestione per gli eventi mouse
-        clientX = event.clientX;
-        clientY = event.clientY;
-    }
+    const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+    const clientY = event.touches ? event.touches[0].clientY : event.clientY;
+
+    // rapporto tra coordinate canvas interne e dimensioni CSS
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
 
     return {
-        x: clientX - rect.left,
-        y: clientY - rect.top,
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY,
     };
 };
 
@@ -112,8 +101,8 @@ const saveSignature = () => {
 };
 
 defineExpose({
-  saveSignature,
-  isSigned,
+    saveSignature,
+    isSigned,
 });
 
 </script>

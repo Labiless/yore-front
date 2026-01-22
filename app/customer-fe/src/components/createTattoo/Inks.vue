@@ -15,7 +15,7 @@
         v-for="ink in createTattoStore.inks">
         <div class="">
             <p class="text-xs font-bold">#000000</p>
-            <p class="text-xs">{{ ink.uuid }}</p>
+            <p class="text-xs">{{ ink }}</p>
         </div>
     </div>
     <div class="video-container flex flex-col items-center justify-center fixed top-0 left-0 w-full h-full bg-black z-50"
@@ -37,8 +37,10 @@ import { createTattoo, getTattoByUuid, updateTattoo } from '@/services/api.tatto
 import { userUserStore } from '@/stores/user.store';
 import { useUiStore } from '@/stores/ui';
 import { BrowserQRCodeReader } from '@zxing/browser';
+import { useTatoosStore } from '@/stores/tattoos.store';
 
 const createTattoStore = useCreateTattoStore();
+const tattoosStore = useTatoosStore();
 const inkUuid = ref('');
 const userStore = userUserStore();
 const uiStore = useUiStore();
@@ -61,16 +63,18 @@ const addInk = async () => {
                     burningDate: new Date(),
                     tattooUuid: createTattoStore.uuid,
                 });
-                createTattoStore.inks.push(ink);
                 inkUuid.value = '';
-                const getTatto = await getTattoByUuid(createTattoStore.uuid);
-                const tatto = await updateTattoo(
+                const inks = [...createTattoStore.inks, ink.uuid]
+                const updatedTattoo = await updateTattoo(
                     createTattoStore.uuid,
                     {
-                        inks: [...getTatto.inks, ink.uuid],
+                        inks,
                         status: 'PROGRESS',
                     }
                 )
+                createTattoStore.inks = inks;
+                tattoosStore.tattoos = tattoosStore.tattoos.map(tattoo => tattoo.uuid === updatedTattoo.uuid ? updatedTattoo : tattoo)
+                tattoosStore.tattoos = tattoosStore.tattoos.sort((a: any, b: any) => b.id - a.id)
                 uiStore.loading = false;
                 uiStore.setToast('Inchiostro bruciato');
             }

@@ -15,7 +15,7 @@
     </form>
     <hr>
     </hr>
-    <div class="grid grid-cols-3 gap-2">
+    <div class="flex justify-center gap-2">
         <img :src="createTattoStore.photoUrl" v-if="createTattoStore.photoUrl"
             class="w-30 bg-white text-lack shadow-2xl border-1 whitespace-normal flex flex-col h-30 rounded-xl" />
         <Button class="w-30 bg-white text-lack shadow-2xl border-1 whitespace-normal flex flex-col h-30"
@@ -31,11 +31,13 @@ import Input from '@shared/components/ui/input/Input.vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
 import { Plus } from 'lucide-vue-next';
 import { onMounted, ref, nextTick } from 'vue';
-import { addImage, updateTattoo } from '@/services/api.tattoo.service';
+import { addImage, updateTattoo, getTattoByUuid } from '@/services/api.tattoo.service';
 import { useUiStore } from '@/stores/ui';
+import { useTatoosStore } from '@/stores/tattoos.store';
 
 const createTattoStore = useCreateTattoStore();
 const uiStore = useUiStore();
+const tattoosStore = useTatoosStore();
 
 const selectFile = () => {
     const input = document.createElement('input');
@@ -48,15 +50,15 @@ const selectFile = () => {
 
 const uploadImage = async (img: any) => {
     uiStore.loading = true;
-    const res = await addImage(createTattoStore.uuid, img);
-    createTattoStore.photoUrl = `${res.url}?v=${Date.now()}`;
+    const updatedTattoo = await addImage(createTattoStore.uuid, img);
+    createTattoStore.photoUrl = updatedTattoo.url;
     uiStore.loading = false;
     uiStore.setToast('Immagine aggiunta')
 }
 
 const addTattooArtist = async () => {
     uiStore.loading = true;
-    if(!createTattoStore.tattooArtist){
+    if (!createTattoStore.tattooArtist) {
         uiStore.setToast('Inserisci il nome del tatuatore', 'error');
         uiStore.loading = false;
         return;
@@ -65,6 +67,9 @@ const addTattooArtist = async () => {
         await updateTattoo(createTattoStore.uuid, {
             tattooArtist: createTattoStore.tattooArtist
         })
+        const updatedTattoo = await getTattoByUuid(createTattoStore.uuid);
+        tattoosStore.tattoos = tattoosStore.tattoos.map(tattoo => tattoo.uuid === updatedTattoo.uuid ? updatedTattoo : tattoo)
+        tattoosStore.tattoos = tattoosStore.tattoos.sort((a: any, b: any) => b.id - a.id)
         uiStore.setToast('Tatuatore aggiunto');
     }
     else {

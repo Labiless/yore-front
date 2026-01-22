@@ -182,8 +182,8 @@ const tattoDeletion = async (tattoo: any) => {
         uiStore.loading = true;
         await deleteTattoo(tattoo.uuid);
         tattoosStore.tattoos = tattoosStore.tattoos.filter(el => el.uuid !== tattoo.uuid);
-        //activeDelete.value = false;
-        //showTab.value = 0;
+        activeDelete.value = false;
+        showTab.value = 0;
         uiStore.loading = false;
         uiStore.setToast('Tatuaggio eliminato');
     });

@@ -26,13 +26,15 @@ import { useCreateTattoStore } from '@/stores/createTatto.store';
 import Button from '@shared/components/ui/button/Button.vue';
 import Sign from './Sign.vue';
 import { onMounted, ref } from 'vue';
-import { saveSigns } from '@/services/api.tattoo.service';
+import { saveSigns, getTattoByUuid } from '@/services/api.tattoo.service';
 import { useUiStore } from '@/stores/ui';
+import { useTatoosStore } from '@/stores/tattoos.store';
 
 const customerSign = ref(null);
 const userSign = ref(null);
 const createTattooStore = useCreateTattoStore();
 const uiStore = useUiStore();
+const tattoosStore = useTatoosStore();
 
 onMounted(() => {
     console.log(createTattooStore.customerSign);
@@ -46,6 +48,10 @@ const saveSignature = async () => {
     const res = await saveSigns(createTattooStore.uuid, sign1, sign2);
     createTattooStore.customerSign = res.customerUrl;
     createTattooStore.userSign = res.userUrl;
+
+    const updatedTattoo = await getTattoByUuid(createTattooStore.uuid);
+    tattoosStore.tattoos = tattoosStore.tattoos.map(tattoo => tattoo.uuid === updatedTattoo.uuid ? updatedTattoo : tattoo)
+    tattoosStore.tattoos = tattoosStore.tattoos.sort((a: any, b: any) => b.id - a.id)
 
     uiStore.loading = false;
     uiStore.setToast('Firme aggiunte correttamente')

@@ -25,13 +25,16 @@
             v-if="activeStep === 'kirbyDesay'">
             <KirbyDesay />
         </div>
-        <div id="ink" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 pb-16 pt-8" v-if="activeStep === 'ink'">
+        <div id="ink" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 pb-16 pt-8"
+            v-if="activeStep === 'ink'">
             <Inks />
         </div>
-        <div id="tattoo" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 pb-16 pt-8" v-if="activeStep === 'tattoo'">
+        <div id="tattoo" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 pb-16 pt-8"
+            v-if="activeStep === 'tattoo'">
             <Tattoo />
         </div>
-        <div id="sign" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 pb-16 pt-8" v-if="activeStep === 'sign'">
+        <div id="sign" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 pb-16 pt-8"
+            v-if="activeStep === 'sign'">
             <Signs />
         </div>
     </div>
@@ -84,8 +87,11 @@ const allSteps = [
 onMounted(async () => {
     uiStore.loading = true;
     uiStore.title = "Crea Tatuaggio";
-    if (createTattoStore.uuid) {
-        const tattoo = await getTattoByUuid(createTattoStore.uuid);
+    const tattooUuid = createTattoStore.uuid;
+    createTattoStore.resetTattoo();
+    if (tattooUuid) {
+        const tattoo = await getTattoByUuid(tattooUuid);
+        createTattoStore.uuid = tattoo.uuid;
         if (tattoo.customerUuid) {
             const customer = await getCustomerByUuid(tattoo.customerUuid)
             createTattoStore.customerUuid = customer.uuid
@@ -99,14 +105,7 @@ onMounted(async () => {
             createTattoStore.info.dataConsent = customer.consent
             createTattoStore.info.contractConsent = customer.consent
         }
-        if (tattoo.inks.length > 0) {
-            const inks = []
-            for (let i = 0; i < tattoo.inks.length; i++) {
-                const ink = await getLabelByUuid(tattoo.inks[i]);
-                inks.push(ink);
-            }
-            createTattoStore.inks = inks;
-        }
+        createTattoStore.inks = tattoo.inks;
         if (tattoo.color > 0) {
             createTattoStore.updateKirbyDesay({
                 color: tattoo.color,
@@ -117,16 +116,10 @@ onMounted(async () => {
                 skinType: tattoo.skinType,
             });
         }
-        if (tattoo.tattooArtist) {
-            createTattoStore.tattooArtist = tattoo.tattooArtist;
-        }
-        if (tattoo.photoUrl) {
-            createTattoStore.photoUrl = tattoo.photoUrl;
-        }
-        if (tattoo.customerSign && tattoo.userSign) {
-            createTattoStore.customerSign = tattoo.customerSign;
-            createTattoStore.userSign = tattoo.userSign;
-        }
+        createTattoStore.tattooArtist = tattoo.tattooArtist;
+        createTattoStore.photoUrl = tattoo.photoUrl;
+        createTattoStore.customerSign = tattoo.customerSign;
+        createTattoStore.userSign = tattoo.userSign;
     }
     uiStore.loading = false;
 });

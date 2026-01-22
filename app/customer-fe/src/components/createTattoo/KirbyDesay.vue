@@ -100,10 +100,12 @@ import Button from '@shared/components/ui/button/Button.vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
 import { userUserStore } from '@/stores/user.store';
 import { updateTattoo } from '@/services/api.tattoo.service';
-import { createTattoo } from '@/services/api.tattoo.service';
+import { getTattoByUuid } from '@/services/api.tattoo.service';
 import { useUiStore } from '@/stores/ui';
+import { useTatoosStore } from '@/stores/tattoos.store';
 
 const createTattoStore = useCreateTattoStore();
+const tattoosStore = useTatoosStore();
 const userStore = userUserStore();
 const uiStore = useUiStore();
 
@@ -119,9 +121,12 @@ const submit = async () => {
             skinType: createTattoStore.kirbyDesay.skinType,
         }
         await updateTattoo(createTattoStore.uuid, kirbyDesayData);
+        const updatedTattoo = await getTattoByUuid(createTattoStore.uuid);
+        tattoosStore.tattoos = tattoosStore.tattoos.map(tattoo => tattoo.uuid === updatedTattoo.uuid ? updatedTattoo : tattoo)
+        tattoosStore.tattoos = tattoosStore.tattoos.sort((a: any, b: any) => b.id - a.id)
         uiStore.loading = false;
         uiStore.setToast('Caratteristiche del tatuaggio aggiunte');
-    }else{
+    } else {
         uiStore.loading = false;
         uiStore.setToast('Compilare tutti i dati prima di inviare', 'error');
     }

@@ -99,7 +99,7 @@
                             <div v-else>
                                 <div class="flex justify-between items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all"
                                     :class="`${''}`" v-for="tattoo in selectedUser.tattoos">
-                                    <p class="text-sm">{{ tattoo.uuid }}</p>
+                                    <p class="text-sm">{{ tattoo }}</p>
                                     <div>
                                         <div class="w-3 h-3 rounded-full mb-2 mr-4 bg-orange-500"
                                             :class="`${tattoo.customerSign ? 'bg-green-500!' : ''}`"></div>
@@ -123,7 +123,7 @@ import { useUiStore } from '@/stores/ui';
 import { useUsersStore } from '@/stores/users.store';
 import Input from '@shared/components/ui/input/Input.vue';
 import Button from '@shared/components/ui/button/Button.vue';
-import { getLabelByUuid } from '@/services/api.label.service';
+import { getLabelsByUser } from '@/services/api.label.service';
 import { tattooService } from '@/services/api.tattoo.service'
 import router from '@/router';
 
@@ -183,16 +183,8 @@ const showUser = async (uuid: string) => {
     transitionDirection.value = 'next';
     usersStore.userUuid = uuid;
     selectedUser.value = usersStore.allUsers.filter(el => el.uuid === uuid)[0];
-    const inks = [];
-    for (let i = 0; i < selectedUser.value.inks.length; i++) {
-        const label = await getLabelByUuid(selectedUser.value.inks[i]);
-        inks.push(label);
-    }
-    const tattoos = [];
-    for (let i = 0; i < selectedUser.value.tattoos.length; i++) {
-        const tattoo = await tattooService.getTattoByUuid(selectedUser.value.tattoos[i]);
-        tattoos.push(tattoo);
-    }
+    const inks = await getLabelsByUser(selectedUser.value.uuid);
+    const tattoos = await tattooService.getTattoosByUserUuid(selectedUser.value.uuid);
     selectedUser.value.tattoos = tattoos.filter(el => el !== '');
     selectedUser.value.inks = inks;
 }

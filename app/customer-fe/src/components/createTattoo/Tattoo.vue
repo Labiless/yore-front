@@ -7,9 +7,19 @@
     </p>
     <hr>
     </hr>
+    <form @submit.prevent="addTattooArtist" class="">
+        <label>
+            <Input placeholder="Nome tatuatore" required v-model="createTattoStore.tattooArtist" />
+        </label>
+        <Button type="submit" class="mt-2 w-full h-9">Conferma</Button>
+    </form>
+    <hr>
+    </hr>
     <div class="grid grid-cols-3 gap-2">
-        <img :src="createTattoStore.photoUrl" v-if="createTattoStore.photoUrl" class="w-30 bg-white text-lack shadow-2xl border-1 whitespace-normal flex flex-col h-30 rounded-xl" />
-        <Button class="w-30 bg-white text-lack shadow-2xl border-1 whitespace-normal flex flex-col h-30" @click="selectFile">
+        <img :src="createTattoStore.photoUrl" v-if="createTattoStore.photoUrl"
+            class="w-30 bg-white text-lack shadow-2xl border-1 whitespace-normal flex flex-col h-30 rounded-xl" />
+        <Button class="w-30 bg-white text-lack shadow-2xl border-1 whitespace-normal flex flex-col h-30"
+            @click="selectFile">
             Aggiungi foto del tatuaggio
             <Plus class="border-1 rounded-full scale-150 mt-2" />
         </Button>
@@ -17,10 +27,11 @@
 </template>
 <script setup lang="ts">
 import Button from '@shared/components/ui/button/Button.vue';
+import Input from '@shared/components/ui/input/Input.vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
 import { Plus } from 'lucide-vue-next';
 import { onMounted, ref, nextTick } from 'vue';
-import { addImage } from '@/services/api.tattoo.service';
+import { addImage, updateTattoo } from '@/services/api.tattoo.service';
 import { useUiStore } from '@/stores/ui';
 
 const createTattoStore = useCreateTattoStore();
@@ -35,12 +46,31 @@ const selectFile = () => {
     input.click();
 }
 
-const uploadImage = async (img :any) => {
+const uploadImage = async (img: any) => {
     uiStore.loading = true;
     const res = await addImage(createTattoStore.uuid, img);
     createTattoStore.photoUrl = `${res.url}?v=${Date.now()}`;
     uiStore.loading = false;
     uiStore.setToast('Immagine aggiunta')
+}
+
+const addTattooArtist = async () => {
+    uiStore.loading = true;
+    if(!createTattoStore.tattooArtist){
+        uiStore.setToast('Inserisci il nome del tatuatore', 'error');
+        uiStore.loading = false;
+        return;
+    }
+    if (createTattoStore.uuid && createTattoStore.tattooArtist) {
+        await updateTattoo(createTattoStore.uuid, {
+            tattooArtist: createTattoStore.tattooArtist
+        })
+        uiStore.setToast('Tatuatore aggiunto');
+    }
+    else {
+        uiStore.setToast('Errore nell\'aggiunta del tatuatore', 'error');
+    }
+    uiStore.loading = false;
 }
 
 onMounted(async () => {

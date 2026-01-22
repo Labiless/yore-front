@@ -117,6 +117,9 @@ onMounted(async () => {
                 skinType: tattoo.skinType,
             });
         }
+        if (tattoo.tattooArtist) {
+            createTattoStore.tattooArtist = tattoo.tattooArtist;
+        }
         if (tattoo.photoUrl) {
             createTattoStore.photoUrl = tattoo.photoUrl;
         }

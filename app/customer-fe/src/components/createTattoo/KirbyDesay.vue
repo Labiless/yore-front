@@ -118,7 +118,7 @@ const submit = async () => {
             scars: createTattoStore.kirbyDesay.scars,
             skinType: createTattoStore.kirbyDesay.skinType,
         }
-        const tattoo = await updateTattoo(createTattoStore.uuid, kirbyDesayData);
+        await updateTattoo(createTattoStore.uuid, kirbyDesayData);
         uiStore.loading = false;
         uiStore.setToast('Caratteristiche del tatuaggio aggiunte');
     }else{

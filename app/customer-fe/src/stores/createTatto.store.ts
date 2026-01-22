@@ -1,3 +1,4 @@
+import Tattoo from '@/components/createTattoo/Tattoo.vue';
 import { defineStore } from 'pinia';
 
 export const useCreateTattoStore = defineStore('createTattoo', {
@@ -26,7 +27,8 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             inkLayers: 0,
         },
         inks: [],
-        photoUrl: undefined,
+        tattooArtist: undefined as string | undefined,
+        photoUrl: undefined as string | undefined,
         customerSign: undefined,
         userSign: undefined
     }),
@@ -61,6 +63,7 @@ export const useCreateTattoStore = defineStore('createTattoo', {
                 inkLayers: 0,
             };
             this.inks = [];
+            this.tattooArtist = undefined;
             this.photoUrl = undefined;
             this.customerSign = undefined;
             this.userSign = undefined;

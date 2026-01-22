@@ -32,6 +32,7 @@ export const getTattoByUuid = async (uuid: string) => {
 }
 
 export const updateTattoo = async (uuid: string, updateData: any) => {
+    console.log("Updating tattoo:", uuid, updateData);
     const data = await api.patch(`tattoos/${uuid}`, updateData);
     return data.data;
 }

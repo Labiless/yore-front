@@ -58,6 +58,7 @@ const addInk = async () => {
     if (inkUuid.value) {
         try {
             const ink = await apiLabelService.getLabelByUuid(inkUuid.value);
+            console.log(userStore.getUiid)
             if (ink && ink.burningDate === null && ink.userUuid === userStore.getUiid) {
                 await apiLabelService.updateLabelByUuid(ink.uuid, {
                     burningDate: new Date(),
@@ -94,9 +95,7 @@ const addInk = async () => {
 
 const scanInk = async () => {
     if (inkUuid.value) {
-        uiStore.setPopoup('Sei sicuro di voler utilizzare questo l\'inchiostro? L\'operazione non è reversibile', () => {
-            addInk();
-        });
+        uiStore.setPopoup('Sei sicuro di voler utilizzare questo l\'inchiostro? L\'operazione non è reversibile', addInk);
         return;
     }
     try {

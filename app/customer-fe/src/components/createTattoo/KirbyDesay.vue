@@ -164,7 +164,7 @@ const skinTypes = [
         bg: '#AB5F4D'
     },
     {
-        id: 5,
+        id: 6,
         name: 'MOLTO SCURA',
         description: 'Mai ustionata, colore naturalmente scuro',
         bg: '#422421'

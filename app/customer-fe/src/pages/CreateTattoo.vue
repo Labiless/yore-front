@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Button @click="submit" :disabled="false" class="mb-8 w-full h-12">Genera certificato</Button>
+        <Button @click="submit" :disabled="!createTattoStore.allValidation()" class="mb-8 w-full h-12">Genera certificato</Button>
         <p class="flex text-xl font-bold w-fit m-auto">
             <Calendar class="mr-2" /> 01/01/2026
         </p>

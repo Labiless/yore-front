@@ -68,6 +68,13 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             this.customerSign = undefined;
             this.userSign = undefined;
         },
+        allValidation() {
+            return this.infoValidation()
+                && this.kirbyDesayValidation() 
+                && this.inksValidation()
+                && this.tattooPhotoValidation()
+                && this.signValidation();
+        },
         infoValidation() {
             return this.info.cf
                 && this.info.city

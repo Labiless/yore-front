@@ -49,7 +49,7 @@
                     <div class="flex items-center mb-4">
                         <ArrowLeft @click="goBackToTattoosList" class="hover:cursor-pointer mr-2" />
                     </div>
-                    <div class="flex gap-2 mb-4">
+                    <div class="flex flex-wrap gap-2 mb-4">
                         <a :href="activeTattoo.certificateUrl" target="_blank">
                             <Button class="text-xs">Scarica certificato</Button>
                         </a>

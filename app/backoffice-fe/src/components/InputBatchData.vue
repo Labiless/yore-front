@@ -12,9 +12,9 @@
             <label for="expiration-date">Data di scadenza</label>
             <Input class="bg-white" v-model="loadingBatchStore.expirationDate" name="expiration-date" type="date"
                 required />
-
+            
             <label for="color">Colore</label>
-            <Input class="bg-white" v-model="loadingBatchStore.color" name="color" type="text" required />
+            <Input class="bg-white" v-model="loadingBatchStore.color" name="color" type="text" required pattern="#[0-9A-Fa-f]{6}" maxlength="7" minlength="7"/>
 
             <label for="inkFormulaUrl">Url formula inchiostro</label>
             <Input class="bg-white" v-model="loadingBatchStore.inkFormulaUrl" name="inkFormulaUrl" type="inkFormulaUrl"

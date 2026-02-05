@@ -10,20 +10,23 @@
     <form @submit.prevent="onsubmit" class="">
         <label>
             Nome
-            <Input placeholder="Nome" required v-model="createTattoStore.info.name" />
+            <Input placeholder="Nome" required v-model="createTattoStore.info.name" pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+" />
         </label>
         <label>
             Cognome
-            <Input placeholder="Cognome" required v-model="createTattoStore.info.surname" />
+            <Input placeholder="Cognome" required v-model="createTattoStore.info.surname"
+                pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+" />
         </label>
 
         <label>
             Codice Fiscale
-            <Input placeholder="Codice Fiscale" required v-model="createTattoStore.info.cf" />
+            <Input placeholder="Codice Fiscale" required v-model="createTattoStore.info.cf" maxlength="16"
+                minlength="16" pattern="[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]"
+                style="text-transform: uppercase" />
         </label>
         <label>
             Email
-            <Input placeholder="Email" required v-model="createTattoStore.info.email" />
+            <Input placeholder="Email" required v-model="createTattoStore.info.email" type="email" maxlength="254" />
         </label>
         <label>
             Data di nascita
@@ -31,35 +34,41 @@
         </label>
         <label>
             Luogo di nascita
-            <Input placeholder="Luogo di nascita" required v-model="createTattoStore.info.birthPlace" />
+            <Input placeholder="Luogo di nascita" required v-model="createTattoStore.info.birthPlace"
+                pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+" />
         </label>
         <label>
             Paese di residenza
-            <Input placeholder="Paese di residenza" required v-model="createTattoStore.info.country" />
+            <Input placeholder="Paese di residenza" required v-model="createTattoStore.info.country"
+                pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+" />
         </label>
 
         <label>
             Città di residenza
-            <Input placeholder="Città di residenza" required v-model="createTattoStore.info.city" />
+            <Input placeholder="Città di residenza" required v-model="createTattoStore.info.city"
+                pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+" />
         </label>
 
         <label>
             Indirizzo di residenza
-            <Input placeholder="Indirizzo di residenza" required v-model="createTattoStore.info.address" />
+            <Input placeholder="Indirizzo di residenza" required v-model="createTattoStore.info.address"
+                pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+" />
         </label>
 
         <label>
             Numero civico
-            <Input placeholder="Numero civico" required v-model="createTattoStore.info.streetNumber" />
+            <Input placeholder="Numero civico" required v-model="createTattoStore.info.streetNumber" pattern="[0-9]+" />
         </label>
 
         <label>
             Cap
-            <Input placeholder="cap" required v-model="createTattoStore.info.cap" />
+            <Input placeholder="cap" required v-model="createTattoStore.info.cap" pattern="[0-9]{5}" maxlength="5"
+                minlength="5" />
         </label>
         <label>
             Provincia di residenza
-            <Input placeholder="Provincia di residenza" required v-model="createTattoStore.info.province" />
+            <Input placeholder="Provincia di residenza" required v-model="createTattoStore.info.province"
+                pattern="[A-Za-z]{2}" maxlength="2" minlength="2" style="text-transform: uppercase" />
         </label>
         <div class="flex flex-col justify-around mt-2">
             <Label class="text-xs mb-4">
@@ -124,7 +133,7 @@ const onsubmit = async () => {
         uiStore.loading = false;
         uiStore.setToast('Dati cliente aggiunti correttamente');
     }
-    else{
+    else {
         console.log(createTattoStore);
         uiStore.setToast('Qualcosa è andato storto', 'error');
         uiStore.loading = false;

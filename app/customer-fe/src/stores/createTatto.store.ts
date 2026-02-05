@@ -185,8 +185,8 @@ export const useCreateTattoStore = defineStore('createTattoo', {
                 country: data.country,
                 city: data.city,
                 address: data.address,
-                dataConsent: data.dataConsent,
-                contractConsent: data.contractConsent,
+                consent1: data.consent1,
+                consent2: data.consent2,
             };
         },
         kirbyDesayValidation() {
@@ -210,6 +210,7 @@ export const useCreateTattoStore = defineStore('createTattoo', {
         },
         tattooPhotoValidation() {
             return this.photoUrl
+            && this.tattooArtist
         },
         signValidation() {
             return this.customerSign

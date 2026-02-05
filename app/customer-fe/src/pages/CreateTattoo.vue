@@ -1,6 +1,7 @@
 <template>
     <div>
-        <Button @click="submit" :disabled="!createTattoStore.allValidation()" class="mb-8 w-full h-12">Genera certificato</Button>
+        <Button @click="submit" :disabled="!createTattoStore.allValidation()" class="mb-8 w-full h-12">Genera
+            certificato</Button>
         <p class="flex text-xl font-bold w-fit m-auto">
             <Calendar class="mr-2" /> 01/01/2026
         </p>
@@ -48,17 +49,19 @@ import Tattoo from '@/components/createTattoo/Tattoo.vue';
 import Signs from '@/components/createTattoo/Signs.vue';
 import { Brush, Calendar, ClipboardList, Droplet, PenTool, PersonStanding } from 'lucide-vue-next';
 import { useUiStore } from '@/stores/ui';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
-import { getTattoByUuid, generateContract, getAllTattoos } from '@/services/api.tattoo.service';
+import { getTattoByUuid, closeTattoo, getAllTattoos, createCertificatePdf, createGdprPdf, createReleaseFormPdf } from '@/services/api.tattoo.service';
 import { getCustomerByUuid } from '@/services/api.customer.service';
-import { getLabelByUuid } from '../../../backoffice-fe/src/services/api.label.service';
+import { apiLabelService, inkLabelService } from '@/services/api.inks.service';
 import router from '@/router';
+import { useUserStore } from '@/stores/user.store';
 import { useTatoosStore } from '@/stores/tattoos.store';
 
 const uiStore = useUiStore();
 const createTattoStore = useCreateTattoStore();
 const tattooStore = useTatoosStore();
+const userStore = useUserStore();
 
 const activeStep = ref('info');
 const allSteps = [
@@ -92,18 +95,10 @@ onMounted(async () => {
     if (tattooUuid) {
         const tattoo = await getTattoByUuid(tattooUuid);
         createTattoStore.uuid = tattoo.uuid;
+        createTattoStore.id = tattoo.id;
         if (tattoo.customerUuid) {
             const customer = await getCustomerByUuid(tattoo.customerUuid)
-            createTattoStore.customerUuid = customer.uuid
-            createTattoStore.info.name = customer.name
-            createTattoStore.info.surname = customer.surname
-            createTattoStore.info.email = customer.email
-            createTattoStore.info.cf = customer.cf
-            createTattoStore.info.country = customer.country
-            createTattoStore.info.city = customer.city
-            createTattoStore.info.address = customer.address
-            createTattoStore.info.dataConsent = customer.consent
-            createTattoStore.info.contractConsent = customer.consent
+            createTattoStore.initCustomer(customer);
         }
         createTattoStore.inks = tattoo.inks;
         if (tattoo.color > 0) {
@@ -124,14 +119,75 @@ onMounted(async () => {
     uiStore.loading = false;
 });
 
+const getToday = () => {
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, "0");
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const year = today.getFullYear();
+    return `${year}-${month}-${day}`;
+}
+
 const submit = async () => {
     uiStore.loading = true;
-    await generateContract(createTattoStore.uuid);
-    const res = await getAllTattoos();
-    tattooStore.tattoos = res.sort((a: any, b: any) => b.id - a.id);
-    router.push(`tattoos/${createTattoStore.uuid}`);
+    if (createTattoStore.uuid) {
+        try {
+            console.log(createTattoStore)
+
+            const closedTattoo = await closeTattoo(createTattoStore.uuid);
+            const labelsData = await apiLabelService.getLabelsByTattooUuid(createTattoStore.uuid);
+
+            for (let i = 0; i < labelsData.length; i++) {
+                const inkData = await inkLabelService.getInkByUuid(labelsData[0].inkUuid);
+                labelsData[0] = {
+                    ...labelsData[0],
+                    ...inkData
+                }
+            }
+
+            const certificateData = {
+                ...createTattoStore.certificateData,
+                date: getToday(),
+                inkType: labelsData[0].inkType,
+                inkColor: labelsData[0].color,
+                codiceUnivoco: '???????',
+                inkBatchId: labelsData[0].batchId,
+                sterilizationUrl: labelsData[0].sterilizationCertUrl,
+                chemistryAnalysisUrl: labelsData[0].chemistryAnalysisUrl,
+                microbiologicalAnalysisUrl: labelsData[0].microbiologicalAnalysisUrl,
+                inkSds: labelsData[0].sdsUrl,
+                inkFormulaUrl: labelsData[0].inkFormulaUrl,
+                signPlace: userStore.city,
+                tattooStudio: userStore.businessName,
+                tattooCertificateNumber: String(createTattoStore.id),
+            }
+
+            console.log(certificateData);
+
+            const certificateUrl = await createCertificatePdf(createTattoStore.uuid, certificateData);
+
+            const releaseFormData = {
+                ...createTattoStore.releaseFormData,
+                date: getToday(),
+                signPlace: userStore.city,
+            }
+
+            const releaseFormUrl = await createReleaseFormPdf(createTattoStore.uuid, releaseFormData);
+            const gdprUrl = await createGdprPdf(createTattoStore.uuid, releaseFormData);
+
+            const res = await getAllTattoos();
+            tattooStore.tattoos = res.sort((a: any, b: any) => b.id - a.id);
+            router.push(`tattoos/${createTattoStore.uuid}`);
+            uiStore.setToast('Tatuaggio completato!');
+
+        } catch {
+            uiStore.setToast('Qualcosa è andato storto', 'error');
+        }
+
+    }
+    else {
+        uiStore.setToast('Nessun ID tatuaggio', 'error');
+    }
     uiStore.loading = false;
-    uiStore.setToast('Tatuaggio completato!');
 }
 
 </script>

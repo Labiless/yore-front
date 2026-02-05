@@ -98,7 +98,7 @@ import {
 } from '@shared/components/ui/accordion'
 import Button from '@shared/components/ui/button/Button.vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
-import { userUserStore } from '@/stores/user.store';
+import { useUserStore } from '@/stores/user.store';
 import { updateTattoo } from '@/services/api.tattoo.service';
 import { getTattoByUuid } from '@/services/api.tattoo.service';
 import { useUiStore } from '@/stores/ui';
@@ -106,7 +106,7 @@ import { useTatoosStore } from '@/stores/tattoos.store';
 
 const createTattoStore = useCreateTattoStore();
 const tattoosStore = useTatoosStore();
-const userStore = userUserStore();
+const userStore = useUserStore();
 const uiStore = useUiStore();
 
 const submit = async () => {

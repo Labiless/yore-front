@@ -32,14 +32,14 @@ import PopUp from '@shared/components/PopUp.vue';
 import { useUiStore } from '@/stores/ui';
 import { useAuthStore } from './stores/auth';
 import { onMounted } from 'vue';
-import { userUserStore } from './stores/user.store';
+import { useUserStore } from './stores/user.store';
 import router from './router';
 import { getUserByUuid } from '../../backoffice-fe/src/services/api.user.service';
 import { useRoute } from 'vue-router';
 
 const uiStore = useUiStore();
 const authStore = useAuthStore();
-const userStore = userUserStore();
+const userStore = useUserStore();
 const route = useRoute();
 
 (async () => {

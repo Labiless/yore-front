@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia';
 
-export const userUserStore = defineStore('user', {
+export const useUserStore = defineStore('user', {
   state: () => ({
     uuid: '',
     email: '',
-    businessName: ''
+    businessName: '',
+    city: '',
   }),
 
   getters: {
@@ -28,6 +29,7 @@ export const userUserStore = defineStore('user', {
       this.uuid = userData.uuid,
       this.email = userData.email,
       this.businessName = userData.businessName
+      this.city = userData.city
     }
   },
 })

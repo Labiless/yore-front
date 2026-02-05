@@ -33,12 +33,12 @@
 
 import { useUiStore } from '@/stores/ui';
 import { ref, onMounted } from 'vue';
-import { userUserStore } from '@/stores/user.store';
+import { useUserStore } from '@/stores/user.store';
 import { userService } from '@/services/api.user.service';
 import { User } from 'lucide-vue-next';
 
 const uiStore = useUiStore();
-const userStore = userUserStore();
+const userStore = useUserStore();
 const user = ref(null);
 
 onMounted(async () => {

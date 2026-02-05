@@ -11,12 +11,12 @@ import { useAuthStore } from '@/stores/auth';
 import { ref } from 'vue';
 import router from '@/router';
 import { useUiStore } from '@/stores/ui';
-import { userUserStore } from '@/stores/user.store';
+import { useUserStore } from '@/stores/user.store';
 
 const error = ref("");
 const authStore = useAuthStore();
 const uiStore = useUiStore();
-const userStore = userUserStore();
+const userStore = useUserStore();
 
 const onsubmit = async (data: { username: string; password: string }) => {
     uiStore.loading = true;

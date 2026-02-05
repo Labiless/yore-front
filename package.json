@@ -14,14 +14,14 @@
   ],
   "dependencies": {
     "@tailwindcss/vite": "^4.1.17",
-    "@vueuse/core": "^14.1.0",
+    "@vueuse/core": "^14.2.0",
     "@zxing/browser": "^0.1.5",
     "axios": "^1.13.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.554.0",
     "lucide-vue-next": "^0.554.0",
-    "reka-ui": "^2.6.1",
+    "reka-ui": "^2.8.0",
     "tailwind-merge": "^3.4.0",
     "tailwind-scrollbar-hide": "^4.0.0",
     "tailwindcss": "^4.1.17"

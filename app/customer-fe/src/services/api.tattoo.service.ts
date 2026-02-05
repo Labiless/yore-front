@@ -43,10 +43,25 @@ export const addImage = async (tattooUuid: string, img: any) => {
     return data.data;
 }
 
-export const generateContract = async(tattooUuid: string) => {
+export const closeTattoo = async(tattooUuid: string) => {
     const data = await updateTattoo(tattooUuid, {
         status: 'CLOSE',
     });
+    return data.data;
+}
+
+export const createReleaseFormPdf = async(tattooUuid: string, releaseFormData : any) => {
+    const data = await api.post(`tattoos/pdf/releaseform/${tattooUuid}`, releaseFormData);
+    return data.data;
+}
+
+export const createGdprPdf = async(tattooUuid: string, gdprData : any) => {
+    const data = await api.post(`tattoos/pdf/gdpr/${tattooUuid}`, gdprData);
+    return data.data;
+}
+
+export const createCertificatePdf = async(tattooUuid: string, certificateData : any) => {
+    const data = await api.post(`tattoos/pdf/certificate/${tattooUuid}`, certificateData);
     return data.data;
 }
 

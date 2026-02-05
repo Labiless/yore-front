@@ -64,10 +64,10 @@ import { useUiStore } from '@/stores/ui';
 import { onMounted, ref } from 'vue';
 import { Droplet, Plus, SquareArrowOutUpRight } from 'lucide-vue-next';
 import { apiLabelService, inkLabelService } from '@/services/api.inks.service';
-import { userUserStore } from '@/stores/user.store';
+import { useUserStore } from '@/stores/user.store';
 
 const uiStore = useUiStore();
-const userStore = userUserStore();
+const userStore = useUserStore();
 const inks = ref([]);
 const usedInks = ref([]);
 const availableInks = ref([]);

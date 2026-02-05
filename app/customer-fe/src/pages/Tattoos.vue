@@ -50,11 +50,14 @@
                         <ArrowLeft @click="goBackToTattoosList" class="hover:cursor-pointer mr-2" />
                     </div>
                     <div class="flex gap-2 mb-4">
-                        <a :href="activeTattoo.contractUrl" target="_blank">
-                            <Button class="text-xs">Scarica contratto</Button>
+                        <a :href="activeTattoo.certificateUrl" target="_blank">
+                            <Button class="text-xs">Scarica certificato</Button>
                         </a>
                         <a :href="activeTattoo.releaseFormUrl" target="_blank">
-                            <Button class="text-xs">Scarica release form</Button>
+                            <Button class="text-xs">Scarica liberatoria</Button>
+                        </a>
+                        <a :href="activeTattoo.gdprUrl" target="_blank">
+                            <Button class="text-xs">Scarica trattamento dati</Button>
                         </a>
                     </div>
                     <div>
@@ -93,13 +96,13 @@ import Button from '@shared/components/ui/button/Button.vue';
 import router from '@/router';
 import { useRoute } from 'vue-router';
 import { getCustomerByUuid } from '@/services/api.customer.service';
-import { userUserStore } from '@/stores/user.store';
+import { useUserStore } from '@/stores/user.store';
 
 const showTab = ref(0)
 const uiStore = useUiStore();
 const tattoosStore = useTatoosStore();
 const createTattooStore = useCreateTattoStore();
-const userStore = userUserStore();
+const userStore = useUserStore();
 const activeTattoo = ref(null) as null | undefined | any;
 const activeDelete = ref(false);
 const route = useRoute();

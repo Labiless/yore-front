@@ -21,7 +21,7 @@
         <label>
             Codice Fiscale
             <Input placeholder="Codice Fiscale" required v-model="createTattoStore.info.cf" maxlength="16"
-                minlength="16" pattern="[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]"
+                minlength="16" pattern="[A-Za-z]{6}[0-9]{2}[A-Za-z][0-9]{2}[A-Za-z][0-9]{3}[A-Za-z]"
                 style="text-transform: uppercase" />
         </label>
         <label>
@@ -35,24 +35,24 @@
         <label>
             Luogo di nascita
             <Input placeholder="Luogo di nascita" required v-model="createTattoStore.info.birthPlace"
-                pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+" />
+                pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s]+" />
         </label>
         <label>
             Paese di residenza
             <Input placeholder="Paese di residenza" required v-model="createTattoStore.info.country"
-                pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+" />
+                pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s]+" />
         </label>
 
         <label>
             Città di residenza
             <Input placeholder="Città di residenza" required v-model="createTattoStore.info.city"
-                pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+" />
+                pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s]+" />
         </label>
 
         <label>
             Indirizzo di residenza
             <Input placeholder="Indirizzo di residenza" required v-model="createTattoStore.info.address"
-                pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+" />
+                pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s]+" />
         </label>
 
         <label>

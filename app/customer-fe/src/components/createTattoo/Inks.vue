@@ -101,8 +101,11 @@ const scanInk = async () => {
     try {
         isCameraOpen.value = !isCameraOpen.value;
         codeReader = new BrowserQRCodeReader();
+
+        const devices = await BrowserQRCodeReader.listVideoInputDevices();
+        //label
         controls = await codeReader.decodeFromVideoDevice(
-            undefined,
+            devices[1]?.deviceId,
             videoEl.value,
             (result, err) => {
                 if (result) {

@@ -24,7 +24,7 @@
                     required />
                 <label for="expiration-date">Codice Fiscale</label>
                 <Input class="bg-white" v-model="createUSerStore.cf" name="expiration-date" type="text" required
-                    maxlength="16" minlength="16" pattern="[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]" />
+                    maxlength="16" minlength="16" pattern="[A-Za-z]{6}[0-9]{2}[A-Za-z][0-9]{2}[A-Za-z][0-9]{3}[A-Za-z]" />
 
                 <label for="expiration-date">Partita Iva</label>
                 <Input class="bg-white" v-model="createUSerStore.piva" name="expiration-date" type="text" required

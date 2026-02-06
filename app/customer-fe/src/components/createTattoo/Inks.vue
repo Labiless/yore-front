@@ -18,9 +18,13 @@
             <p class="text-xs">{{ ink }}</p>
         </div>
     </div>
-    <div class="video-container flex flex-col items-center justify-center fixed top-0 left-0 w-full h-full bg-black z-50"
-        v-if="isCameraOpen">
+    <div class="video-container flex flex-col items-center justify-center fixed top-0 left-0 w-full h-full bg-black z-40"
+        v-show="isCameraOpen">
         <p class="text-white mb-2">Inquadra il qrcode dell'inchiostro</p>
+        <div class="flex flex-wrap gap-2 mb-2">
+            <Button v-for="device in devices" @click="startScanner(device.deviceId)" class="text-xs">{{ device.label
+                }}</Button>
+        </div>
         <video ref="videoEl" class="video w-full max-w-200" autoplay playsinline muted></video>
         <CircleX @click="stopScanner" color="red" class="mt-4" :size="30"></CircleX>
     </div>
@@ -46,8 +50,9 @@ const userStore = useUserStore();
 const uiStore = useUiStore();
 const isCameraOpen = ref(false);
 const videoEl = ref<HTMLVideoElement | null>(null);
-let codeReader = null;
-let controls = null;
+const devices = ref(null)
+const codeReader = ref(null);
+const controls = ref(null);
 
 onBeforeUnmount(() => {
     stopScanner();
@@ -58,7 +63,6 @@ const addInk = async () => {
     if (inkUuid.value) {
         try {
             const ink = await apiLabelService.getLabelByUuid(inkUuid.value);
-            console.log(userStore.getUiid)
             if (ink && ink.burningDate === null && ink.userUuid === userStore.getUiid) {
                 await apiLabelService.updateLabelByUuid(ink.uuid, {
                     burningDate: new Date(),
@@ -99,13 +103,23 @@ const scanInk = async () => {
         return;
     }
     try {
-        isCameraOpen.value = !isCameraOpen.value;
-        codeReader = new BrowserQRCodeReader();
+        await startScanner();
+        //videoEl.value.srcObject = stream;
+        //const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    } catch (e) {
+        console.error(e);
+        stopScanner();
+    }
+}
 
-        const devices = await BrowserQRCodeReader.listVideoInputDevices();
-        //label
-        controls = await codeReader.decodeFromVideoDevice(
-            devices[1]?.deviceId,
+const startScanner = async (deviceId = undefined) => {
+    isCameraOpen.value = true;
+    //label
+    try {
+        codeReader.value = new BrowserQRCodeReader();
+        devices.value = await BrowserQRCodeReader.listVideoInputDevices();
+        controls.value = await codeReader.value.decodeFromVideoDevice(
+            deviceId || devices.value[0]?.deviceId,
             videoEl.value,
             (result, err) => {
                 if (result) {
@@ -117,24 +131,22 @@ const scanInk = async () => {
                 }
             }
         );
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        videoEl.value.srcObject = stream;
-    } catch (e) {
-        console.error(e);
+    } catch (error) {
+        uiStore.setToast('Camera non valida', 'error');
         stopScanner();
     }
 }
 
 const stopScanner = () => {
     try {
-        controls?.stop?.();
+        controls.value?.stop();
     } catch { }
-    controls = null;
+    controls.value = null;
 
     try {
-        codeReader?.reset?.();
+        codeReader.value?.reset();
     } catch { }
-    codeReader = null;
+    controls.value = null;
     isCameraOpen.value = false;
 }
 

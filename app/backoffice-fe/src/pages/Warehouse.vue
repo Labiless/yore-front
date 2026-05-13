@@ -1,19 +1,20 @@
 <template>
     <div class="mx-auto w-full px-4 items-start overflow-y-auto h-full">
         <router-link to="/loadbatch">
-            <Button class="w-full h-12 mb-4">
-                <Plus /> Carica inchiostro
+            <Button class="w-full h-12 mb-4 ">
+                <Plus /> Carica nuovi inchiostri
             </Button>
         </router-link>
+        <h1 class="text-2xl mb-2 mt-4">Magazzino inchiostro</h1>
         <div class="flex  justify-start items-center">
             <Input v-model="searchUuid" class="w-2/3 shadow-xl" type="text" />
             <Search class="ml-2" />
         </div>
         <div class="flex items-center gap-2 p-2 my-4 mx-auto rounded-md bg-slate-200">
             <Button @click="showTab = 0" class="text-xs w-fit h-8 bg-transparent text-black"
-                :class="`${showTab === 0 ? 'bg-white!' : 'shadow-none'}`">Magazzino</Button>
+                :class="`${showTab === 0 ? 'bg-white!' : ''}`">Magazzino</Button>
             <Button @click="showTab = 1" class="text-xs w-fit h-8 bg-transparent text-black"
-                :class="`${showTab === 1 ? 'bg-white!' : 'shadow-none'}`">
+                :class="`${showTab === 1 ? 'bg-white!' : ''}`">
                 Lotti caricamento
             </Button>
         </div>

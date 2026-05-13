@@ -184,7 +184,6 @@ onMounted(async () => {
     let allUsers = await getAllUsers();
     allUsers = allUsers.filter(el => el.role !== 'admin');
     usersStore.allUsers = allUsers.sort((a: any, b: any) => b.id - a.id);
-    console.log(usersStore.allUsers);
     //}
     if (userUuid) {
         await showUser(userUuid);

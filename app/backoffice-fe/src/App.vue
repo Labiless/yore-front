@@ -42,21 +42,21 @@ const links = [
     icon: "House",
     name: "Home",
   },
-  {
+  /*{
     link: "/loadbatch",
     icon: "ArchiveRestore",
     name: "Carica lotto",
-  },
+  },*/
   {
     link: "/warehouse",
     icon: "Warehouse",
     name: "Magazzino",
   },
-  {
+  /*{
     link: "/createlabels",
     icon: "Tag",
     name: "Crea etichette",
-  },
+  },*/
   {
     link: "/labels",
     icon: "Tags",

@@ -23,7 +23,7 @@
                 <Input class="bg-white" v-model="createUSerStore.businessName" name="expiration-date" type="text"
                     required />
                 <label for="expiration-date">Codice Fiscale</label>
-                <Input class="bg-white" v-model="createUSerStore.cf" name="expiration-date" type="text" required
+                <Input class="bg-white" v-model="createUSerStore.cf" name="expiration-date" type="text"
                     maxlength="16" minlength="16" pattern="[A-Za-z]{6}[0-9]{2}[A-Za-z][0-9]{2}[A-Za-z][0-9]{3}[A-Za-z]" />
 
                 <label for="expiration-date">Partita Iva</label>

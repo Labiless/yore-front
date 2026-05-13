@@ -35,6 +35,7 @@ onMounted(async () => {
     inkTypes.value = await getInkTypes();
     console.log(inkTypes.value)
     uiStore.loading = false;
+    console.log(loadingBatchStore)
 })
 
 const addAmount = (data: {

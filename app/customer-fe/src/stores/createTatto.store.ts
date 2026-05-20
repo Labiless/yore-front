@@ -1,46 +1,43 @@
-import Tattoo from '@/components/createTattoo/Tattoo.vue';
 import { defineStore } from 'pinia';
 
 export const useCreateTattoStore = defineStore('createTattoo', {
     state: () => ({
-        id: undefined,
-        uuid: undefined,
-        customerUuid: undefined,
+        id: undefined as number | undefined,
+        uuid: undefined as string | undefined,
+        customerUuid: undefined as string | undefined,
         date: undefined,
         user: undefined,
         info: {
-            name: undefined,
-            surname: undefined,
-            email: undefined,
-            cf: undefined,
-            country: undefined,
-            city: undefined,
-            address: undefined,
+            name: undefined as string | undefined,
+            surname: undefined as string | undefined,
+            email: undefined as string | undefined,
+            cf: undefined as string | undefined,
+            country: undefined as string | undefined,
+            city: undefined as string | undefined,
+            address: undefined as string | undefined,
             consent1: false,
             consent2: false,
-            birthDate: undefined,
-            birthPlace: undefined,
-            streetNumber: undefined,
-            cap: undefined,
-            province: undefined,
+            birthDate: undefined as string | undefined,
+            birthPlace: undefined as string | undefined,
+            streetNumber: undefined as string | undefined,
+            cap: undefined as string | undefined,
+            province: undefined as string | undefined,
         },
         kirbyDesay: {
             skinType: 0,
             position: 0,
-            color: 0,
-            inkAmount: 0,
-            scars: 0,
-            inkLayers: 0,
+            color: '' as string,
+            tattooStyle: '' as string,
+            tattooType: '' as string,
         },
-        inks: [],
+        inks: [] as string[],
         tattooArtist: undefined as string | undefined,
         photoUrl: undefined as string | undefined,
-        customerSign: undefined,
-        userSign: undefined
+        customerSign: undefined as string | undefined,
+        userSign: undefined as string | undefined,
     }),
 
     getters: {
-
         certificateData: (state) => ({
             tattooId: String(state.id),
             date: undefined,
@@ -56,9 +53,8 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             kirbySkinType: state.kirbyDesay.skinType,
             kirbyPosition: state.kirbyDesay.position,
             kirbyColor: state.kirbyDesay.color,
-            kirbyInkAmount: state.kirbyDesay.inkAmount,
-            kirbyScars: state.kirbyDesay.scars,
-            kirbyInkLayers: state.kirbyDesay.inkLayers,
+            kirbyTattooStyle: state.kirbyDesay.tattooStyle,
+            kirbyTattooType: state.kirbyDesay.tattooType,
             sterilizationUrl: undefined,
             chemistryAnalysisUrl: undefined,
             microbiologicalAnalysisUrl: undefined,
@@ -69,7 +65,7 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             signPlace: undefined,
             tattooStudio: undefined,
             tattooArtist: state.tattooArtist,
-            tattooCertificateNumber: undefined
+            tattooCertificateNumber: undefined,
         }),
         releaseFormData: (state) => ({
             date: undefined,
@@ -92,13 +88,13 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             customerStreetNumber: state.info.streetNumber,
             customerSignUrl: state.customerSign,
             signPlace: undefined,
-        })
+        }),
     },
 
     actions: {
         getDate() {
-            return ''
-        },        
+            return '';
+        },
         resetTattoo() {
             this.uuid = undefined;
             this.customerUuid = undefined;
@@ -123,10 +119,9 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             this.kirbyDesay = {
                 skinType: 0,
                 position: 0,
-                color: 0,
-                inkAmount: 0,
-                scars: 0,
-                inkLayers: 0,
+                color: '',
+                tattooStyle: '',
+                tattooType: '',
             };
             this.inks = [];
             this.tattooArtist = undefined;
@@ -145,76 +140,82 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             this.info.address = customer.address;
             this.info.consent1 = customer.consent1;
             this.info.consent2 = customer.consent2;
-            this.info.birthDate = customer.birthDate
+            this.info.birthDate = customer.birthDate;
             this.info.birthPlace = customer.birthPlace;
             this.info.streetNumber = customer.streetNumber;
             this.info.cap = customer.cap;
             this.info.province = customer.province;
         },
         allValidation() {
-            return this.infoValidation()
-                && this.kirbyDesayValidation()
-                && this.inksValidation()
-                && this.tattooPhotoValidation()
-                && this.signValidation();
+            return (
+                this.infoValidation() &&
+                this.kirbyDesayValidation() &&
+                this.inksValidation() &&
+                this.tattooPhotoValidation() &&
+                this.signValidation()
+            );
         },
         infoValidation() {
-            return this.info.name !== undefined
-                && this.info.email !== undefined
-                && this.info.surname !== undefined
-                && this.info.cf !== undefined
-                && this.info.country !== undefined
-                && this.info.city !== undefined
-                && this.info.address !== undefined
-                && this.info.consent1
-                && this.info.consent2
-                && this.info.birthDate !== undefined
-                && this.info.birthPlace !== undefined
-                && this.info.streetNumber !== undefined
-                && this.info.cap !== undefined
-                && this.info.province !== undefined
+            return (
+                this.info.name !== undefined &&
+                this.info.email !== undefined &&
+                this.info.surname !== undefined &&
+                this.info.cf !== undefined &&
+                this.info.country !== undefined &&
+                this.info.city !== undefined &&
+                this.info.address !== undefined &&
+                this.info.consent1 &&
+                this.info.consent2 &&
+                this.info.birthDate !== undefined &&
+                this.info.birthPlace !== undefined &&
+                this.info.streetNumber !== undefined &&
+                this.info.cap !== undefined &&
+                this.info.province !== undefined
+            );
         },
         addInfo(data: any) {
             this.uuid = data.uuid;
             this.customerUuid = data.customerUuid;
-            this.info = {
-                name: data.name,
-                email: data.email,
-                surname: data.surname,
-                cf: data.cf,
-                country: data.country,
-                city: data.city,
-                address: data.address,
-                consent1: data.consent1,
-                consent2: data.consent2,
-            };
+            this.info.name = data.name;
+            this.info.email = data.email;
+            this.info.surname = data.surname;
+            this.info.cf = data.cf;
+            this.info.country = data.country;
+            this.info.city = data.city;
+            this.info.address = data.address;
+            this.info.consent1 = data.consent1;
+            this.info.consent2 = data.consent2;
         },
         kirbyDesayValidation() {
-            return this.kirbyDesay.skinType > 0
-                && this.kirbyDesay.position > 0
-                && this.kirbyDesay.color > 0
-                && this.kirbyDesay.inkAmount > 0
-                && this.kirbyDesay.scars > 0
-                && this.kirbyDesay.inkLayers > 0
+            return (
+                this.kirbyDesay.skinType > 0 &&
+                this.kirbyDesay.position > 0 &&
+                !!this.kirbyDesay.color &&
+                !!this.kirbyDesay.tattooStyle &&
+                !!this.kirbyDesay.tattooType
+            );
         },
-        updateKirbyDesay(data: any) {
-            this.kirbyDesay.color = data.color;
-            this.kirbyDesay.inkAmount = data.inkAmount;
-            this.kirbyDesay.inkLayers = data.inkLayers;
-            this.kirbyDesay.position = data.position;
-            this.kirbyDesay.scars = data.scars;
-            this.kirbyDesay.skinType = data.skinType;
+        updateKirbyDesay(data: {
+            skinType?: number | null;
+            position?: number | null;
+            color?: string | null;
+            tattooStyle?: string | null;
+            tattooType?: string | null;
+        }) {
+            if (data.skinType != null) this.kirbyDesay.skinType = data.skinType;
+            if (data.position != null) this.kirbyDesay.position = data.position;
+            if (data.color) this.kirbyDesay.color = data.color;
+            if (data.tattooStyle) this.kirbyDesay.tattooStyle = data.tattooStyle;
+            if (data.tattooType) this.kirbyDesay.tattooType = data.tattooType;
         },
         inksValidation() {
-            return this.inks.length > 0
+            return this.inks.length > 0;
         },
         tattooPhotoValidation() {
-            return this.photoUrl
-            && this.tattooArtist
+            return !!this.photoUrl && !!this.tattooArtist;
         },
         signValidation() {
-            return this.customerSign
-                && this.userSign
-        }
+            return !!this.customerSign && !!this.userSign;
+        },
     },
-})
+});

@@ -68,15 +68,19 @@
                             <p class="text-xs">{{ activeTattoo.creationDate.split('T')[0] }}</p>
                             <p class="text-xs opacity-60">{{ activeTattoo.uuid }}</p>
                         </div>
-                        <img :src="activeTattoo.photoUrl" class="w-1/2 border-2 mb-4" />
+                        <img
+                            v-if="tattooPhotoUrl"
+                            :src="tattooPhotoUrl"
+                            class="w-1/2 border-2 mb-4"
+                            alt="Foto tatuaggio"
+                        />
                         <div class="mb-4">
                             <p class="font-bold">Caratteristiche del tatuaggio</p>
-                            <p class="">color: {{ activeTattoo.color }}</p>
-                            <p class="">inkAmount: {{ activeTattoo.inkAmount }}</p>
-                            <p class="">inkLayers: {{ activeTattoo.inkLayers }}</p>
-                            <p class="">position: {{ activeTattoo.position }}</p>
-                            <p class="">scars: {{ activeTattoo.scars }}</p>
-                            <p class="">skinType: {{ activeTattoo.skinType }}</p>
+                            <p>Colore: {{ inkColorLabel }}</p>
+                            <p>Stile: {{ activeTattoo.tattooStyle ?? '—' }}</p>
+                            <p>Tipo: {{ tattooTypeLabel }}</p>
+                            <p>Posizione: {{ activeTattoo.position ?? '—' }}</p>
+                            <p>Tipo pelle: {{ activeTattoo.skinType ?? '—' }}</p>
                         </div>
                     </div>
                 </div>
@@ -88,9 +92,14 @@
 
 import { useUiStore } from '@/stores/ui';
 import { Calendar, Plus, Trash, ArrowLeft } from 'lucide-vue-next';
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useTatoosStore } from '@/stores/tattoos.store';
 import { deleteTattoo, getTattoosByUserUuid } from '@/services/api.tattoo.service';
+import {
+    getTattooPhotoUrl,
+    INK_COLOR_LABELS,
+    TATTOO_TYPE_LABELS,
+} from '@/constants/tattoo.config';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
 import Button from '@shared/components/ui/button/Button.vue';
 import router from '@/router';
@@ -106,6 +115,20 @@ const userStore = useUserStore();
 const activeTattoo = ref(null) as null | undefined | any;
 const activeDelete = ref(false);
 const route = useRoute();
+
+const tattooPhotoUrl = computed(() =>
+    activeTattoo.value ? getTattooPhotoUrl(activeTattoo.value.photoUrl) : undefined,
+);
+const inkColorLabel = computed(() => {
+    const color = activeTattoo.value?.color;
+    if (!color) return '—';
+    return INK_COLOR_LABELS[color] ?? color;
+});
+const tattooTypeLabel = computed(() => {
+    const type = activeTattoo.value?.tattooType;
+    if (!type) return '—';
+    return TATTOO_TYPE_LABELS[type]?.title ?? type;
+});
 
 watch(
     () => route.fullPath,

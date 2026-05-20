@@ -53,6 +53,7 @@ import { onMounted, ref } from 'vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
 import { getTattoByUuid, closeTattoo, getAllTattoos, createCertificatePdf, createGdprPdf, createReleaseFormPdf } from '@/services/api.tattoo.service';
 import { getCustomerByUuid } from '@/services/api.customer.service';
+import { getTattooPhotoUrl, hasKirbyDesayData } from '@/constants/tattoo.config';
 import { apiLabelService, inkLabelService } from '@/services/api.inks.service';
 import router from '@/router';
 import { useUserStore } from '@/stores/user.store';
@@ -100,19 +101,18 @@ onMounted(async () => {
             const customer = await getCustomerByUuid(tattoo.customerUuid)
             createTattoStore.initCustomer(customer);
         }
-        createTattoStore.inks = tattoo.inks;
-        if (tattoo.color > 0) {
+        createTattoStore.inks = tattoo.inks ?? [];
+        if (hasKirbyDesayData(tattoo)) {
             createTattoStore.updateKirbyDesay({
-                color: tattoo.color,
-                inkAmount: tattoo.inkAmount,
-                inkLayers: tattoo.inkLayers,
-                position: tattoo.position,
-                scars: tattoo.scars,
                 skinType: tattoo.skinType,
+                position: tattoo.position,
+                color: tattoo.color,
+                tattooStyle: tattoo.tattooStyle,
+                tattooType: tattoo.tattooType,
             });
         }
         createTattoStore.tattooArtist = tattoo.tattooArtist;
-        createTattoStore.photoUrl = tattoo.photoUrl;
+        createTattoStore.photoUrl = getTattooPhotoUrl(tattoo.photoUrl);
         createTattoStore.customerSign = tattoo.customerSign;
         createTattoStore.userSign = tattoo.userSign;
     }

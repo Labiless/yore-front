@@ -12,6 +12,7 @@
             <AccordionContent>
                 <div class="grid grid-cols-2 gap-2">
                     <Button @click="createTattoStore.kirbyDesay.skinType = skinType.id" v-for="skinType in skinTypes"
+                        :key="skinType.id"
                         class="h-28 shadow-xl bg-white text-black flex flex-col"
                         :class="`${createTattoStore.kirbyDesay.skinType === skinType.id ? 'border-2 border-blue-400' : ''}`">
                         <p class="text-center text-sm lowercase w-full rounded-sm p-1"
@@ -26,9 +27,10 @@
             <AccordionContent>
                 <div class="grid grid-cols-3 gap-2">
                     <Button @click="createTattoStore.kirbyDesay.position = position.id" v-for="position in positions"
+                        :key="position.id"
                         class="h-fit shadow-xl bg-white text-black flex flex-col"
                         :class="`${createTattoStore.kirbyDesay.position === position.id ? 'border-2 border-blue-400' : ''}`">
-                        <img class="" :src="`img/kirby_desay/location-${position.id}.svg`" />
+                        <img :src="`img/kirby_desay/location-${position.id}.svg`" alt="" />
                     </Button>
                 </div>
             </AccordionContent>
@@ -36,58 +38,56 @@
         <AccordionItem value="item-3">
             <AccordionTrigger>Colore dell'inchiostro</AccordionTrigger>
             <AccordionContent>
-                <div class="grid grid-cols-3 gap-2">
-                    <Button @click="createTattoStore.kirbyDesay.color = color.id" v-for="color in colors"
-                        class="h-24 shadow-xl bg-white text-black flex"
-                        :class="`${createTattoStore.kirbyDesay.color === color.id ? 'border-2 border-blue-400' : ''}`">
-                        <div v-for="bgColor in color.colors" :style="`background-color: ${bgColor};`"
-                            class="w-8 h-8 rounded-full border-1"></div>
+                <div class="grid grid-cols-2 gap-2">
+                    <Button
+                        v-for="inkColor in inkColors"
+                        :key="inkColor"
+                        @click="createTattoStore.kirbyDesay.color = inkColor"
+                        class="h-24 shadow-xl bg-white text-black flex flex-col justify-center"
+                        :class="`${createTattoStore.kirbyDesay.color === inkColor ? 'border-2 border-blue-400' : ''}`">
+                        <div class="w-10 h-10 rounded-full border mx-auto" style="background-color: #000000"></div>
+                        <p class="text-center text-sm mt-2">{{ INK_COLOR_LABELS[inkColor] ?? inkColor }}</p>
                     </Button>
                 </div>
             </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-4">
-            <AccordionTrigger>Quantità inchiostro</AccordionTrigger>
+            <AccordionTrigger>Stile del tatuaggio</AccordionTrigger>
             <AccordionContent>
-                <div class="grid grid-cols-3 gap-2">
-                    <Button @click="createTattoStore.kirbyDesay.inkAmount = inkAmount.id"
-                        v-for="inkAmount in inkAmounts"
-                        class="h-40 shadow-xl bg-white text-black flex flex-col justify-start lg:justify-center"
-                        :class="`${createTattoStore.kirbyDesay.inkAmount === inkAmount.id ? 'border-2 border-blue-400' : ''}`">
-                        <p class="text-center rounded-sm p-1 whitespace-normal">{{ inkAmount.title }}</p>
-                        <p class="text-center text-xs block whitespace-normal">{{ inkAmount.description }}</p>
+                <div class="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
+                    <Button
+                        v-for="style in tattooStyles"
+                        :key="style"
+                        @click="createTattoStore.kirbyDesay.tattooStyle = style"
+                        class="h-auto min-h-16 shadow-xl bg-white text-black flex flex-col justify-center py-2"
+                        :class="`${createTattoStore.kirbyDesay.tattooStyle === style ? 'border-2 border-blue-400' : ''}`">
+                        <p class="text-center text-sm whitespace-normal px-1">{{ style }}</p>
                     </Button>
                 </div>
             </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-5">
-            <AccordionTrigger>Presenza cicatrici</AccordionTrigger>
+            <AccordionTrigger>Tipo di intervento</AccordionTrigger>
             <AccordionContent>
-                <div class="grid grid-cols-3 gap-2">
-                    <Button @click="createTattoStore.kirbyDesay.scars = scar.id" v-for="scar in scars"
-                        class="h-40 shadow-xl bg-white text-black flex flex-col justify-start lg:justify-center"
-                        :class="`${createTattoStore.kirbyDesay.scars === scar.id ? 'border-2 border-blue-400' : ''}`">
-                        <p class="text-center rounded-sm p-1 whitespace-normal">{{ scar.title }}</p>
-                        <p class="text-center text-xs block whitespace-normal">{{ scar.description }}</p>
-                    </Button>
-                </div>
-            </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="item-6">
-            <AccordionTrigger>Stratificazione inchiostro</AccordionTrigger>
-            <AccordionContent>
-                <div class="grid grid-cols-2 gap-2">
-                    <Button @click="createTattoStore.kirbyDesay.inkLayers = inkLayer.id" v-for="inkLayer in inkLayers"
-                        class="h-30 shadow-xl bg-white text-black flex flex-col justify-start lg:justify-center"
-                        :class="`${createTattoStore.kirbyDesay.inkLayers === inkLayer.id ? 'border-2 border-blue-400' : ''}`">
-                        <p class="text-center rounded-sm p-1 whitespace-normal">{{ inkLayer.title }}</p>
-                        <p class="text-center text-xs block whitespace-normal">{{ inkLayer.description }}</p>
+                <div class="grid grid-cols-1 gap-2">
+                    <Button
+                        v-for="type in tattooTypes"
+                        :key="type"
+                        @click="createTattoStore.kirbyDesay.tattooType = type"
+                        class="h-auto min-h-20 shadow-xl bg-white text-black flex flex-col justify-start py-3"
+                        :class="`${createTattoStore.kirbyDesay.tattooType === type ? 'border-2 border-blue-400' : ''}`">
+                        <p class="text-center rounded-sm p-1 whitespace-normal font-medium">
+                            {{ TATTOO_TYPE_LABELS[type]?.title ?? type }}
+                        </p>
+                        <p class="text-center text-xs block whitespace-normal px-2 opacity-80">
+                            {{ TATTOO_TYPE_LABELS[type]?.description ?? '' }}
+                        </p>
                     </Button>
                 </div>
             </AccordionContent>
         </AccordionItem>
     </Accordion>
-    <Button @click="submit" class="w-full h-12"> Conferma</Button>
+    <Button @click="submit" class="w-full h-12">Conferma</Button>
 </template>
 <script setup lang="ts">
 import {
@@ -95,209 +95,82 @@ import {
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
-} from '@shared/components/ui/accordion'
+} from '@shared/components/ui/accordion';
 import Button from '@shared/components/ui/button/Button.vue';
+import { ClipboardList } from 'lucide-vue-next';
+import { onMounted, ref } from 'vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
-import { useUserStore } from '@/stores/user.store';
-import { updateTattoo } from '@/services/api.tattoo.service';
-import { getTattoByUuid } from '@/services/api.tattoo.service';
+import { getTattoByUuid, getTattooConfig, updateTattoo } from '@/services/api.tattoo.service';
 import { useUiStore } from '@/stores/ui';
 import { useTatoosStore } from '@/stores/tattoos.store';
+import {
+    FALLBACK_INK_COLORS,
+    FALLBACK_TATTOO_STYLES,
+    FALLBACK_TATTOO_TYPES,
+    INK_COLOR_LABELS,
+    TATTOO_TYPE_LABELS,
+} from '@/constants/tattoo.config';
 
 const createTattoStore = useCreateTattoStore();
 const tattoosStore = useTatoosStore();
-const userStore = useUserStore();
 const uiStore = useUiStore();
+
+const inkColors = ref<string[]>([...FALLBACK_INK_COLORS]);
+const tattooStyles = ref<string[]>([...FALLBACK_TATTOO_STYLES]);
+const tattooTypes = ref<string[]>([...FALLBACK_TATTOO_TYPES]);
+
+onMounted(async () => {
+    try {
+        const config = await getTattooConfig();
+        if (config.inkColors?.length) inkColors.value = config.inkColors;
+        if (config.tattooStyles?.length) tattooStyles.value = config.tattooStyles;
+        if (config.tattooTypes?.length) tattooTypes.value = config.tattooTypes;
+    } catch {
+        // usa i fallback locali
+    }
+    if (!createTattoStore.kirbyDesay.color && inkColors.value.length === 1) {
+        createTattoStore.kirbyDesay.color = inkColors.value[0];
+    }
+});
 
 const submit = async () => {
     uiStore.loading = true;
     if (createTattoStore.kirbyDesayValidation() && createTattoStore.uuid) {
-        const kirbyDesayData = {
-            color: createTattoStore.kirbyDesay.color,
-            inkAmount: createTattoStore.kirbyDesay.inkAmount,
-            inkLayers: createTattoStore.kirbyDesay.inkLayers,
-            position: createTattoStore.kirbyDesay.position,
-            scars: createTattoStore.kirbyDesay.scars,
+        await updateTattoo(createTattoStore.uuid, {
             skinType: createTattoStore.kirbyDesay.skinType,
-        }
-        await updateTattoo(createTattoStore.uuid, kirbyDesayData);
+            position: createTattoStore.kirbyDesay.position,
+            color: createTattoStore.kirbyDesay.color,
+            tattooStyle: createTattoStore.kirbyDesay.tattooStyle,
+            tattooType: createTattoStore.kirbyDesay.tattooType,
+        });
         const updatedTattoo = await getTattoByUuid(createTattoStore.uuid);
-        tattoosStore.tattoos = tattoosStore.tattoos.map(tattoo => tattoo.uuid === updatedTattoo.uuid ? updatedTattoo : tattoo)
-        tattoosStore.tattoos = tattoosStore.tattoos.sort((a: any, b: any) => b.id - a.id)
+        tattoosStore.tattoos = tattoosStore.tattoos
+            .map((tattoo) => (tattoo.uuid === updatedTattoo.uuid ? updatedTattoo : tattoo))
+            .sort((a: { id: number }, b: { id: number }) => b.id - a.id);
         uiStore.loading = false;
         uiStore.setToast('Caratteristiche del tatuaggio aggiunte');
     } else {
         uiStore.loading = false;
         uiStore.setToast('Compilare tutti i dati prima di inviare', 'error');
     }
-}
+};
 
 const skinTypes = [
-    {
-        id: 1,
-        name: 'molto chiara',
-        description: 'descrizione della pelle',
-        bg: '#F0E4F2'
-    },
-    {
-        id: 2,
-        name: 'CHIARA',
-        description: 'Spesso si scotta, si abbronza leggermente',
-        bg: '#FBC2CF'
-    },
-    {
-        id: 3,
-        name: 'MEDIO CHIARA',
-        description: 'Si scotta a volte, si abbronza gradualmente',
-        bg: '#FBB2A4'
-    },
-    {
-        id: 4,
-        name: 'MEDIO SCURA',
-        description: 'Si scotta raramente, si abbronza facilmente',
-        bg: '#D28D56'
-    },
-    {
-        id: 5,
-        name: 'SCURA',
-        description: 'Quasi mai si scotta, si abbronza subito',
-        bg: '#AB5F4D'
-    },
-    {
-        id: 6,
-        name: 'MOLTO SCURA',
-        description: 'Mai ustionata, colore naturalmente scuro',
-        bg: '#422421'
-    },
-]
+    { id: 1, name: 'molto chiara', description: 'descrizione della pelle', bg: '#F0E4F2' },
+    { id: 2, name: 'CHIARA', description: 'Spesso si scotta, si abbronza leggermente', bg: '#FBC2CF' },
+    { id: 3, name: 'MEDIO CHIARA', description: 'Si scotta a volte, si abbronza gradualmente', bg: '#FBB2A4' },
+    { id: 4, name: 'MEDIO SCURA', description: 'Si scotta raramente, si abbronza facilmente', bg: '#D28D56' },
+    { id: 5, name: 'SCURA', description: 'Quasi mai si scotta, si abbronza subito', bg: '#AB5F4D' },
+    { id: 6, name: 'MOLTO SCURA', description: 'Mai ustionata, colore naturalmente scuro', bg: '#422421' },
+];
 
 const positions = [
-    {
-        id: 1,
-        name: 'head',
-    },
-    {
-        id: 2,
-        name: 'chest',
-    },
-    {
-        id: 3,
-        name: 'upper_legs',
-    },
-    {
-        id: 4,
-        name: 'downer_legs_forearms',
-    },
-    {
-        id: 5,
-        name: 'feet_hands',
-    },
-]
-
-const colors = [
-    {
-        id: 1,
-        name: 'blue_black',
-        colors: ['#050089', '#000000']
-    },
-    {
-        id: 2,
-        name: 'blue_black',
-        colors: ['#541C00', '#FF0000', '#FF7F00']
-    },
-    {
-        id: 3,
-        name: 'blue_black',
-        colors: ['#329D00', '#71A0FF', '#A600FF']
-    },
-    {
-        id: 4,
-        name: 'blue_black',
-        colors: ['white', '#FFEA00', '#EAB1DF']
-    },
-]
-
-const inkAmounts = [
-    {
-        id: 1,
-        name: 'blue_black',
-        title: 'Cosmetico (sopracciglia, labbra)',
-        description: 'superficiale, poco denso'
-    },
-    {
-        id: 2,
-        name: 'blue_black',
-        title: 'Professionale (tatuatore)',
-        description: 'profondo e denso'
-    },
-    {
-        id: 3,
-        name: 'blue_black',
-        title: 'Amatoriale (fatto in casa)',
-        description: 'Spesso irregolare, quantità variabile'
-    },
-    {
-        id: 4,
-        name: 'blue_black',
-        title: 'Copertura (cover-up)',
-        description: 'Due o più strati di inchiostro'
-    },
-]
-
-const scars = [
-    {
-        id: 1,
-        name: 'blue_black',
-        title: 'Pelle normale',
-        description: 'Nessuna cicatrice o alterazione'
-    },
-    {
-        id: 3,
-        name: 'blue_black',
-        title: 'Lieve cicatrice o ispessimento',
-        description: 'Piccola area irregolare'
-    },
-    {
-        id: 4,
-        name: 'blue_black',
-        title: 'Cicatrice evidente o ipertrofica',
-        description: 'Tessuto duro, fibrotico'
-    },
-    {
-        id: 5,
-        name: 'blue_black',
-        title: 'Cheloide / fibrosi estesa',
-        description: 'Alterazione severa'
-    },
-    {
-        id: 6,
-        name: 'blue_black',
-        title: 'Pelle normale',
-        description: 'Nessuna cicatrice o alterazione'
-    },
-]
-
-const inkLayers = [
-    {
-        id: 1,
-        name: 'blue_black',
-        title: 'Un solo strato di pigmento',
-        description: 'Tatuaggio unico'
-    },
-    {
-        id: 2,
-        name: 'blue_black',
-        title: 'Ritocco o rinforzo sullo stesso tatuaggio',
-        description: 'Due passaggi di inchiostro'
-    },
-    {
-        id: 3,
-        name: 'blue_black',
-        title: 'Copertura (cover-up)',
-        description: 'Nuovo tatuaggio sopra il precedente'
-    },
-]
-
+    { id: 1, name: 'head' },
+    { id: 2, name: 'chest' },
+    { id: 3, name: 'upper_legs' },
+    { id: 4, name: 'downer_legs_forearms' },
+    { id: 5, name: 'feet_hands' },
+];
 </script>
 
 <style scoped>

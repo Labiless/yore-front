@@ -18,7 +18,7 @@
     </Transition>
     <div class="fixed bottom-0 w-full">
       <Header v-if="authStore.isAuthenticated" :title="uiStore.title" />
-      <Nav firstIndex="0" v-if="authStore.isAuthenticated" :links :route="route" />
+      <Nav :first-index="0" v-if="authStore.isAuthenticated" :links :route="route" />
     </div>
   </main>
 </template>

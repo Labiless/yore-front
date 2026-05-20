@@ -33,17 +33,13 @@ import { onMounted, ref } from 'vue';
 import { getBatchByUuid, getPrintFile } from '@/services/api.label.service';
 import { Printer, ArrowLeft } from 'lucide-vue-next';
 import router from '@/router';
+import { useRoute } from 'vue-router';
 
 const uiStore = useUiStore();
-const batchData = ref(null);
+const route = useRoute();
+const batchData = ref<any[]>([]);
 
-const batchUuid = (() => {
-    try {
-        return router.resolve().params.labelsUuid as string;
-    } catch {
-        return '';
-    }
-})()
+const batchUuid = typeof route.params.labelsUuid === 'string' ? route.params.labelsUuid : '';
 
 onMounted(async () => {
     uiStore.title = "Lotto etichette";
@@ -51,7 +47,7 @@ onMounted(async () => {
     console.log(batchUuid);
     // @ts-ignore
     batchData.value = await getBatchByUuid(batchUuid);
-    console.log(batchData.value[0].uuid);
+    if (batchData.value[0]) console.log(batchData.value[0].uuid);
     uiStore.loading = false;
 });
 

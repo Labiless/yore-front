@@ -138,6 +138,7 @@ import Button from '@shared/components/ui/button/Button.vue';
 import { getLabelsByUser } from '@/services/api.label.service';
 import { tattooService } from '@/services/api.tattoo.service'
 import router from '@/router';
+import { useRoute } from 'vue-router';
 import {
     Accordion,
     AccordionContent,
@@ -147,21 +148,16 @@ import {
 
 const uiStore = useUiStore();
 const usersStore = useUsersStore();
+const route = useRoute();
 const transitionDirection = ref('next');
 
 const showTab = ref(0)
 
 const searchUuid = ref('');
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const selectedUser = ref(null);
+const selectedUser = ref<any>(null);
 
-const userUuid = (() => {
-    try {
-        return router.resolve().params.userUuid as string;
-    } catch {
-        return '';
-    }
-})()
+const userUuid = typeof route.params.userUuid === 'string' ? route.params.userUuid : '';
 
 const isValidUuid = (uuid: string) => {
     return uuidRegex.test(uuid);
@@ -182,7 +178,7 @@ onMounted(async () => {
     uiStore.loading = true;
     //if (!usersStore.allUsers.length) {
     let allUsers = await getAllUsers();
-    allUsers = allUsers.filter(el => el.role !== 'admin');
+    allUsers = allUsers.filter((el: { role?: string }) => el.role !== 'admin');
     usersStore.allUsers = allUsers.sort((a: any, b: any) => b.id - a.id);
     //}
     if (userUuid) {
@@ -196,13 +192,14 @@ onBeforeUnmount(() => {
 });
 
 const showUser = async (uuid: string) => {
-    console.log(uuid);
     transitionDirection.value = 'next';
     usersStore.userUuid = uuid;
-    selectedUser.value = usersStore.allUsers.filter(el => el.uuid === uuid)[0];
-    const inks = await getLabelsByUser(selectedUser.value.uuid);
-    const tattoos = await tattooService.getTattoosByUserUuid(selectedUser.value.uuid);
-    selectedUser.value.tattoos = tattoos.filter(el => el !== '');
+    const user = usersStore.allUsers.find((el: { uuid: string }) => el.uuid === uuid);
+    if (!user) return;
+    selectedUser.value = user;
+    const inks = await getLabelsByUser(user.uuid);
+    const tattoos = await tattooService.getTattoosByUserUuid(user.uuid);
+    selectedUser.value.tattoos = tattoos.filter((el: string) => el !== '');
     selectedUser.value.inks = inks;
 }
 

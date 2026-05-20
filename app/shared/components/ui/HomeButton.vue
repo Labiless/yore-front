@@ -12,13 +12,15 @@
 <script setup lang="ts">
 import * as icons from "lucide-vue-next";
 import Button from './button/Button.vue';
-import { computed } from 'vue';
+import { computed, type Component } from 'vue';
 
 const props = defineProps<{
     link: string,
     icon: string
 }>();
 
-const icon = computed(() => icons[props.icon]);
+const icon = computed(
+    () => icons[props.icon as keyof typeof icons] as Component | undefined,
+);
 
 </script>

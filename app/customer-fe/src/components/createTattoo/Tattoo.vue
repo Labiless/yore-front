@@ -49,8 +49,13 @@ const selectFile = () => {
 }
 
 const uploadImage = async (img: any) => {
+    const tattooUuid = createTattoStore.uuid;
+    if (!tattooUuid) {
+        uiStore.setToast('Completa prima i dati cliente', 'error');
+        return;
+    }
     uiStore.loading = true;
-    const updatedTattoo = await addImage(createTattoStore.uuid, img);
+    const updatedTattoo = await addImage(tattooUuid, img);
     createTattoStore.photoUrl = updatedTattoo.url;
     uiStore.loading = false;
     uiStore.setToast('Immagine aggiunta')

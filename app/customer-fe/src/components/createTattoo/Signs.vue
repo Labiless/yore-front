@@ -30,8 +30,8 @@ import { saveSigns, getTattoByUuid } from '@/services/api.tattoo.service';
 import { useUiStore } from '@/stores/ui';
 import { useTatoosStore } from '@/stores/tattoos.store';
 
-const customerSign = ref(null);
-const userSign = ref(null);
+const customerSign = ref<{ saveSignature: () => string } | null>(null);
+const userSign = ref<{ saveSignature: () => string } | null>(null);
 const createTattooStore = useCreateTattoStore();
 const uiStore = useUiStore();
 const tattoosStore = useTatoosStore();
@@ -42,14 +42,25 @@ onMounted(() => {
 
 const saveSignature = async () => {
     uiStore.loading = true;
+    const tattooUuid = createTattooStore.uuid;
+    if (!tattooUuid || !customerSign.value || !userSign.value) {
+        uiStore.loading = false;
+        uiStore.setToast('Dati mancanti per salvare le firme', 'error');
+        return;
+    }
 
     const sign1 = customerSign.value.saveSignature();
     const sign2 = userSign.value.saveSignature();
-    const res = await saveSigns(createTattooStore.uuid, sign1, sign2);
+    if (!sign1 || !sign2) {
+        uiStore.loading = false;
+        uiStore.setToast('Firma mancante', 'error');
+        return;
+    }
+    const res = await saveSigns(tattooUuid, sign1, sign2);
     createTattooStore.customerSign = res.customerUrl;
     createTattooStore.userSign = res.userUrl;
 
-    const updatedTattoo = await getTattoByUuid(createTattooStore.uuid);
+    const updatedTattoo = await getTattoByUuid(tattooUuid);
     tattoosStore.tattoos = tattoosStore.tattoos.map(tattoo => tattoo.uuid === updatedTattoo.uuid ? updatedTattoo : tattoo)
     tattoosStore.tattoos = tattoosStore.tattoos.sort((a: any, b: any) => b.id - a.id)
 

@@ -129,7 +129,7 @@ onMounted(async () => {
         // usa i fallback locali
     }
     if (!createTattoStore.kirbyDesay.color && inkColors.value.length === 1) {
-        createTattoStore.kirbyDesay.color = inkColors.value[0];
+        createTattoStore.kirbyDesay.color = inkColors.value[0] ?? 'black';
     }
 });
 

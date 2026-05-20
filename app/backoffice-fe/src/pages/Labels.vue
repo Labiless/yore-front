@@ -73,9 +73,11 @@ import { useLabelsStore } from '@/stores/lables.store';
 import Input from '@shared/components/ui/input/Input.vue';
 import Button from '@shared/components/ui/button/Button.vue';
 import router from '@/router';
+import { useRoute } from 'vue-router';
 
 const uiStore = useUiStore();
 const labelsStore = useLabelsStore();
+const route = useRoute();
 const transitionDirection = ref('next');
 
 const showTab = ref(0);
@@ -83,13 +85,7 @@ const showTab = ref(0);
 const searchUuid = ref('');
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-const batchUuid = (() => {
-    try {
-        return router.resolve().params.labelsUuid as string;
-    } catch {
-        return '';
-    }
-})()
+const batchUuid = typeof route.params.labelsUuid === 'string' ? route.params.labelsUuid : '';
 
 const isValidUuid = (uuid: string) => {
     return uuidRegex.test(uuid);

@@ -50,9 +50,9 @@ const userStore = useUserStore();
 const uiStore = useUiStore();
 const isCameraOpen = ref(false);
 const videoEl = ref<HTMLVideoElement | null>(null);
-const devices = ref(null)
-const codeReader = ref(null);
-const controls = ref(null);
+const devices = ref<MediaDeviceInfo[]>([]);
+const codeReader = ref<BrowserQRCodeReader | null>(null);
+const controls = ref<{ stop: () => void } | null>(null);
 
 onBeforeUnmount(() => {
     stopScanner();
@@ -60,18 +60,24 @@ onBeforeUnmount(() => {
 
 const addInk = async () => {
     uiStore.loading = true;
+    const tattooUuid = createTattoStore.uuid;
+    if (!tattooUuid) {
+        uiStore.loading = false;
+        uiStore.setToast('Completa prima i dati cliente', 'error');
+        return;
+    }
     if (inkUuid.value) {
         try {
             const ink = await apiLabelService.getLabelByUuid(inkUuid.value);
             if (ink && ink.burningDate === null && ink.userUuid === userStore.getUiid) {
                 await apiLabelService.updateLabelByUuid(ink.uuid, {
                     burningDate: new Date(),
-                    tattooUuid: createTattoStore.uuid,
+                    tattooUuid,
                 });
                 inkUuid.value = '';
                 const inks = [...createTattoStore.inks, ink.uuid]
                 const updatedTattoo = await updateTattoo(
-                    createTattoStore.uuid,
+                    tattooUuid,
                     {
                         inks,
                         status: 'PROGRESS',
@@ -112,16 +118,16 @@ const scanInk = async () => {
     }
 }
 
-const startScanner = async (deviceId = undefined) => {
+const startScanner = async (deviceId?: string) => {
     isCameraOpen.value = true;
-    //label
+    if (!videoEl.value) return;
     try {
         codeReader.value = new BrowserQRCodeReader();
         devices.value = await BrowserQRCodeReader.listVideoInputDevices();
         controls.value = await codeReader.value.decodeFromVideoDevice(
-            deviceId || devices.value[0]?.deviceId,
+            deviceId ?? devices.value[0]?.deviceId,
             videoEl.value,
-            (result, err) => {
+            (result: { getText: () => string } | undefined, _err: unknown) => {
                 if (result) {
                     stopScanner(); // chiudi dopo il primo match (comportamento tipico)
                     inkUuid.value = result.getText();
@@ -143,10 +149,7 @@ const stopScanner = () => {
     } catch { }
     controls.value = null;
 
-    try {
-        codeReader.value?.reset();
-    } catch { }
-    controls.value = null;
+    codeReader.value = null;
     isCameraOpen.value = false;
 }
 

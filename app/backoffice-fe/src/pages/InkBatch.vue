@@ -22,17 +22,13 @@ import { onMounted, ref } from 'vue';
 import { getBatchByUuid } from '@/services/api.ink.service';
 import { ArrowLeft } from 'lucide-vue-next';
 import router from '@/router';
+import { useRoute } from 'vue-router';
 
 const uiStore = useUiStore();
-const batchData = ref(null);
+const route = useRoute();
+const batchData = ref<any[]>([]);
 
-const batchUuid = (() => {
-    try {
-        return router.resolve().params.batchUuid as string;
-    } catch {
-        return '';
-    }
-})()
+const batchUuid = typeof route.params.batchUuid === 'string' ? route.params.batchUuid : '';
 
 onMounted(async () => {
     uiStore.title = "Lotto caricato";

@@ -2,8 +2,8 @@ import { defineStore } from 'pinia';
 
 export const useUsersStore = defineStore('users', {
   state: () => ({
-    allUsers : [],
-    userData: null,
+    allUsers: [] as any[],
+    userData: null as any,
     userUuid : '',
   }),
 

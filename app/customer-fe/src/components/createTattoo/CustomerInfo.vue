@@ -126,9 +126,14 @@ const onsubmit = async () => {
             createTattoStore.uuid = newTattoo.uuid;
             createTattoStore.id = newTattoo.id;
         }
-        // @ts-ignore
-        const res = await getTattoByUuid(createTattoStore.uuid);
-        tattoosStore.tattoos.push(res)
+        const tattooUuid = createTattoStore.uuid;
+        if (!tattooUuid) {
+            uiStore.setToast('Qualcosa è andato storto', 'error');
+            uiStore.loading = false;
+            return;
+        }
+        const res = await getTattoByUuid(tattooUuid);
+        tattoosStore.tattoos.push(res);
         tattoosStore.tattoos = tattoosStore.tattoos.sort((a: any, b: any) => b.id - a.id)
         uiStore.loading = false;
         uiStore.setToast('Dati cliente aggiunti correttamente');

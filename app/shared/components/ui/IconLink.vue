@@ -6,14 +6,16 @@
 
 <script setup lang="ts">
 
-import { computed } from 'vue';
+import { computed, type Component } from 'vue';
 import * as icons from "lucide-vue-next";
 
 const props = defineProps<{
-    icon: any,
+    icon: string,
     link: string
 }>();
 
-const icon = computed(() => icons[props.icon]);
+const icon = computed(
+    () => icons[props.icon as keyof typeof icons] as Component | undefined,
+);
 
 </script>

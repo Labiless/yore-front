@@ -2,12 +2,12 @@ import { defineStore } from 'pinia';
 
 export const useWharehouseStore = defineStore('warehouse', {
   state: () => ({
-    allBatches : [],
-    warehouse : [],
-    batchUuid : '',
-    batchData : [],
-    inkUuid : '',
-    inkData : {}
+    allBatches: [] as any[],
+    warehouse: [] as any[],
+    batchUuid: '',
+    batchData: [] as any[],
+    inkUuid: '',
+    inkData: {} as Record<string, unknown>,
   }),
 
   getters: {

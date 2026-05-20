@@ -29,7 +29,7 @@
                 <p class="text-2xl mx-2 font-bold">x{{ availableInks.length }}</p>
                 <div class="flex items-center border-l-1 border-black ml-2">
                     <droplet class="m-2" />
-                    <p class="font-bold">{{ inkTypes[0].name }} - {{ inkTypes[0].color }}</p>
+                    <p class="font-bold">{{ inkTypes[0]?.name }} - {{ inkTypes[0]?.color }}</p>
                 </div>
             </div>
             <div v-else>
@@ -40,7 +40,7 @@
                     <div class="w-full">
                         <div class="flex justify-between w-full">
                             <div>
-                                <p class="font-bold">{{ inkTypes[0].name }} - {{ inkTypes[0].color }}</p>
+                                <p class="font-bold">{{ inkTypes[0]?.name }} - {{ inkTypes[0]?.color }}</p>
                                 <p class="text-xs text-gray-500">{{ ink.uuid }}</p>
                                 <p class="text-xs text-gray-500">utilizzato il: {{ ink.burningDate.split("T")[0] }}
                                 </p>
@@ -68,10 +68,10 @@ import { useUserStore } from '@/stores/user.store';
 
 const uiStore = useUiStore();
 const userStore = useUserStore();
-const inks = ref([]);
-const usedInks = ref([]);
-const availableInks = ref([]);
-const inkTypes = ref([]);
+const inks = ref<any[]>([]);
+const usedInks = ref<any[]>([]);
+const availableInks = ref<any[]>([]);
+const inkTypes = ref<any[]>([]);
 const selectedink = ref('');
 
 const showTab = ref(0)

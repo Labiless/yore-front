@@ -112,7 +112,7 @@ const uiStore = useUiStore();
 const tattoosStore = useTatoosStore();
 const createTattooStore = useCreateTattoStore();
 const userStore = useUserStore();
-const activeTattoo = ref(null) as null | undefined | any;
+const activeTattoo = ref<any>(null);
 const activeDelete = ref(false);
 const route = useRoute();
 

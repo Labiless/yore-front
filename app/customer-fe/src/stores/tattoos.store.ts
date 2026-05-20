@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 
 export const useTatoosStore = defineStore('tattoos', {
   state: () => ({
-    tattoos : []
+    tattoos: [] as any[],
   }),
 
   getters: {

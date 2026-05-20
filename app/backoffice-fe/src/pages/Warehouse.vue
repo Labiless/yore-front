@@ -74,7 +74,7 @@
                             <Button class="text-xs">Analisi microbiologiche</Button>
                         </a>
                     </div>
-                    <div @click="showBatch(batch.uuid)"
+                    <div @click="showInk(ink.uuid)"
                         class="flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:p-6"
                         :class="`${''}`" v-for="ink in warehouseStore.batchData">
                         <p class="font-bold text-md">{{ ink.id }}</p>
@@ -106,17 +106,11 @@ import { useUiStore } from '@/stores/ui';
 import { useWharehouseStore } from '@/stores/warehouse.store';
 import Input from '@shared/components/ui/input/Input.vue';
 import Button from '@shared/components/ui/button/Button.vue';
-import router from '@/router';
+import { useRoute } from 'vue-router';
 
 const showTab = ref(0);
-
-const batchUuid = (() => {
-    try {
-        return router.resolve().params.batchUuid as string;
-    } catch {
-        return '';
-    }
-})()
+const route = useRoute();
+const batchUuid = typeof route.params.batchUuid === 'string' ? route.params.batchUuid : '';
 
 const uiStore = useUiStore();
 const warehouseStore = useWharehouseStore();

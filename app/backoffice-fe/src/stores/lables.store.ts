@@ -2,11 +2,11 @@ import { defineStore } from 'pinia';
 
 export const useLabelsStore = defineStore('lables', {
   state: () => ({
-    allBatches : [],
-    batchUuid : '',
-    batchData : [],
-    labelUuid : '',
-    labelData : {}
+    allBatches: [] as any[],
+    batchUuid: '',
+    batchData: [] as any[],
+    labelUuid: '',
+    labelData: {} as Record<string, unknown>,
   }),
 
   getters: {

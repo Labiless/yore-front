@@ -8,18 +8,13 @@
 import { useUiStore } from '@/stores/ui';
 import { onMounted, ref } from 'vue';
 import { getInkByUuid } from '@/services/api.ink.service';
-import router from '@/router';
+import { useRoute } from 'vue-router';
 
 const uiStore = useUiStore();
-const inkData = ref(null);
+const route = useRoute();
+const inkData = ref<any>(null);
 
-const inkUuid = (() => {
-    try {
-        return router.resolve().params.inkUuid as string;
-    } catch {
-        return '';
-    }
-})()
+const inkUuid = typeof route.params.inkUuid === 'string' ? route.params.inkUuid : '';
 
 onMounted(async () => {
     uiStore.title = "Singolo inchiostro";

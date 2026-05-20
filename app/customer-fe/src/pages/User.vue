@@ -39,7 +39,7 @@ import { User } from 'lucide-vue-next';
 
 const uiStore = useUiStore();
 const userStore = useUserStore();
-const user = ref(null);
+const user = ref<any>(null);
 
 onMounted(async () => {
     uiStore.title = "Utente";

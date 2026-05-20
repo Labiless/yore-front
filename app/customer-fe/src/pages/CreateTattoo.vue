@@ -53,7 +53,7 @@ import { onMounted, ref } from 'vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
 import { getTattoByUuid, closeTattoo, getAllTattoos, createCertificatePdf, createGdprPdf, createReleaseFormPdf } from '@/services/api.tattoo.service';
 import { getCustomerByUuid } from '@/services/api.customer.service';
-import { getTattooPhotoUrl, hasKirbyDesayData } from '@/constants/tattoo.config';
+import { hasKirbyDesayData } from '@/constants/tattoo.config';
 import { apiLabelService, inkLabelService } from '@/services/api.inks.service';
 import router from '@/router';
 import { useUserStore } from '@/stores/user.store';
@@ -112,7 +112,7 @@ onMounted(async () => {
             });
         }
         createTattoStore.tattooArtist = tattoo.tattooArtist;
-        createTattoStore.photoUrl = getTattooPhotoUrl(tattoo.photoUrl);
+        createTattoStore.syncPhotosFromApi(tattoo.photoUrl);
         createTattoStore.customerSign = tattoo.customerSign;
         createTattoStore.userSign = tattoo.userSign;
     }

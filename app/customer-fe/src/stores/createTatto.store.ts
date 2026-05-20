@@ -32,7 +32,8 @@ export const useCreateTattoStore = defineStore('createTattoo', {
         },
         inks: [] as string[],
         tattooArtist: undefined as string | undefined,
-        photoUrl: undefined as string | undefined,
+        photoBeforeUrl: undefined as string | undefined,
+        photoAfterUrl: undefined as string | undefined,
         customerSign: undefined as string | undefined,
         userSign: undefined as string | undefined,
     }),
@@ -125,7 +126,8 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             };
             this.inks = [];
             this.tattooArtist = undefined;
-            this.photoUrl = undefined;
+            this.photoBeforeUrl = undefined;
+            this.photoAfterUrl = undefined;
             this.customerSign = undefined;
             this.userSign = undefined;
         },
@@ -212,7 +214,17 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             return this.inks.length > 0;
         },
         tattooPhotoValidation() {
-            return !!this.photoUrl && !!this.tattooArtist;
+            return !!this.photoBeforeUrl && !!this.photoAfterUrl && !!this.tattooArtist;
+        },
+        syncPhotosFromApi(photoUrl: string | string[] | null | undefined) {
+            const photos = Array.isArray(photoUrl) ? photoUrl : photoUrl ? [photoUrl] : [];
+            this.photoBeforeUrl = photos[0];
+            this.photoAfterUrl = photos[1];
+        },
+        buildPhotoUrlPayload(): string[] {
+            return [this.photoBeforeUrl, this.photoAfterUrl].filter(
+                (url): url is string => !!url,
+            );
         },
         signValidation() {
             return !!this.customerSign && !!this.userSign;

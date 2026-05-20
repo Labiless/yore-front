@@ -49,6 +49,18 @@ export function getTattooPhotoUrl(photoUrl: string | string[] | null | undefined
   return Array.isArray(photoUrl) ? photoUrl[0] : photoUrl;
 }
 
+/** Indice 0 = prima del tatuaggio, indice 1 = dopo il tatuaggio */
+export function syncTattooPhotos(photoUrl: string | string[] | null | undefined): {
+  before?: string;
+  after?: string;
+} {
+  const arr = Array.isArray(photoUrl) ? photoUrl : photoUrl ? [photoUrl] : [];
+  return {
+    before: arr[0],
+    after: arr[1],
+  };
+}
+
 export function hasKirbyDesayData(tattoo: {
   skinType?: number | null;
   position?: number | null;

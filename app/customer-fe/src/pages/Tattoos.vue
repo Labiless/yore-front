@@ -29,9 +29,9 @@
                         class="flex justify-start items-center shadow-md p-2 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
                         :class="`${activeDelete && isDeletable(tattoo.status) ? 'active-delete' : ''}`"
                         v-for="tattoo in tattoosStore.tattoos">
-                        <img v-if="tattoo.photoUrl" :src="tattoo.photoUrl"
-                            class="w-[30px] h-[30px] rounded-full "></img>
-                        <div v-else :src="tattoo.photoUrl" class="w-[30px] h-[30px] rounded-full bg-gray-500"></div>
+                        <img v-if="listTattooThumb(tattoo.photoUrl)" :src="listTattooThumb(tattoo.photoUrl)"
+                            class="w-[30px] h-[30px] rounded-full object-cover" alt="" />
+                        <div v-else class="w-[30px] h-[30px] rounded-full bg-gray-500"></div>
                         <div class="pl-4 flex justify-between items-center w-11/12">
                             <div>
                                 <p class="capitalize -mb-1 text-md font-bold"><span class="font-medium text-xs">#{{
@@ -68,12 +68,18 @@
                             <p class="text-xs">{{ activeTattoo.creationDate.split('T')[0] }}</p>
                             <p class="text-xs opacity-60">{{ activeTattoo.uuid }}</p>
                         </div>
-                        <img
-                            v-if="tattooPhotoUrl"
-                            :src="tattooPhotoUrl"
-                            class="w-1/2 border-2 mb-4"
-                            alt="Foto tatuaggio"
-                        />
+                        <div v-if="tattooPhotos.before || tattooPhotos.after" class="flex gap-2 mb-4 flex-wrap">
+                            <div v-if="tattooPhotos.before" class="w-1/2 min-w-[140px]">
+                                <p class="text-xs font-bold mb-1">Prima</p>
+                                <img :src="tattooPhotos.before" class="w-full border-2 rounded-md object-cover"
+                                    alt="Prima del tatuaggio" />
+                            </div>
+                            <div v-if="tattooPhotos.after" class="w-1/2 min-w-[140px]">
+                                <p class="text-xs font-bold mb-1">Dopo</p>
+                                <img :src="tattooPhotos.after" class="w-full border-2 rounded-md object-cover"
+                                    alt="Dopo il tatuaggio" />
+                            </div>
+                        </div>
                         <div class="mb-4">
                             <p class="font-bold">Caratteristiche del tatuaggio</p>
                             <p>Colore: {{ inkColorLabel }}</p>
@@ -96,7 +102,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { useTatoosStore } from '@/stores/tattoos.store';
 import { deleteTattoo, getTattoosByUserUuid } from '@/services/api.tattoo.service';
 import {
-    getTattooPhotoUrl,
+    syncTattooPhotos,
     INK_COLOR_LABELS,
     TATTOO_TYPE_LABELS,
 } from '@/constants/tattoo.config';
@@ -116,9 +122,14 @@ const activeTattoo = ref<any>(null);
 const activeDelete = ref(false);
 const route = useRoute();
 
-const tattooPhotoUrl = computed(() =>
-    activeTattoo.value ? getTattooPhotoUrl(activeTattoo.value.photoUrl) : undefined,
+const tattooPhotos = computed(() =>
+    activeTattoo.value ? syncTattooPhotos(activeTattoo.value.photoUrl) : {},
 );
+
+const listTattooThumb = (photoUrl: string | string[] | null | undefined) => {
+    const { after, before } = syncTattooPhotos(photoUrl);
+    return after ?? before;
+};
 const inkColorLabel = computed(() => {
     const color = activeTattoo.value?.color;
     if (!color) return '—';

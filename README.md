@@ -1,1 +1,1 @@
-Yore FE test deployment
+Yore FE

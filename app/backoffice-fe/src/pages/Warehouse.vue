@@ -19,8 +19,10 @@
             </Button>
         </div>
         <div v-show="showTab === 0" class="pb-50">
-            <div class="flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:p-6"
-                v-for="inks in warehouseStore.warehouse">
+            <div v-if="warehouseStore.warehouse.length"
+                class="flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:p-6"
+                v-for="inks in warehouseStore.warehouse"
+                :key="inks.uuid">
                 <p class="font-bold text-2xl">x{{ inks.amount }}</p>
                 <div class="pl-4 flex justify-between items-center w-11/12">
                     <div>
@@ -31,66 +33,77 @@
                     </div>
                 </div>
             </div>
+            <p v-else class="text-sm text-gray-600 px-1">nessun inchiostro</p>
         </div>
         <div v-show="showTab === 1" class="pb-50">
             <Transition>
                 <div v-if="!warehouseStore.batchUuid">
-                    <div @click="showBatch(batch.uuid)"
-                        class="flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:p-6"
-                        v-for="batch in warehouseStore.allBatches">
-                        <p class="font-bold text-2xl">x{{ batch.amount }}</p>
-                        <div class="pl-4 flex justify-between items-center w-11/12">
-                            <div>
-                                <p class="flex capitalize text-md font-bold -translate-x-2">
-                                    <Calendar class="scale-75" />{{ batch.creationDate.split('T')[0] }}
-                                </p>
-                                <p class="flex capitalize text-xs -translate-x-2">{{ batch.uuid }}</p>
+                    <div v-if="warehouseStore.allBatches.length">
+                        <div @click="showBatch(batch.uuid)"
+                            class="flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:p-6"
+                            v-for="batch in warehouseStore.allBatches"
+                            :key="batch.uuid">
+                            <p class="font-bold text-2xl">x{{ batch.amount }}</p>
+                            <div class="pl-4 flex justify-between items-center w-11/12">
+                                <div>
+                                    <p class="flex capitalize text-md font-bold -translate-x-2">
+                                        <Calendar class="scale-75" />{{ batch.creationDate.split('T')[0] }}
+                                    </p>
+                                    <p class="flex capitalize text-xs -translate-x-2">{{ batch.uuid }}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <p v-else class="text-sm text-gray-600 px-1">nessun lotto</p>
                 </div>
-                <div v-else>
-                    <div class="flex items-center mb-4">
-                        <ArrowLeft @click="warehouseStore.batchUuid = '';" class="hover:cursor-pointer mr-2" />
-                        <p class="font-bold text-md flex -translate-x-2">
-                            <Calendar class="scale-75" /> {{ warehouseStore.batchData[0].creationDate.split('T')[0] }} /
-                            {{ warehouseStore.batchUuid }}
-                        </p>
-                    </div>
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        <a target="_blank" :href="warehouseStore.batchData[0].inkFormulaUrl">
-                            <Button class="text-xs">Formula Inchiostro</Button>
-                        </a>
-                        <a target="_blank" :href="warehouseStore.batchData[0].sdsUrl">
-                            <Button class="text-xs">Sds</Button>
-                        </a>
-                        <a target="_blank" :href="warehouseStore.batchData[0].sterilizationCertUrl">
-                            <Button class="text-xs">Certificato sterilizzazione</Button>
-                        </a>
-                        <a target="_blank" :href="warehouseStore.batchData[0].chemistryAnalysisUrl">
-                            <Button class="text-xs">Analisi chimiche</Button>
-                        </a>
-                        <a target="_blank" :href="warehouseStore.batchData[0].microbiologicalAnalysisUrl">
-                            <Button class="text-xs">Analisi microbiologiche</Button>
-                        </a>
-                    </div>
-                    <div @click="showInk(ink.uuid)"
-                        class="flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:p-6"
-                        :class="`${''}`" v-for="ink in warehouseStore.batchData">
-                        <p class="font-bold text-md">{{ ink.id }}</p>
-                        <div class="pl-4 flex justify-between items-center w-11/12">
-                            <div>
-                                <p class="flex items-center text-xs" v-if="ink.color">
-                                    <Pipette class="scale-50" />{{ ink.color }}
-                                </p>
-                                <p class="flex items-center text-xs" v-if="ink.labelUuid">
-                                    <Tag class="scale-50" />{{ ink.labelUuid }}
-                                </p>
-                            </div>
-                            <p class="w-3 h-3 rounded-full"
-                                :class="`${ink.labelUuid ? 'bg-orange-500' : 'bg-green-500'}`"></p>
+                <div v-else-if="warehouseStore.batchData.length">
+                    <div class="flex items-start gap-2 mb-4">
+                        <ArrowLeft @click="warehouseStore.batchUuid = '';" class="hover:cursor-pointer shrink-0 mt-1" />
+                        <div class="min-w-0">
+                            <p class="font-bold text-md flex items-center gap-1">
+                                <Calendar class="scale-75 shrink-0" />
+                                {{ batchHeaderDate }}
+                            </p>
+                            <p class="text-xs text-gray-500 break-all">{{ warehouseStore.batchUuid }}</p>
                         </div>
                     </div>
+
+                    <div v-if="batchDocuments.length" class="mb-4">
+                        <p class="text-sm font-semibold text-gray-700 mb-2">Documenti</p>
+                        <ul class="flex flex-col gap-2">
+                            <li v-for="doc in batchDocuments" :key="doc.label">
+                                <a
+                                    :href="doc.url"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="block"
+                                >
+                                    <Button
+                                        type="button"
+                                        class="w-full h-11 justify-start px-4 text-sm font-normal bg-white text-black border border-gray-200 shadow-sm hover:bg-blue-50"
+                                    >
+                                        <FileText class="size-4 mr-2 shrink-0" />
+                                        {{ doc.label }}
+                                    </Button>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <section v-if="batchInkSummary">
+                        <p class="text-sm font-semibold text-gray-700 mb-2">Inchiostri nel lotto</p>
+                        <div
+                            class="flex justify-start items-center shadow-md p-4 pl-4 bg-white rounded-md w-full h-fit">
+                            <p class="font-bold text-2xl">x{{ batchInkSummary.count }}</p>
+                            <div class="pl-4 flex items-center border-l border-black ml-2 min-w-0">
+                                <Droplet class="m-2 shrink-0" />
+                                <div class="min-w-0">
+                                    <p class="font-bold capitalize truncate">{{ batchInkSummary.name }}</p>
+                                    <p class="text-xs text-gray-600 truncate">{{ batchInkSummary.color }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             </Transition>
         </div>
@@ -99,9 +112,9 @@
 
 <script setup lang="ts">
 
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, computed } from 'vue';
 import { getBatchByUuid, getInkByUuid } from "@/services/api.ink.service";
-import { ArrowLeft, Pipette, Tag, Download, Search, Plus, Droplet, Warehouse, Calendar } from 'lucide-vue-next';
+import { ArrowLeft, FileText, Search, Plus, Droplet, Calendar } from 'lucide-vue-next';
 import { useUiStore } from '@/stores/ui';
 import { useWharehouseStore } from '@/stores/warehouse.store';
 import Input from '@shared/components/ui/input/Input.vue';
@@ -115,6 +128,35 @@ const batchUuid = typeof route.params.batchUuid === 'string' ? route.params.batc
 const uiStore = useUiStore();
 const warehouseStore = useWharehouseStore();
 const transitionDirection = ref('next');
+
+const batchHeaderDate = computed(() => {
+    const first = warehouseStore.batchData[0];
+    if (!first?.creationDate) return '';
+    return String(first.creationDate).split('T')[0];
+});
+
+const batchDocuments = computed(() => {
+    const first = warehouseStore.batchData[0];
+    if (!first) return [];
+    return [
+        { label: 'Formula inchiostro', url: first.inkFormulaUrl },
+        { label: 'SDS', url: first.sdsUrl },
+        { label: 'Certificato sterilizzazione', url: first.sterilizationCertUrl },
+        { label: 'Analisi chimiche', url: first.chemistryAnalysisUrl },
+        { label: 'Analisi microbiologiche', url: first.microbiologicalAnalysisUrl },
+    ].filter((doc) => !!doc.url);
+});
+
+const batchInkSummary = computed(() => {
+    const data = warehouseStore.batchData;
+    if (!data.length) return null;
+    const first = data[0];
+    return {
+        count: data.length,
+        name: first.inkType ?? 'Inchiostro',
+        color: first.color ?? '',
+    };
+});
 
 const searchUuid = ref('');
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -156,15 +198,7 @@ const showBatch = async (uuid: string) => {
     transitionDirection.value = 'next';
     warehouseStore.batchUuid = uuid;
     warehouseStore.batchData = await getBatchByUuid(warehouseStore.batchUuid);
-    console.log(warehouseStore.batchUuid)
-    console.log(warehouseStore.batchData)
-}
-
-const showInk = async (uuid: string) => {
-    transitionDirection.value = 'next';
-    warehouseStore.inkUuid = uuid;
-    warehouseStore.inkData = await getInkByUuid(uuid);
-}
+};
 
 </script>
 

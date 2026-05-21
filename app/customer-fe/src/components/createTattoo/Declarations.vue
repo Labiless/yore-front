@@ -7,21 +7,39 @@
     </p>
     <p class="text-xs text-center text-gray-600 mb-4 px-2">Il soggetto dichiara (rispondere sì o no a ogni voce):</p>
     <hr />
-    <div class="flex flex-col gap-4 max-h-[50vh] overflow-y-auto hide-scrollbar pb-4">
+    <div class="flex flex-col gap-4">
         <div v-for="question in DECLARATION_QUESTIONS" :key="question.key"
             class="shadow-md bg-white rounded-md p-3">
             <p class="text-sm mb-2">{{ question.label }}</p>
             <div class="grid grid-cols-2 gap-2">
-                <Button type="button" class="h-10"
-                    :class="createTattoStore.declarations[question.key] === true ? 'border-2 border-blue-400' : ''"
-                    @click="setAnswer(question.key, true)">
+                <label
+                    class="h-10 flex items-center justify-center gap-2 rounded-md border bg-white cursor-pointer select-none"
+                    :class="createTattoStore.declarations[question.key] === true ? 'border-2 border-blue-400' : 'border-gray-200'"
+                >
+                    <input
+                        type="radio"
+                        class="size-4 shrink-0 accent-blue-600"
+                        :name="question.key"
+                        :value="true"
+                        v-model="createTattoStore.declarations[question.key]"
+                        @change="setAnswer(question.key, true)"
+                    />
                     Sì
-                </Button>
-                <Button type="button" class="h-10"
-                    :class="createTattoStore.declarations[question.key] === false ? 'border-2 border-blue-400' : ''"
-                    @click="setAnswer(question.key, false)">
+                </label>
+                <label
+                    class="h-10 flex items-center justify-center gap-2 rounded-md border bg-white cursor-pointer select-none"
+                    :class="createTattoStore.declarations[question.key] === false ? 'border-2 border-blue-400' : 'border-gray-200'"
+                >
+                    <input
+                        type="radio"
+                        class="size-4 shrink-0 accent-blue-600"
+                        :name="question.key"
+                        :value="false"
+                        v-model="createTattoStore.declarations[question.key]"
+                        @change="setAnswer(question.key, false)"
+                    />
                     No
-                </Button>
+                </label>
             </div>
             <Input v-if="question.detailKey && createTattoStore.declarations[question.key] === true"
                 class="mt-2"

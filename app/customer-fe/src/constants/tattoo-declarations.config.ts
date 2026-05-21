@@ -122,27 +122,28 @@ export const DECLARATION_QUESTIONS: {
 
 export const DECLARATION_ANSWER_KEYS = DECLARATION_QUESTIONS.map((q) => q.key);
 
+/** Tutte le voci partono da No; l'utente può cambiare in Sì dove necessario. */
 export function createEmptyDeclarations(): TattooDeclarationsState {
   return {
-    declPreviousPigmentation: null,
-    declPreviousBotoxFiller: null,
-    declHypertrophicScarsKeloids: null,
-    declHeartConditions: null,
-    declPacemaker: null,
-    declSkinDiseases: null,
+    declPreviousPigmentation: false,
+    declPreviousBotoxFiller: false,
+    declHypertrophicScarsKeloids: false,
+    declHeartConditions: false,
+    declPacemaker: false,
+    declSkinDiseases: false,
     declSkinDiseasesDetail: '',
-    declHepatitisAidsEtc: null,
-    declPsoriasisFamily: null,
+    declHepatitisAidsEtc: false,
+    declPsoriasisFamily: false,
     declPsoriasisFamilyDetail: '',
-    declRadioChemoLast18Months: null,
-    declChronicMedication: null,
-    declPregnancyBreastfeeding: null,
-    declMetalAllergy: null,
-    declBloodThinners: null,
-    declConsentPhotosMarketing: null,
-    declConsentDesignStencil: null,
-    declConsentYoreInkSingleUse: null,
-    declConsentYoreInkNewSealed: null,
+    declRadioChemoLast18Months: false,
+    declChronicMedication: false,
+    declPregnancyBreastfeeding: false,
+    declMetalAllergy: false,
+    declBloodThinners: false,
+    declConsentPhotosMarketing: false,
+    declConsentDesignStencil: false,
+    declConsentYoreInkSingleUse: false,
+    declConsentYoreInkNewSealed: false,
     declMedicalConditionsNotes: '',
   };
 }

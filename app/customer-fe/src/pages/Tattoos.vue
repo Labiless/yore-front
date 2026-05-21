@@ -26,21 +26,35 @@
             <Transition>
                 <div v-if="!activeTattoo">
                     <div v-show="showIfStatus(tattoo.status)" @click="onclickTattoo(tattoo)"
-                        class="flex justify-start items-center shadow-md p-2 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
+                        class="flex items-start gap-3 shadow-md p-2 pl-4 pr-3 bg-white mb-4 rounded-md w-full hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
                         :class="`${activeDelete && isDeletable(tattoo.status) ? 'active-delete' : ''}`"
-                        v-for="tattoo in tattoosStore.tattoos">
-                        <img v-if="listTattooThumb(tattoo.photoUrl)" :src="listTattooThumb(tattoo.photoUrl)"
-                            class="w-[30px] h-[30px] rounded-full object-cover" alt="" />
-                        <div v-else class="w-[30px] h-[30px] rounded-full bg-gray-500"></div>
-                        <div class="pl-4 flex justify-between items-center w-11/12">
-                            <div>
-                                <p class="capitalize -mb-1 text-md font-bold"><span class="font-medium text-xs">#{{
-                                    tattoo.id }}</span> {{ tattoo.customerName }}</p>
-                                <p class="flex items-center text-xs -translate-x-1 opacity-60">
-                                    <Calendar class="scale-50" />{{ tattoo.creationDate.split("T")[0] }}
-                                </p>
+                        v-for="tattoo in tattoosStore.tattoos"
+                        :key="tattoo.uuid">
+                        <div class="shrink-0 w-[30px] h-[30px] mt-0.5">
+                            <img v-if="listTattooThumb(tattoo.photoUrl)" :src="listTattooThumb(tattoo.photoUrl)"
+                                class="w-[30px] h-[30px] min-w-[30px] min-h-[30px] rounded-full object-cover"
+                                alt="" />
+                            <div v-else class="w-[30px] h-[30px] min-w-[30px] min-h-[30px] rounded-full bg-gray-500"></div>
+                        </div>
+                        <div class="flex-1 min-w-0 flex gap-2 py-0.5">
+                            <div class="flex flex-col items-center gap-1.5 shrink-0 w-7 pt-0.5">
+                                <span class="text-xs font-medium text-gray-700">#{{ tattoo.id }}</span>
+                                <Calendar class="size-3.5 shrink-0 opacity-60" />
+                                <Droplet v-if="hasAssociatedInk(tattoo)" class="size-3.5 shrink-0 text-gray-600" />
                             </div>
-                            <div class="w-3 h-3 rounded-full mb-2 mr-4" :class="`${getStatusColor(tattoo.status)}`">
+                            <div class="flex-1 min-w-0 flex flex-col gap-1">
+                                <div class="flex items-start gap-2">
+                                    <p class="flex-1 min-w-0 capitalize text-md font-bold leading-tight truncate">
+                                        {{ tattoo.customerName }}
+                                    </p>
+                                    <div class="w-3 h-3 rounded-full shrink-0 mt-1" :class="getStatusColor(tattoo)"></div>
+                                </div>
+                                <p class="text-xs opacity-60">{{ tattoo.creationDate.split("T")[0] }}</p>
+                                <p v-if="hasAssociatedInk(tattoo)"
+                                    class="text-xs text-gray-600 truncate leading-snug"
+                                    :title="associatedInkIds(tattoo)">
+                                    {{ associatedInkIds(tattoo) }}
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -94,7 +108,7 @@
 <script setup lang="ts">
 
 import { useUiStore } from '@/stores/ui';
-import { Calendar, Plus, Trash, ArrowLeft } from 'lucide-vue-next';
+import { Calendar, Plus, Trash, ArrowLeft, Droplet } from 'lucide-vue-next';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useTatoosStore } from '@/stores/tattoos.store';
 import { deleteTattoo, getTattoosByUserUuid } from '@/services/api.tattoo.service';
@@ -168,10 +182,17 @@ const isDeletable = (status: string) => {
     return status !== 'CLOSE' && status !== 'PROGRESS';
 }
 
-const getStatusColor = (status: string) => {
-    if (status === 'CLOSE') return "bg-green-500";
-    return "bg-orange-500"
-}
+const hasAssociatedInk = (tattoo: { inks?: string[] }) =>
+    Array.isArray(tattoo.inks) && tattoo.inks.length > 0;
+
+const associatedInkIds = (tattoo: { inks?: string[] }) =>
+    (tattoo.inks ?? []).join(', ');
+
+const getStatusColor = (tattoo: { status: string; inks?: string[] }) => {
+    if (hasAssociatedInk(tattoo)) return 'bg-yellow-500';
+    if (tattoo.status === 'CLOSE') return 'bg-green-500';
+    return 'bg-orange-500';
+};
 
 onMounted(async () => {
     uiStore.loading = true;

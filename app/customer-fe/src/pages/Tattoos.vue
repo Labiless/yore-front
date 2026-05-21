@@ -50,14 +50,11 @@
                         <ArrowLeft @click="goBackToTattoosList" class="hover:cursor-pointer mr-2" />
                     </div>
                     <div class="flex flex-wrap gap-2 mb-4">
-                        <a :href="activeTattoo.certificateUrl" target="_blank">
+                        <a v-if="activeTattoo.certificateUrl" :href="activeTattoo.certificateUrl" target="_blank">
                             <Button class="text-xs">Scarica certificato</Button>
                         </a>
-                        <a :href="activeTattoo.releaseFormUrl" target="_blank">
-                            <Button class="text-xs">Scarica liberatoria</Button>
-                        </a>
-                        <a :href="activeTattoo.gdprUrl" target="_blank">
-                            <Button class="text-xs">Scarica trattamento dati</Button>
+                        <a v-if="activeTattoo.releaseFormUrl" :href="activeTattoo.releaseFormUrl" target="_blank">
+                            <Button class="text-xs">Scarica consenso informato</Button>
                         </a>
                     </div>
                     <div>

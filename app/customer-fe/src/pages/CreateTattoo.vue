@@ -11,6 +11,7 @@
                 v-for="status in allSteps" class="w-10 h-14 bg-white flex flex-col md:mx-4"
                 :class="`${activeStep === status.name ? 'border-2 border-blue-500' : ''}`">
                 <ClipboardList class="text-black" v-if="status.name === 'info'" />
+                <FileText class="text-black" v-if="status.name === 'declarations'" />
                 <PersonStanding class="text-black" v-if="status.name === 'kirbyDesay'" />
                 <Droplet class="text-black" v-if="status.name === 'ink'" />
                 <Brush class="text-black" v-if="status.name === 'tattoo'" />
@@ -21,6 +22,10 @@
         </div>
         <div id="info" class="flex flex-col gap-4 h-1/2 pt-8 pb-12" v-if="activeStep === 'info'">
             <CustomerInfo />
+        </div>
+        <div id="declarations" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 pb-16 pt-8"
+            v-if="activeStep === 'declarations'">
+            <Declarations />
         </div>
         <div id="kirbyDesay" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 pb-16 pt-8"
             v-if="activeStep === 'kirbyDesay'">
@@ -43,17 +48,19 @@
 <script setup lang="ts">
 import Button from '@shared/components/ui/button/Button.vue';
 import CustomerInfo from '@/components/createTattoo/CustomerInfo.vue';
+import Declarations from '@/components/createTattoo/Declarations.vue';
 import KirbyDesay from '@/components/createTattoo/KirbyDesay.vue';
 import Inks from '@/components/createTattoo/Inks.vue';
 import Tattoo from '@/components/createTattoo/Tattoo.vue';
 import Signs from '@/components/createTattoo/Signs.vue';
-import { Brush, Calendar, ClipboardList, Droplet, PenTool, PersonStanding } from 'lucide-vue-next';
+import { Brush, Calendar, ClipboardList, Droplet, FileText, PenTool, PersonStanding } from 'lucide-vue-next';
 import { useUiStore } from '@/stores/ui';
 import { onMounted, ref } from 'vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
-import { getTattoByUuid, closeTattoo, getAllTattoos, createCertificatePdf, createGdprPdf, createReleaseFormPdf } from '@/services/api.tattoo.service';
+import { getTattoByUuid, closeTattoo, getAllTattoos, createCertificatePdf, createInformedConsentPdf } from '@/services/api.tattoo.service';
 import { getCustomerByUuid } from '@/services/api.customer.service';
 import { hasKirbyDesayData } from '@/constants/tattoo.config';
+import { hasDeclarationsData } from '@/constants/tattoo-declarations.config';
 import { apiLabelService, inkLabelService } from '@/services/api.inks.service';
 import router from '@/router';
 import { useUserStore } from '@/stores/user.store';
@@ -69,6 +76,10 @@ const allSteps = [
     {
         name: 'info',
         validation: createTattoStore.infoValidation
+    },
+    {
+        name: 'declarations',
+        validation: createTattoStore.declarationsValidation
     },
     {
         name: 'kirbyDesay',
@@ -102,6 +113,9 @@ onMounted(async () => {
             createTattoStore.initCustomer(customer);
         }
         createTattoStore.inks = tattoo.inks ?? [];
+        if (hasDeclarationsData(tattoo)) {
+            createTattoStore.updateDeclarationsFromApi(tattoo);
+        }
         if (hasKirbyDesayData(tattoo)) {
             createTattoStore.updateKirbyDesay({
                 skinType: tattoo.skinType,
@@ -165,14 +179,13 @@ const submit = async () => {
 
             const certificateUrl = await createCertificatePdf(createTattoStore.uuid, certificateData);
 
-            const releaseFormData = {
-                ...createTattoStore.releaseFormData,
+            const informedConsentData = {
+                ...createTattoStore.informedConsentData,
                 date: getToday(),
                 signPlace: userStore.city,
-            }
+            };
 
-            const releaseFormUrl = await createReleaseFormPdf(createTattoStore.uuid, releaseFormData);
-            const gdprUrl = await createGdprPdf(createTattoStore.uuid, releaseFormData);
+            await createInformedConsentPdf(createTattoStore.uuid, informedConsentData);
 
             const res = await getAllTattoos();
             tattooStore.tattoos = res.sort((a: any, b: any) => b.id - a.id);

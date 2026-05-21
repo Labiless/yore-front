@@ -59,13 +59,8 @@ export const closeTattoo = async(tattooUuid: string) => {
     return data.data;
 }
 
-export const createReleaseFormPdf = async(tattooUuid: string, releaseFormData : any) => {
-    const data = await api.post(`tattoos/pdf/releaseform/${tattooUuid}`, releaseFormData);
-    return data.data;
-}
-
-export const createGdprPdf = async(tattooUuid: string, gdprData : any) => {
-    const data = await api.post(`tattoos/pdf/gdpr/${tattooUuid}`, gdprData);
+export const createInformedConsentPdf = async (tattooUuid: string, consentData: any) => {
+    const data = await api.post(`tattoos/pdf/consent/${tattooUuid}`, consentData);
     return data.data;
 }
 

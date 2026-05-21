@@ -1,4 +1,11 @@
 import { defineStore } from 'pinia';
+import {
+    createEmptyDeclarations,
+    DECLARATION_QUESTIONS,
+    DECLARATION_ANSWER_KEYS,
+    type TattooDeclarationsState,
+    type DeclarationAnswerKey,
+} from '@/constants/tattoo-declarations.config';
 
 export const useCreateTattoStore = defineStore('createTattoo', {
     state: () => ({
@@ -23,6 +30,7 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             cap: undefined as string | undefined,
             province: undefined as string | undefined,
         },
+        declarations: createEmptyDeclarations(),
         kirbyDesay: {
             skinType: 0,
             position: 0,
@@ -46,7 +54,7 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             inkColor: undefined,
             brand: 'Yore',
             codiceUnivoco: undefined,
-            customerName: state.info.name,
+            customerName: [state.info.name, state.info.surname].filter(Boolean).join(' '),
             customerBirthDate: state.info.birthDate,
             customerCf: state.info.cf,
             customerAddress: state.info.address,
@@ -68,27 +76,23 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             tattooArtist: state.tattooArtist,
             tattooCertificateNumber: undefined,
         }),
-        releaseFormData: (state) => ({
+        informedConsentData: (state) => ({
             date: undefined,
-            customerName: `${state.info.name} ${state.info.surname}`,
+            customerFirstName: state.info.name,
+            customerLastName: state.info.surname,
+            customerName: [state.info.name, state.info.surname].filter(Boolean).join(' '),
             customerBirthDate: state.info.birthDate,
             customerBirthPlace: state.info.birthPlace,
             customerCity: state.info.city,
+            customerCap: state.info.cap,
+            customerProvince: state.info.province,
             customerAddress: state.info.address,
             customerStreetNumber: state.info.streetNumber,
+            customerEmail: state.info.email,
+            customerCf: state.info.cf,
             customerSignUrl: state.customerSign,
             signPlace: undefined,
-        }),
-        gdprData: (state) => ({
-            date: undefined,
-            customerName: `${state.info.name} ${state.info.surname}`,
-            customerBirthDate: state.info.birthDate,
-            customerBirthPlace: state.info.birthPlace,
-            customerCity: state.info.city,
-            customerAddress: state.info.address,
-            customerStreetNumber: state.info.streetNumber,
-            customerSignUrl: state.customerSign,
-            signPlace: undefined,
+            ...state.declarations,
         }),
     },
 
@@ -117,6 +121,7 @@ export const useCreateTattoStore = defineStore('createTattoo', {
                 cap: undefined,
                 province: undefined,
             };
+            this.declarations = createEmptyDeclarations();
             this.kirbyDesay = {
                 skinType: 0,
                 position: 0,
@@ -151,6 +156,7 @@ export const useCreateTattoStore = defineStore('createTattoo', {
         allValidation() {
             return (
                 this.infoValidation() &&
+                this.declarationsValidation() &&
                 this.kirbyDesayValidation() &&
                 this.inksValidation() &&
                 this.tattooPhotoValidation() &&
@@ -187,6 +193,63 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             this.info.address = data.address;
             this.info.consent1 = data.consent1;
             this.info.consent2 = data.consent2;
+        },
+        declarationsValidation() {
+            for (const key of DECLARATION_ANSWER_KEYS) {
+                if (this.declarations[key] === null) return false;
+            }
+            for (const q of DECLARATION_QUESTIONS) {
+                if (q.detailKey && this.declarations[q.key] === true) {
+                    const detail = this.declarations[q.detailKey]?.trim();
+                    if (!detail) return false;
+                }
+            }
+            return true;
+        },
+        buildDeclarationsPayload() {
+            const payload: Record<string, boolean | string> = {};
+            for (const key of DECLARATION_ANSWER_KEYS) {
+                payload[key] = this.declarations[key] as boolean;
+            }
+            if (this.declarations.declSkinDiseases === true) {
+                payload.declSkinDiseasesDetail =
+                    this.declarations.declSkinDiseasesDetail.trim();
+            }
+            if (this.declarations.declPsoriasisFamily === true) {
+                payload.declPsoriasisFamilyDetail =
+                    this.declarations.declPsoriasisFamilyDetail.trim();
+            }
+            const notes = this.declarations.declMedicalConditionsNotes.trim();
+            if (notes.length > 0) {
+                payload.declMedicalConditionsNotes = notes;
+            }
+            return payload;
+        },
+        updateDeclarationsFromApi(data: Record<string, unknown>) {
+            for (const key of DECLARATION_ANSWER_KEYS) {
+                const value = data[key];
+                if (value === true || value === false) {
+                    (this.declarations as TattooDeclarationsState)[key] = value;
+                }
+            }
+            if (typeof data.declSkinDiseasesDetail === 'string') {
+                this.declarations.declSkinDiseasesDetail = data.declSkinDiseasesDetail;
+            }
+            if (typeof data.declPsoriasisFamilyDetail === 'string') {
+                this.declarations.declPsoriasisFamilyDetail = data.declPsoriasisFamilyDetail;
+            }
+            if (typeof data.declMedicalConditionsNotes === 'string') {
+                this.declarations.declMedicalConditionsNotes = data.declMedicalConditionsNotes;
+            } else if (data.declMedicalConditionsNotes == null) {
+                this.declarations.declMedicalConditionsNotes = '';
+            }
+        },
+        setDeclarationAnswer(key: DeclarationAnswerKey, value: boolean) {
+            this.declarations[key] = value;
+            const question = DECLARATION_QUESTIONS.find((q) => q.key === key);
+            if (question?.detailKey && value === false) {
+                this.declarations[question.detailKey] = '';
+            }
         },
         kirbyDesayValidation() {
             return (

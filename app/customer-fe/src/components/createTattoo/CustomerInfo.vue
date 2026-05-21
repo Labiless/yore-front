@@ -15,7 +15,8 @@
         <label>
             Cognome
             <Input placeholder="Cognome" required v-model="createTattoStore.info.surname"
-                pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+" />
+                pattern="[A-Za-zÀ-ÖØ-öø-ÿ']+(?:[ '\-][A-Za-zÀ-ÖØ-öø-ÿ']+)*"
+                title="Cognome con lettere, spazi, apostrofi o trattini (es. De Luca, D'Angelo)" />
         </label>
 
         <label>
@@ -57,7 +58,9 @@
 
         <label>
             Numero civico
-            <Input placeholder="Numero civico" required v-model="createTattoStore.info.streetNumber" pattern="[0-9]+" />
+            <Input placeholder="Numero civico" required v-model="createTattoStore.info.streetNumber"
+                pattern="[0-9A-Za-z\/\-]+"
+                title="Numero civico: cifre, lettere, / o - (es. 12A, 5/B)" />
         </label>
 
         <label>

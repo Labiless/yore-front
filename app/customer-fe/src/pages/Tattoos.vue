@@ -189,8 +189,8 @@ const associatedInkIds = (tattoo: { inks?: string[] }) =>
     (tattoo.inks ?? []).join(', ');
 
 const getStatusColor = (tattoo: { status: string; inks?: string[] }) => {
-    if (hasAssociatedInk(tattoo)) return 'bg-yellow-500';
     if (tattoo.status === 'CLOSE') return 'bg-green-500';
+    if (hasAssociatedInk(tattoo)) return 'bg-yellow-500';
     return 'bg-orange-500';
 };
 

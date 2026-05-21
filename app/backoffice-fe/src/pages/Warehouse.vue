@@ -11,9 +11,9 @@
             <Search class="ml-2" />
         </div>
         <div class="flex items-center gap-2 p-2 my-4 mx-auto rounded-md bg-slate-200">
-            <Button @click="showTab = 0" class="text-xs w-fit h-8 bg-transparent text-black"
+            <Button @click="selectMagazzinoTab" type="button" class="text-xs w-fit h-8 bg-transparent text-black"
                 :class="`${showTab === 0 ? 'bg-white!' : ''}`">Magazzino</Button>
-            <Button @click="showTab = 1" class="text-xs w-fit h-8 bg-transparent text-black"
+            <Button @click="selectLottiTab" type="button" class="text-xs w-fit h-8 bg-transparent text-black"
                 :class="`${showTab === 1 ? 'bg-white!' : ''}`">
                 Lotti caricamento
             </Button>
@@ -58,7 +58,7 @@
                 </div>
                 <div v-else-if="warehouseStore.batchData.length">
                     <div class="flex items-start gap-2 mb-4">
-                        <ArrowLeft @click="warehouseStore.batchUuid = '';" class="hover:cursor-pointer shrink-0 mt-1" />
+                        <ArrowLeft @click="backToBatchesList" class="hover:cursor-pointer shrink-0 mt-1" />
                         <div class="min-w-0">
                             <p class="font-bold text-md flex items-center gap-1">
                                 <Calendar class="scale-75 shrink-0" />
@@ -119,10 +119,11 @@ import { useUiStore } from '@/stores/ui';
 import { useWharehouseStore } from '@/stores/warehouse.store';
 import Input from '@shared/components/ui/input/Input.vue';
 import Button from '@shared/components/ui/button/Button.vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const showTab = ref(0);
 const route = useRoute();
+const router = useRouter();
 const batchUuid = typeof route.params.batchUuid === 'string' ? route.params.batchUuid : '';
 
 const uiStore = useUiStore();
@@ -194,10 +195,29 @@ onMounted(async () => {
     uiStore.loading = false;
 });
 
+const backToBatchesList = () => {
+    warehouseStore.resetSearch();
+    if (route.params.batchUuid) {
+        router.replace({ name: 'warehouse' });
+    }
+};
+
+const selectMagazzinoTab = () => {
+    showTab.value = 0;
+};
+
+const selectLottiTab = () => {
+    showTab.value = 1;
+    backToBatchesList();
+};
+
 const showBatch = async (uuid: string) => {
     transitionDirection.value = 'next';
     warehouseStore.batchUuid = uuid;
     warehouseStore.batchData = await getBatchByUuid(warehouseStore.batchUuid);
+    if (route.params.batchUuid !== uuid) {
+        router.replace({ name: 'inkBatch', params: { batchUuid: uuid } });
+    }
 };
 
 </script>

@@ -41,3 +41,8 @@ export const getPrintFile = async (uuid: string) => {
     const data = await api.get(`/labels/pdf/${uuid}`);
     return data.data;
 }
+
+export const associateBatchToUser = async (batchId: string, userUuid: string) => {
+    const data = await api.patch(`/labels/batch/${batchId}/associate-user`, { userUuid });
+    return data.data;
+};

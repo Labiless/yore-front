@@ -10,10 +10,13 @@
         </div>
     </div>
     <div v-else class="w-full h-full">
-        <div class="flex justify-between items-center mb-4">
-            <ArrowLeft @click="creatingLabelsStore.resetCreatingLabels()" />
-            <p class="text-xl font-bold text-left">Associa le etichette a uno studio</p>
+        <div class="flex justify-between items-center mb-4 gap-2">
+            <ArrowLeft @click="creatingLabelsStore.resetCreatingLabels()" class="shrink-0 cursor-pointer" />
+            <p class="text-xl font-bold text-left flex-1">Associa le etichette a uno studio (opzionale)</p>
         </div>
+        <Button type="button" class="w-full h-12 mb-4" @click="createWithoutUser">
+            Crea senza associare
+        </Button>
         <div class="w-full flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:p-6"
             @click="addUser(user.uuid)" :class="`${''}`" v-for="user in usersStore.allUsers">
             <p class="font-bold text-md">{{ user.id }}</p>
@@ -45,6 +48,7 @@ import { useUsersStore } from '@/stores/users.store';
 import { useWharehouseStore } from '@/stores/warehouse.store';
 import { User, Mail, BookMarked, ArrowLeft } from 'lucide-vue-next';
 import inkTypeSelector from '@/components/inkTypeSelector.vue';
+import Button from '@shared/components/ui/button/Button.vue';
 import router from '@/router';
 
 const uiStore = useUiStore();
@@ -74,21 +78,37 @@ const addAmount = async (data: {
 const addUser = async (userUuid: string) => {
     creatingLabelsStore.userUuid = userUuid;
     uiStore.setPopoup(
-        'Sei sicuro di voler creare le etichette?',
+        'Sei sicuro di voler creare le etichette per questo studio?',
+        async () => {
+            await create(userUuid);
+        }
+    );
+}
+
+const createWithoutUser = () => {
+    uiStore.setPopoup(
+        'Creare le etichette senza associarle a uno studio?',
         async () => {
             await create();
         }
     );
 }
 
-const create = async () => {
+const create = async (userUuid?: string) => {
     uiStore.loading = true;
     try {
-        const res = await createLabels({
-            userUuid: creatingLabelsStore.userUuid,
+        const payload: {
+            inkTypeUuid: string;
+            amount: number;
+            userUuid?: string;
+        } = {
             inkTypeUuid: creatingLabelsStore.inkTypeUuid,
             amount: creatingLabelsStore.amount,
-        });
+        };
+        if (userUuid) {
+            payload.userUuid = userUuid;
+        }
+        await createLabels(payload);
         creatingLabelsStore.resetCreatingLabels();
         await warehouseStore.refreshWarehouse();
         router.push('/labels');

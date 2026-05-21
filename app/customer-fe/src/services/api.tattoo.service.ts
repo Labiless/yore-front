@@ -69,6 +69,21 @@ export const createCertificatePdf = async(tattooUuid: string, certificateData : 
     return data.data;
 }
 
+export const finalizeTattoo = async (tattooUuid: string, payload: {
+    customerEmail: string;
+    customerName: string;
+    studioName?: string;
+    certificate: Record<string, unknown>;
+    consent: Record<string, unknown>;
+}) => {
+    const data = await api.post(`tattoos/finalize/${tattooUuid}`, payload);
+    return data.data as {
+        certificateUrl: string;
+        consentUrl: string;
+        emailSent: boolean;
+    };
+}
+
 export const saveSigns = async (tattooUuid : string, customerSign: string, userSign: string) => {
     const data = await api.post(`tattoos/sign/${tattooUuid}`, {
         customerSign,

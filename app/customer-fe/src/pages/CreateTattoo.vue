@@ -57,7 +57,7 @@ import { Brush, Calendar, ClipboardList, Droplet, FileText, PenTool, PersonStand
 import { useUiStore } from '@/stores/ui';
 import { onMounted, ref } from 'vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
-import { getTattoByUuid, closeTattoo, getAllTattoos, createCertificatePdf, createInformedConsentPdf } from '@/services/api.tattoo.service';
+import { getTattoByUuid, closeTattoo, getAllTattoos, finalizeTattoo } from '@/services/api.tattoo.service';
 import { getCustomerByUuid } from '@/services/api.customer.service';
 import { hasKirbyDesayData } from '@/constants/tattoo.config';
 import { hasDeclarationsData } from '@/constants/tattoo-declarations.config';
@@ -175,22 +175,33 @@ const submit = async () => {
                 tattooCertificateNumber: String(createTattoStore.id),
             }
 
-            console.log(certificateData);
-
-            const certificateUrl = await createCertificatePdf(createTattoStore.uuid, certificateData);
-
             const informedConsentData = {
                 ...createTattoStore.informedConsentData,
                 date: getToday(),
                 signPlace: userStore.city,
             };
 
-            await createInformedConsentPdf(createTattoStore.uuid, informedConsentData);
+            const customerEmail = createTattoStore.info.email;
+            if (!customerEmail) {
+                uiStore.setToast('Email del cliente obbligatoria per l\'invio dei documenti', 'error');
+                uiStore.loading = false;
+                return;
+            }
+
+            await finalizeTattoo(createTattoStore.uuid, {
+                customerEmail,
+                customerName: [createTattoStore.info.name, createTattoStore.info.surname]
+                    .filter(Boolean)
+                    .join(' '),
+                studioName: userStore.businessName,
+                certificate: certificateData,
+                consent: informedConsentData,
+            });
 
             const res = await getAllTattoos();
             tattooStore.tattoos = res.sort((a: any, b: any) => b.id - a.id);
             router.push(`tattoos/${createTattoStore.uuid}`);
-            uiStore.setToast('Tatuaggio completato!');
+            uiStore.setToast('Tatuaggio completato! Email inviata al cliente.');
 
         } catch {
             uiStore.setToast('Qualcosa è andato storto', 'error');

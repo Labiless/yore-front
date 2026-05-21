@@ -1,6 +1,6 @@
 <template>
     <div class="h-min-full overflow-y-scroll hide-scrollbar">
-        <form @submit.prevent="submit" class="w-full pb-8">
+        <form @submit.prevent="submit" class="user-form w-full pb-8">
             <div class="flex flex-col justify-center items-start gap-2 border-black">
                 <div class="flex justify-between items-center w-full">
                     <p class="font-bold text-xl py-4">Credenziali</p>
@@ -8,50 +8,58 @@
                         <Trash2 color="red" />
                     </router-link>
                 </div>
-                <label for="expiration-date">Indirizzo Mail</label>
-                <Input class="bg-white" v-model="createUSerStore.email" name="expiration-date" type="email" required />
-
-                <label for="expiration-date">Password</label>
-                <Input class="bg-white" v-model="createUSerStore.password" name="expiration-date" type="text"
+                <label class="user-form-label" for="user-email">Indirizzo Mail</label>
+                <Input id="user-email" class="bg-white" v-model="createUSerStore.email" name="email" type="email"
                     required />
+
+                <label class="user-form-label" for="user-password">Password</label>
+                <Input id="user-password" class="bg-white" v-model="createUSerStore.password" name="password"
+                    type="password" required />
+
                 <p class="font-bold text-xl py-4">Informazioni</p>
 
-                <label for="expiration-date">Forma giuridica</label>
-                <Input class="bg-white" v-model="createUSerStore.legalForm" name="expiration-date" type="text"
-                    required />
-                <label for="expiration-date">Ragione sociale</label>
-                <Input class="bg-white" v-model="createUSerStore.businessName" name="expiration-date" type="text"
-                    required />
-                <label for="expiration-date">Codice Fiscale</label>
-                <Input class="bg-white" v-model="createUSerStore.cf" name="expiration-date" type="text"
-                    maxlength="16" minlength="16" pattern="[A-Za-z]{6}[0-9]{2}[A-Za-z][0-9]{2}[A-Za-z][0-9]{3}[A-Za-z]" />
+                <label class="user-form-label" for="user-legal-form">Forma giuridica</label>
+                <Input id="user-legal-form" class="bg-white" v-model="createUSerStore.legalForm" name="legalForm"
+                    type="text" required />
 
-                <label for="expiration-date">Partita Iva</label>
-                <Input class="bg-white" v-model="createUSerStore.piva" name="expiration-date" type="text" required
+                <label class="user-form-label" for="user-business-name">Ragione sociale</label>
+                <Input id="user-business-name" class="bg-white" v-model="createUSerStore.businessName"
+                    name="businessName" type="text" required />
+
+                <label class="user-form-label" for="user-cf">Codice Fiscale</label>
+                <Input id="user-cf" class="bg-white" v-model="createUSerStore.cf" name="cf" type="text" maxlength="16"
+                    minlength="16" pattern="[A-Za-z]{6}[0-9]{2}[A-Za-z][0-9]{2}[A-Za-z][0-9]{3}[A-Za-z]" />
+
+                <label class="user-form-label" for="user-piva">Partita Iva</label>
+                <Input id="user-piva" class="bg-white" v-model="createUSerStore.piva" name="piva" type="text" required
                     maxlength="11" minlength="11" pattern="[0-9]{11}" />
 
-                <label for="expiration-date">Indirizzo PEC FE</label>
-                <Input class="bg-white" v-model="createUSerStore.pecMail" name="expiration-date" type="email" required />
-
-                <label for="expiration-date">Codice destinatario FE</label>
-                <Input class="bg-white" v-model="createUSerStore.fePecAddress" name="expiration-date" type="text"
+                <label class="user-form-label" for="user-pec">Indirizzo PEC FE</label>
+                <Input id="user-pec" class="bg-white" v-model="createUSerStore.pecMail" name="pecMail" type="email"
                     required />
 
-                <label for="expiration-date">Telefono</label>
-                <Input class="bg-white" v-model="createUSerStore.phone" name="expiration-date" type="tel" required pattern="^\+?[0-9]{8,15}$" inputmode="tel" />
+                <label class="user-form-label" for="user-fe-pec">Codice destinatario FE</label>
+                <Input id="user-fe-pec" class="bg-white" v-model="createUSerStore.fePecAddress" name="fePecAddress"
+                    type="text" required />
+
+                <label class="user-form-label" for="user-phone">Telefono</label>
+                <Input id="user-phone" class="bg-white" v-model="createUSerStore.phone" name="phone" type="tel" required
+                    pattern="^\+?[0-9]{8,15}$" inputmode="tel" />
 
                 <p class="font-bold text-xl py-4">Sede Legale</p>
 
-                <label for="expiration-date">Città</label>
-                <Input class="bg-white" v-model="createUSerStore.city" name="expiration-date" type="text" required />
+                <label class="user-form-label" for="user-city">Città</label>
+                <Input id="user-city" class="bg-white" v-model="createUSerStore.city" name="city" type="text"
+                    required />
 
-                <label for="expiration-date">Indirizzo</label>
-                <Input class="bg-white" v-model="createUSerStore.address" name="expiration-date" type="text" required />
+                <label class="user-form-label" for="user-address">Indirizzo</label>
+                <Input id="user-address" class="bg-white" v-model="createUSerStore.address" name="address" type="text"
+                    required />
 
-                <Label for="terms" class="py-4">
+                <label class="user-form-label user-form-label--checkbox flex items-center gap-2 py-4">
                     <Checkbox required v-model="createUSerStore.consent" />
                     Do il consenso per la liberatoria
-                </Label>
+                </label>
 
                 <Button type="submit" class="h-12 w-full">Crea utente</Button>
             </div>
@@ -99,3 +107,20 @@ const submit = async () => {
 
 
 </script>
+
+<style scoped>
+.user-form .user-form-label {
+    font-size: 12px;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.user-form .user-form-label:hover {
+    text-decoration: none;
+}
+
+.user-form .user-form-label--checkbox {
+    font-size: 14px;
+}
+</style>

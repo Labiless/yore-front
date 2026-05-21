@@ -1,5 +1,5 @@
 <template>
-    <div class="mx-auto w-full items-start overflow-y-auto h-full px-4">
+    <div class="users-page mx-auto w-full items-start overflow-y-auto h-full px-4">
         <router-link to="/createuser">
             <Button class="w-full h-12 mb-4">
                 <Plus /> Crea nuovo utente
@@ -25,10 +25,10 @@
                                 <User class="scale-50" />{{ user.businessName }}
                             </p>
                             <div class="flex">
-                                <p class="flex items-center text-xs" v-if="user.email">
+                                <p class="user-field flex items-center text-xs" v-if="user.piva">
                                     <BookMarked class="scale-50" />{{ user.piva }}
                                 </p>
-                                <p class="flex items-center text-xs" v-if="user.email">
+                                <p class="user-field flex items-center text-xs" v-if="user.email">
                                     <Mail class="scale-50" />{{ user.email }}
                                 </p>
                             </div>
@@ -45,37 +45,37 @@
                                 <User /> {{ selectedUser.businessName }}
                             </p>
                             <div class="border-l-1 border-black pl-2">
-                                <p class="text-xs opacity-60">{{ selectedUser.uuid }}</p>
-                                <p class="text-xs opacity-60">{{ selectedUser.createdAt.split('T')[0] }}</p>
+                                <p class="user-field text-xs opacity-60">{{ selectedUser.uuid }}</p>
+                                <p class="user-field text-xs opacity-60">{{ selectedUser.createdAt.split('T')[0] }}</p>
                             </div>
                         </div>
                         <div class="flex flex-wrap w-full gap-2 h-fit">
                             <div class="mb-4 bg-white rounded-xl w-full p-4">
                                 <p class="font-bold">Contatti</p>
-                                <p>{{ selectedUser.email }}</p>
-                                <p>{{ selectedUser.phone }}</p>
+                                <p class="user-field" x-apple-data-detectors="false">{{ selectedUser.email }}</p>
+                                <p class="user-field">{{ selectedUser.phone }}</p>
                             </div>
                             <div class="mb-4 bg-white rounded-xl w-full p-4">
                                 <p class="font-bold">Indirizzo</p>
-                                <p>{{ selectedUser.country }}</p>
-                                <p>{{ selectedUser.city }}</p>
-                                <p>{{ selectedUser.cap }}</p>
-                                <p>{{ selectedUser.province }}</p>
-                                <p>{{ selectedUser.address }}</p>
+                                <p class="user-field">{{ selectedUser.country }}</p>
+                                <p class="user-field">{{ selectedUser.city }}</p>
+                                <p class="user-field">{{ selectedUser.cap }}</p>
+                                <p class="user-field">{{ selectedUser.province }}</p>
+                                <p class="user-field">{{ selectedUser.address }}</p>
                             </div>
                             <div class="mb-4 bg-white rounded-xl w-full p-4">
                                 <p class="font-bold">Dati azienda</p>
-                                <p>{{ selectedUser.legalForm }}</p>
-                                <p>{{ selectedUser.piva }}</p>
-                                <p>{{ selectedUser.cf }}</p>
-                                <p>{{ selectedUser.fePecAddress }}</p>
-                                <p>{{ selectedUser.pecMail }}</p>
-                                <p>{{ selectedUser.taxCode }}</p>
+                                <p class="user-field">{{ selectedUser.legalForm }}</p>
+                                <p class="user-field">{{ selectedUser.piva }}</p>
+                                <p class="user-field">{{ selectedUser.cf }}</p>
+                                <p class="user-field">{{ selectedUser.fePecAddress }}</p>
+                                <p class="user-field" x-apple-data-detectors="false">{{ selectedUser.pecMail }}</p>
+                                <p class="user-field">{{ selectedUser.taxCode }}</p>
                             </div>
                         </div>
                         <Accordion type="single" collapsible class="w-full">
                             <AccordionItem value="item-1">
-                                <AccordionTrigger>
+                                <AccordionTrigger class="no-underline hover:no-underline">
                                     <p class="font-bold text-xl">Etichette associate</p>
                                 </AccordionTrigger>
                                 <AccordionContent>
@@ -99,7 +99,7 @@
                                 </AccordionContent>
                             </AccordionItem>
                             <AccordionItem value="item-2">
-                                <AccordionTrigger>
+                                <AccordionTrigger class="no-underline hover:no-underline">
                                     <p class="font-bold text-xl">Tatuaggi</p>
                                 </AccordionTrigger>
                                 <AccordionContent>
@@ -214,4 +214,24 @@ const copyUuidToClipboard = async (uuid: string) => {
 
 </script>
 
-<style scoped></style>
+<style scoped>
+.users-page .user-field {
+    text-decoration: none;
+    color: inherit;
+    cursor: default;
+}
+
+.users-page :deep([data-slot="accordion-trigger"]) {
+    text-decoration: none !important;
+}
+
+.users-page :deep([data-slot="accordion-trigger"]:hover) {
+    text-decoration: none !important;
+}
+
+/* Evita che email/PEC vengano stilizzate come link dal browser */
+.users-page .user-field {
+    -webkit-text-decoration: none;
+    text-decoration-skip-ink: none;
+}
+</style>

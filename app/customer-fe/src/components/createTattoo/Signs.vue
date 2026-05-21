@@ -1,24 +1,40 @@
 <template>
     <p class="text-center font-bold mb-2 w-fit flex items-center mx-auto">
         <ClipboardList class="text-black mr-2" />
-        Firma
-    <div class="rounded-full bg-green-700 p-1 w-2 h-2 ml-2"
-        :class="`${createTattooStore.signValidation() ? '' : 'bg-amber-500!'}`"></div>
+        Firme
+        <span class="rounded-full bg-green-700 p-1 w-2 h-2 ml-2"
+            :class="`${createTattooStore.signValidation() ? '' : 'bg-amber-500!'}`"></span>
     </p>
-    <hr>
-    </hr>
+    <p class="text-xs text-center text-gray-600 mb-4 px-2">
+        Apponi la firma del tatuato e quella del tatuatore nei riquadri sottostanti.
+    </p>
+    <hr />
     <div v-if="!createTattooStore.customerSign && !createTattooStore.userSign">
-        <Sign class="mb-4" ref="customerSign" :width="400" :height="200" />
-        <hr>
-        </hr>
-        <Sign class="mb-4" ref="userSign" :width="400" :height="200" />
+        <section class="mb-4">
+            <p class="text-sm font-bold mb-2">Firma del tatuato</p>
+            <p class="text-xs text-gray-600 mb-2">Persona che riceve il tatuaggio</p>
+            <Sign ref="customerSign" :width="400" :height="200" />
+        </section>
+        <hr />
+        <section class="mb-4">
+            <p class="text-sm font-bold mb-2">Firma del tatuatore</p>
+            <p class="text-xs text-gray-600 mb-2">Operatore che esegue il tatuaggio</p>
+            <Sign ref="userSign" :width="400" :height="200" />
+        </section>
         <Button class="w-full h-12" @click="saveSignature">Conferma</Button>
     </div>
     <div v-else>
-        <img class="bg-white mb-4 mx-auto" :src="createTattooStore.customerSign"></img>
-        <hr>
-        </hr>
-        <img class="bg-white mx-auto" :src="createTattooStore.userSign"></img>
+        <section class="mb-4">
+            <p class="text-sm font-bold mb-2 text-center">Firma del tatuato</p>
+            <img class="bg-white mx-auto rounded-md shadow-md" :src="createTattooStore.customerSign"
+                alt="Firma del tatuato" />
+        </section>
+        <hr />
+        <section>
+            <p class="text-sm font-bold mb-2 text-center">Firma del tatuatore</p>
+            <img class="bg-white mx-auto rounded-md shadow-md" :src="createTattooStore.userSign"
+                alt="Firma del tatuatore" />
+        </section>
     </div>
 </template>
 <script setup lang="ts">

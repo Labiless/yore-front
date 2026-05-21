@@ -3,13 +3,6 @@
     <div class="w-16 h-16 bg-white rounded-full animate-bounce"></div>
   </div>
   <Transition>
-    <div v-if="uiStore.toast.length"
-      class="fixed bottom-48 w-10/12 max-w-96 text-center shadow-black -translate-x-[50%] left-[50%] p-4 bg-green-500 text-white rounded-2xl shadow-2xl z-50"
-      :class="`${uiStore.toastType === 'error' ? 'bg-red-500!' : ''}`">
-      {{ uiStore.toast }}
-    </div>
-  </Transition>
-  <Transition>
     <PopUp v-if="uiStore.popup.text.length && uiStore.popup.action" :uiStore="uiStore" />
   </Transition>
   <main class="h-screen" :class="`${uiStore.loading ? 'blur' : ''}`">
@@ -21,6 +14,13 @@
     <Header v-if="authStore.isAuthenticated" :title="uiStore.title" />
     <Nav :first-index="0" v-if="authStore.isAuthenticated" :links :route="route" />
   </div>
+  <Transition>
+    <div v-if="uiStore.toast.length"
+      class="ui-toast bottom-48 w-10/12 max-w-96 text-center shadow-black -translate-x-[50%] left-[50%] p-4 bg-green-500 text-white rounded-2xl shadow-2xl"
+      :class="`${uiStore.toastType === 'error' ? 'bg-red-500!' : ''}`">
+      {{ uiStore.toast }}
+    </div>
+  </Transition>
 </template>
 
 <script setup lang="ts">

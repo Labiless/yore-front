@@ -12,6 +12,12 @@ body{
   background-color: rgb(218, 218, 218);
 }
 
+.ui-toast {
+  position: fixed;
+  z-index: 99999;
+  pointer-events: none;
+}
+
 input{
   background-color: white !important;
 }

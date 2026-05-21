@@ -12,6 +12,7 @@ import InkBatch from '@/pages/InkBatch.vue';
 import Ink from '@/pages/Ink.vue';
 import LabelBatch from '@/pages/LabelBatch.vue';
 import CreateUser from '@/pages/CreateUser.vue';
+import { useLabelsStore } from '@/stores/lables.store';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -100,13 +101,18 @@ router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
   if (to.path !== '/login' && !authStore.isAuthenticated) {
     next('/login');
+    return;
   }
   if (to.path === '/login' && authStore.isAuthenticated) {
     next('/');
+    return;
   }
-  else {
-    next();
+
+  if (to.name === 'labels' || to.name === 'labelBatch') {
+    useLabelsStore().resetSearch();
   }
+
+  next();
 })
 
 export default router

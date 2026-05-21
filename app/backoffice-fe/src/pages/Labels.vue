@@ -34,7 +34,7 @@
                 </div>
                 <div v-else>
                     <div class="flex items-center mb-4">
-                        <ArrowLeft @click="labelsStore.batchUuid = '';" class="hover:cursor-pointer mr-2" />
+                        <ArrowLeft @click="labelsStore.resetSearch()" class="hover:cursor-pointer mr-2" />
                         <p class="font-bold text-md flex -translate-x-2">
                             <Calendar class="scale-75" /> {{ labelsStore.batchData[0].creationDate.split('T')[0] }} /
                             {{ labelsStore.batchUuid }}
@@ -85,7 +85,8 @@ const showTab = ref(0);
 const searchUuid = ref('');
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-const batchUuid = typeof route.params.labelsUuid === 'string' ? route.params.labelsUuid : '';
+const routeBatchUuid = () =>
+    typeof route.params.labelsUuid === 'string' ? route.params.labelsUuid : '';
 
 const isValidUuid = (uuid: string) => {
     return uuidRegex.test(uuid);
@@ -114,13 +115,14 @@ watch(searchUuid, async (newSearchUuid, oldSearchUuid) => {
 onMounted(async () => {
     uiStore.title = "Etichette";
     uiStore.loading = true;
-    if (batchUuid) {
-        showBatch(batchUuid);
-        router.replace("/labels");
+
+    const batchFromRoute = routeBatchUuid();
+    if (batchFromRoute) {
+        await router.replace('/labels');
     }
-    if (!labelsStore.allBatches.length) {
-        labelsStore.allBatches = await getAllBatches();
-    }
+
+    labelsStore.resetSearch();
+    labelsStore.allBatches = await getAllBatches();
     uiStore.loading = false;
 });
 

@@ -1,5 +1,5 @@
 <template>
-    <button type="button" class="m-2 flex items-center justify-center hover:scale-120 transition-all">
+    <button type="button" class="m-2 flex items-center justify-center hover:scale-120 transition-all rounded-full">
         <component :is="icon" />
     </button>
 </template>

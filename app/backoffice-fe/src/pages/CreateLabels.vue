@@ -1,7 +1,8 @@
 <template>
     <div v-if="!creatingLabelsStore.inkTypeUuid" class="w-full flex flex-col md:flex-row justify-center h-full">
-        <div class="w-full flex justify-center items-center h-full" v-if="warehouse.length">
-            <inkTypeSelector @submit="addAmount" v-for="inkType in warehouse" :ink-type="inkType">Crea etichette
+        <div class="w-full flex justify-center items-center h-full" v-if="warehouseStore.warehouse.length">
+            <inkTypeSelector @submit="addAmount" v-for="inkType in warehouseStore.warehouse" :key="inkType.uuid"
+                :ink-type="inkType">Crea etichette
             </inkTypeSelector>
         </div>
         <div v-else class="w-full flex justify-center items-center min-h-full">
@@ -35,13 +36,13 @@
 
 <script setup lang="ts">
 
-import { onMounted, ref } from 'vue';
-import { getInkTypes, getInksByType, getAvailableInksByType } from "@/services/api.ink.service";
+import { onMounted } from 'vue';
 import { getAllUsers } from '@/services/api.user.service';
 import { createLabels } from '@/services/api.label.service';
 import { useUiStore } from '@/stores/ui';
 import { useCreatingLabelsStore } from '@/stores/creatingLabels';
 import { useUsersStore } from '@/stores/users.store';
+import { useWharehouseStore } from '@/stores/warehouse.store';
 import { User, Mail, BookMarked, ArrowLeft } from 'lucide-vue-next';
 import inkTypeSelector from '@/components/inkTypeSelector.vue';
 import router from '@/router';
@@ -49,20 +50,13 @@ import router from '@/router';
 const uiStore = useUiStore();
 const creatingLabelsStore = useCreatingLabelsStore();
 const usersStore = useUsersStore();
-const warehouse = ref<any[]>([]);
+const warehouseStore = useWharehouseStore();
 
 onMounted(async () => {
     uiStore.title = "Crea etichette";
     uiStore.loading = true;
     creatingLabelsStore.resetCreatingLabels();
-    const inkTypes = await getInkTypes();
-    for (let i = 0; i < inkTypes.length; i++) {
-        const availableAmount = await getAvailableInksByType(inkTypes[i].uuid);
-        if (availableAmount.length) warehouse.value[i] = {
-            ...inkTypes[i],
-            amount: availableAmount.length
-        }
-    }
+    await warehouseStore.refreshWarehouse();
     uiStore.loading = false;
 });
 
@@ -96,8 +90,10 @@ const create = async () => {
             amount: creatingLabelsStore.amount,
         });
         creatingLabelsStore.resetCreatingLabels();
-        router.push(`labels/${res}`);
+        await warehouseStore.refreshWarehouse();
+        router.push('/labels');
         uiStore.setToast("Etichette create correttamente");
+        uiStore.loading = false;
     } catch (error) {
         creatingLabelsStore.resetCreatingLabels();
         uiStore.setToast('Errore nella creazione etichette', 'error');

@@ -22,8 +22,6 @@ import { useLoadingBatchStore } from '@/stores/loadingBatch';
 import { onMounted, ref } from 'vue';
 import router from '@/router';
 import { useWharehouseStore } from '@/stores/warehouse.store';
-import { getAvailableInksByType, getAllBatches } from '@/services/api.ink.service';
-
 const loadingBatchStore = useLoadingBatchStore();
 const inkTypes: any = ref(null);
 const uiStore = useUiStore();
@@ -55,16 +53,7 @@ const loadBatch = async () => {
     const res = await loadInks(data);
     if (res) {
         loadingBatchStore.resetLoadingBatch()
-        warehouseStore.allBatches = await getAllBatches();
-        const inkTypes = await getInkTypes();
-        for (let i = 0; i < inkTypes.length; i++) {
-            const availableAmount = await getAvailableInksByType(inkTypes[i].uuid);
-            //@ts-ignore
-            if (availableAmount.length) warehouseStore.warehouse[i] = {
-                ...inkTypes[i],
-                amount: availableAmount.length
-            }
-        }
+        await warehouseStore.refreshWarehouse();
         router.push(`/warehouse/${res.batchId}`);
         uiStore.loading = false;
         uiStore.setToast('Inchiostri caricati correttamente');

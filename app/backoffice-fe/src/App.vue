@@ -31,10 +31,13 @@ import Nav from '@shared/components/Nav.vue';
 import PopUp from '@shared/components/PopUp.vue';
 import { useUiStore } from '@/stores/ui';
 import { useAuthStore } from './stores/auth';
+import { useLabelsStore } from '@/stores/lables.store';
+import router from '@/router';
 
 const route = useRoute();
 const uiStore = useUiStore();
 const authStore = useAuthStore();
+const labelsStore = useLabelsStore();
 
 const links = [
   {
@@ -58,7 +61,11 @@ const links = [
     name: "Crea etichette",
   },*/
   {
-    link: "/labels",
+    matchPath: '/labels',
+    action: () => {
+      labelsStore.resetSearch();
+      router.push('/labels');
+    },
     icon: "Tags",
     name: "Etichette",
   },

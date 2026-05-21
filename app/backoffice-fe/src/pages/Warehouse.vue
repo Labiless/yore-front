@@ -100,7 +100,7 @@
 <script setup lang="ts">
 
 import { ref, watch, onMounted } from 'vue';
-import { getAllBatches, getAvailableInksByType, getInkTypes, getBatchByUuid, getInkByUuid } from "@/services/api.ink.service";
+import { getBatchByUuid, getInkByUuid } from "@/services/api.ink.service";
 import { ArrowLeft, Pipette, Tag, Download, Search, Plus, Droplet, Warehouse, Calendar } from 'lucide-vue-next';
 import { useUiStore } from '@/stores/ui';
 import { useWharehouseStore } from '@/stores/warehouse.store';
@@ -144,18 +144,7 @@ watch(searchUuid, async (newSearchUuid, oldSearchUuid) => {
 onMounted(async () => {
     uiStore.title = "Magazzino";
     uiStore.loading = true;
-    if (!warehouseStore.allBatches.length) {
-        warehouseStore.allBatches = await getAllBatches();
-        const inkTypes = await getInkTypes();
-        for (let i = 0; i < inkTypes.length; i++) {
-            const availableAmount = await getAvailableInksByType(inkTypes[i].uuid);
-            //@ts-ignore
-            if (availableAmount.length) warehouseStore.warehouse[i] = {
-                ...inkTypes[i],
-                amount: availableAmount.length
-            }
-        }
-    }
+    await warehouseStore.refreshWarehouse();
     if (batchUuid) {
         await showBatch(batchUuid);
         showTab.value = 1;

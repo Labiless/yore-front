@@ -1,90 +1,90 @@
 <template>
-
-
-    <div class="mx-auto w-full items-start overflow-y-auto">
+    <div class="mx-auto w-full items-start overflow-y-auto hide-scrollbar pb-24">
         <Button class="w-full h-12 mb-4">
             <Plus /> Carica Inchiostro
         </Button>
-        <!--<div @click="activeInk = ink.uuid" :class="`${ink.uuid === activeInk ? 'h-80! items-start' : ''}`"
-            class="flex justify-start items-center shadow-2xl p-2 bg-white mb-4 rounded-2xl w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
-            v-for="ink in inks">
-            <p class="font-bold text-2xl pr-4 w-16 text-center">{{ ink.id }}</p>
-            <div class="border-l-1 border-black pl-4">
-                <p class="font-bold">{{ ink.uuid }}</p>
-                <p>{{ new Date(ink.createdAt).toDateString() }}</p>
-            </div>
-        </div>-->
-        <!--<p class="flex text-xl font-bold items-center mb-4">Magazzino
-            <droplet class="" />
-        </p>-->
-        <div class="flex items-center gap-2 p-2 my-4 mx-auto rounded-md bg-slate-200">
-            <Button @click="showTab = 0" class="text-xs w-fit h-8 bg-transparent text-black"
-                :class="`${showTab === 0 ? 'bg-white!' : 'shadow-none'}`">Disponibili</Button>
-            <Button @click="showTab = 1" class="text-xs w-fit h-8 bg-transparent text-black"
-                :class="`${showTab === 1 ? 'bg-white!' : 'shadow-none'}`">Utilizzati</Button>
-        </div>
-        <div v-if="inks.length">
-            <div v-if="showTab === 0"
-                class="flex justify-start items-center shadow-md p-2 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103">
-                <p class="text-2xl mx-2 font-bold">x{{ availableInks.length }}</p>
-                <div class="flex items-center border-l-1 border-black ml-2">
-                    <droplet class="m-2" />
-                    <p class="font-bold">{{ inkTypes[0]?.name }} - {{ inkTypes[0]?.color }}</p>
+
+        <template v-if="inks.length">
+            <section class="mb-6">
+                <h2 class="text-lg font-bold mb-3">Inchiostri disponibili</h2>
+                <div v-if="availableInks.length"
+                    class="flex justify-start items-center shadow-md p-4 bg-white rounded-md w-auto h-fit">
+                    <p class="text-2xl mx-2 font-bold">x{{ availableInks.length }}</p>
+                    <div class="flex items-center border-l border-black ml-2 pl-2">
+                        <Droplet class="m-2 shrink-0" />
+                        <p class="font-bold capitalize">{{ inkTypeLabel }}</p>
+                    </div>
                 </div>
-            </div>
-            <div v-else>
-                <div @click="selectedink = selectedink === ink.uuid ? '' : ink.uuid"
-                    class="flex justify-start items-center shadow-md p-2 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
-                    v-for="ink in usedInks">
-                    <droplet class="m-2" />
-                    <div class="w-full">
-                        <div class="flex justify-between w-full">
-                            <div>
-                                <p class="font-bold">{{ inkTypes[0]?.name }} - {{ inkTypes[0]?.color }}</p>
-                                <p class="text-xs text-gray-500">{{ ink.uuid }}</p>
-                                <p class="text-xs text-gray-500">utilizzato il: {{ ink.burningDate.split("T")[0] }}
-                                </p>
-                            </div>
-                            <router-link :to="`tattoos/${ink.tattooUuid}`">
-                                <SquareArrowOutUpRight />
-                            </router-link>
-                        </div>
-                        <div v-if="selectedink === ink.uuid">
-                            <p class="text-xs">{{ ink.uuid }}</p>
+                <p v-else class="text-sm text-gray-600 px-1">Nessun inchiostro disponibile.</p>
+            </section>
+
+            <section>
+                <h2 class="text-lg font-bold mb-3">Inchiostri utilizzati</h2>
+                <div v-if="usedInks.length" class="flex flex-col gap-3">
+                    <div
+                        v-for="ink in usedInks"
+                        :key="ink.uuid"
+                        class="flex justify-start items-center shadow-md p-4 bg-white rounded-md w-full h-fit hover:bg-blue-100 hover:cursor-pointer transition-all"
+                        @click="goToTattoo(ink.tattooUuid)"
+                    >
+                        <Droplet class="m-2 shrink-0" />
+                        <div class="min-w-0 flex-1">
+                            <p class="font-bold capitalize">{{ inkTypeLabel }}</p>
+                            <p class="text-xs text-gray-500 truncate">{{ ink.uuid }}</p>
+                            <p v-if="ink.burningDate" class="text-xs text-gray-500">
+                                Utilizzato il {{ formatDate(ink.burningDate) }}
+                            </p>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+                <p v-else class="text-sm text-gray-600 px-1">Nessun inchiostro utilizzato.</p>
+            </section>
+        </template>
+
+        <p v-else class="text-center text-gray-600 mt-8">Nessun inchiostro associato allo studio.</p>
     </div>
 </template>
+
 <script setup lang="ts">
 import Button from '@shared/components/ui/button/Button.vue';
 import { useUiStore } from '@/stores/ui';
-import { onMounted, ref } from 'vue';
-import { Droplet, Plus, SquareArrowOutUpRight } from 'lucide-vue-next';
+import { computed, onMounted, ref } from 'vue';
+import { Droplet, Plus } from 'lucide-vue-next';
 import { apiLabelService, inkLabelService } from '@/services/api.inks.service';
 import { useUserStore } from '@/stores/user.store';
+import router from '@/router';
 
 const uiStore = useUiStore();
 const userStore = useUserStore();
 const inks = ref<any[]>([]);
-const usedInks = ref<any[]>([]);
-const availableInks = ref<any[]>([]);
 const inkTypes = ref<any[]>([]);
-const selectedink = ref('');
 
-const showTab = ref(0)
+const availableInks = computed(() =>
+    inks.value.filter((el) => !el.tattooUuid),
+);
+
+const usedInks = computed(() =>
+    inks.value.filter((el) => el.tattooUuid),
+);
+
+const inkTypeLabel = computed(() => {
+    const type = inkTypes.value[0];
+    if (!type) return 'Inchiostro Yore';
+    return `${type.name ?? 'Yore'} - ${type.color ?? ''}`.trim();
+});
+
+const formatDate = (value: string) => value.split('T')[0];
+
+const goToTattoo = (tattooUuid: string) => {
+    if (!tattooUuid) return;
+    router.push(`/tattoos/${tattooUuid}`);
+};
 
 onMounted(async () => {
     uiStore.loading = true;
-    uiStore.title = "Inchiostri";
+    uiStore.title = 'Inchiostri';
     inkTypes.value = await inkLabelService.getInkTypes();
     inks.value = await apiLabelService.getLabelsByUser(userStore.getUiid);
-    availableInks.value = inks.value.filter(el => el.tattooUuid === null)
-    usedInks.value = inks.value.filter(el => el.tattooUuid)
     uiStore.loading = false;
 });
-
 </script>
-<style></style>

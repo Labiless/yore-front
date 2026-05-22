@@ -26,10 +26,10 @@ export const useUserStore = defineStore('user', {
   actions: {
     init(userData: any) {
       localStorage.setItem('userUuid', userData.uuid);
-      this.uuid = userData.uuid,
-      this.email = userData.email,
-      this.businessName = userData.businessName
-      this.city = userData.city
+      this.uuid = userData.uuid ?? '';
+      this.email = userData.email ?? '';
+      this.businessName = userData.businessName ?? '';
+      this.city = userData.city ?? '';
     }
   },
 })

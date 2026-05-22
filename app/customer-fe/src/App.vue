@@ -47,11 +47,12 @@ const route = useRoute();
     authStore.logout();
     router.push('login');
   }
-  else if(userStore.getUiid && authStore.isAuthenticated) {
-    const user = userStore.getUser;
-    if (!user.email) {
-      const user = await getUserByUuid(userStore.getUiid);
-      userStore.init(user);
+  else if (userStore.getUiid && authStore.isAuthenticated) {
+    try {
+      const profile = await getUserByUuid(userStore.getUiid);
+      userStore.init(profile);
+    } catch {
+      // keep cached profile if refresh fails
     }
   }
 })()

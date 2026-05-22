@@ -65,6 +65,7 @@ import { apiLabelService, inkLabelService } from '@/services/api.inks.service';
 import router from '@/router';
 import { useUserStore } from '@/stores/user.store';
 import { useTatoosStore } from '@/stores/tattoos.store';
+import { userService } from '@/services/api.user.service';
 
 const uiStore = useUiStore();
 const createTattoStore = useCreateTattoStore();
@@ -99,9 +100,23 @@ const allSteps = [
     },
 ]
 
+const refreshStudioProfile = async () => {
+    const profile = await userService.getUserByUuid(userStore.getUiid);
+    userStore.init(profile);
+};
+
+const studioSignPlace = () => (userStore.city ?? '').trim();
+const studioName = () =>
+    (userStore.businessName ?? '').trim() || (userStore.email ?? '').trim() || 'Studio';
+
 onMounted(async () => {
     uiStore.loading = true;
     uiStore.title = "Crea Tatuaggio";
+    try {
+        await refreshStudioProfile();
+    } catch {
+        // proceed with cached profile
+    }
     const tattooUuid = createTattoStore.uuid;
     createTattoStore.resetTattoo();
     if (tattooUuid) {
@@ -145,7 +160,7 @@ const submit = async () => {
     uiStore.loading = true;
     if (createTattoStore.uuid) {
         try {
-            console.log(createTattoStore)
+            await refreshStudioProfile();
 
             const closedTattoo = await closeTattoo(createTattoStore.uuid);
             const labelsData = await apiLabelService.getLabelsByTattooUuid(createTattoStore.uuid);
@@ -170,15 +185,15 @@ const submit = async () => {
                 microbiologicalAnalysisUrl: labelsData[0].microbiologicalAnalysisUrl,
                 inkSds: labelsData[0].sdsUrl,
                 inkFormulaUrl: labelsData[0].inkFormulaUrl,
-                signPlace: userStore.city,
-                tattooStudio: userStore.businessName,
+                signPlace: studioSignPlace(),
+                tattooStudio: studioName(),
                 tattooCertificateNumber: String(createTattoStore.id),
             }
 
             const informedConsentData = {
                 ...createTattoStore.informedConsentData,
                 date: getToday(),
-                signPlace: userStore.city,
+                signPlace: studioSignPlace(),
             };
 
             const customerEmail = createTattoStore.info.email;
@@ -193,7 +208,7 @@ const submit = async () => {
                 customerName: [createTattoStore.info.name, createTattoStore.info.surname]
                     .filter(Boolean)
                     .join(' '),
-                studioName: userStore.businessName,
+                studioName: studioName(),
                 certificate: certificateData,
                 consent: informedConsentData,
             });

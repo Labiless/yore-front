@@ -1,6 +1,6 @@
 <template>
     <form @submit.prevent="onsubmit" class="flex flex-col gap-4 max-w-full mx-auto">
-        YORE
+        <img :src="yoreLogo" alt="Yore" class="w-32 mx-auto" />
         <Input autocomplete="username" placeholder="Username" v-model="username" required />
         <Input autocomplete="current-password" placeholder="Password" v-model="password" type="password" required/>
         <Button type="submit">Login</Button>
@@ -12,6 +12,7 @@
 import Input from './ui/input/Input.vue';
 import Button from './ui/button/Button.vue';
 import { ref, defineEmits } from 'vue';
+import yoreLogo from '../images/yore_logo.png';
 
 defineProps<{
     error?: string

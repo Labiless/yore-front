@@ -1,1 +1,1 @@
-Yore FE build deploy
+Yore FE build

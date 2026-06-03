@@ -1,13 +1,14 @@
 <template>
     <p class="text-center font-bold mb-2 w-fit flex items-center mx-auto">
-        <ClipboardList class="text-black mr-2" />
+        <ClipboardList class="text-black mr-2 shrink-0" />
         Informazioni Tatuato
-    <div class="rounded-full bg-green-700 p-1 w-2 h-2 ml-2"
-        :class="`${createTattoStore.infoValidation() ? '' : 'bg-amber-500!'}`"></div>
+        <span
+            class="rounded-full p-1 w-2 h-2 ml-2 shrink-0"
+            :class="createTattoStore.infoValidation() ? 'bg-green-700' : 'bg-amber-500'"
+        />
     </p>
-    <hr>
-    </hr>
-    <form @submit.prevent="onsubmit" class="">
+    <hr class="mb-4" />
+    <form @submit.prevent="onsubmit" class="customer-form grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
         <label>
             Nome
             <Input placeholder="Nome" required v-model="createTattoStore.info.name" pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+" />
@@ -19,13 +20,13 @@
                 title="Cognome con lettere, spazi, apostrofi o trattini (es. De Luca, D'Angelo)" />
         </label>
 
-        <label>
+        <label class="sm:col-span-2">
             Codice Fiscale
             <Input placeholder="Codice Fiscale" required v-model="createTattoStore.info.cf" maxlength="16"
                 minlength="16" pattern="[A-Za-z]{6}[0-9]{2}[A-Za-z][0-9]{2}[A-Za-z][0-9]{3}[A-Za-z]"
                 style="text-transform: uppercase" />
         </label>
-        <label>
+        <label class="sm:col-span-2">
             Email
             <Input placeholder="Email" required v-model="createTattoStore.info.email" type="email" maxlength="254" />
         </label>
@@ -50,7 +51,7 @@
                 pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s]+" />
         </label>
 
-        <label>
+        <label class="sm:col-span-2">
             Indirizzo di residenza
             <Input placeholder="Indirizzo di residenza" required v-model="createTattoStore.info.address"
                 pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s]+" />
@@ -73,17 +74,17 @@
             <Input placeholder="Provincia di residenza" required v-model="createTattoStore.info.province"
                 pattern="[A-Za-z]{2}" maxlength="2" minlength="2" style="text-transform: uppercase" />
         </label>
-        <div class="flex flex-col justify-around mt-2">
-            <Label class="text-xs mb-4">
-                <input type="checkbox" required v-model="createTattoStore.info.consent1" />
-                Do il consenso per il trattamento dati
-            </Label>
-            <Label class="text-xs">
-                <input type="checkbox" required v-model="createTattoStore.info.consent2" />
-                Do il consenso per la liberatoria
-            </Label>
+        <div class="sm:col-span-2 flex flex-col gap-3 mt-1">
+            <label class="consent-label">
+                <input type="checkbox" required v-model="createTattoStore.info.consent1" class="mt-0.5 shrink-0" />
+                <span>Do il consenso per il trattamento dati</span>
+            </label>
+            <label class="consent-label">
+                <input type="checkbox" required v-model="createTattoStore.info.consent2" class="mt-0.5 shrink-0" />
+                <span>Do il consenso per la liberatoria</span>
+            </label>
         </div>
-        <Button type="submit" class="mt-8 w-full h-12">Conferma</Button>
+        <Button type="submit" class="sm:col-span-2 mt-2 w-full h-12">Conferma</Button>
     </form>
 </template>
 
@@ -91,7 +92,7 @@
 import { useCreateTattoStore } from '@/stores/createTatto.store';
 import Input from '@shared/components/ui/input/Input.vue';
 import Button from '@shared/components/ui/button/Button.vue';
-import Checkbox from '@shared/components/ui/checkbox/Checkbox.vue';
+import { ClipboardList } from 'lucide-vue-next';
 import { createCustomer, updateCustomer } from '@/services/api.customer.service';
 import { createTattoo, getAllTattoos, getTattoByUuid, updateTattoo } from '@/services/api.tattoo.service';
 import { useUserStore } from '@/stores/user.store';

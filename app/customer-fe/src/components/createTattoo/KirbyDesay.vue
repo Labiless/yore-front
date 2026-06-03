@@ -1,16 +1,18 @@
 <template>
     <p class="text-center font-bold mb-2 w-fit flex items-center mx-auto">
-        <ClipboardList class="text-black mr-2" />
+        <ClipboardList class="text-black mr-2 shrink-0" />
         Caratteristiche del tatuaggio
-    <div class="rounded-full p-1 w-2 h-2 ml-2"
-        :class="`${createTattoStore.kirbyDesayValidation() ? 'bg-green-700' : 'bg-amber-500'}`"></div>
+        <span
+            class="rounded-full p-1 w-2 h-2 ml-2 shrink-0"
+            :class="createTattoStore.kirbyDesayValidation() ? 'bg-green-700' : 'bg-amber-500'"
+        />
     </p>
     <hr />
     <Accordion type="single" collapsible class="w-full" default-value="item-1">
         <AccordionItem value="item-1">
             <AccordionTrigger>Tipo di pelle</AccordionTrigger>
             <AccordionContent>
-                <div class="grid grid-cols-2 gap-2">
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     <Button @click="createTattoStore.kirbyDesay.skinType = skinType.id" v-for="skinType in skinTypes"
                         :key="skinType.id"
                         class="h-28 shadow-xl bg-white text-black flex flex-col"
@@ -25,10 +27,10 @@
         <AccordionItem value="item-2">
             <AccordionTrigger>Localizzazione tatuaggio</AccordionTrigger>
             <AccordionContent>
-                <div class="grid grid-cols-3 gap-2">
+                <div class="grid grid-cols-3 sm:grid-cols-5 gap-2 max-w-md mx-auto sm:max-w-none">
                     <Button @click="createTattoStore.kirbyDesay.position = position.id" v-for="position in positions"
                         :key="position.id"
-                        class="h-fit shadow-xl bg-white text-black flex flex-col"
+                        class="h-fit max-w-[5.5rem] sm:max-w-none mx-auto w-full shadow-xl bg-white text-black flex flex-col"
                         :class="`${createTattoStore.kirbyDesay.position === position.id ? 'border-2 border-blue-400' : ''}`">
                         <img :src="`img/kirby_desay/location-${position.id}.svg`" alt="" />
                     </Button>

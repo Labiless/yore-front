@@ -6,7 +6,7 @@
             </Button>
         </router-link>
 
-        <div class="flex items-center gap-2 p-2 my-4 mx-auto rounded-md bg-slate-200">
+        <div class="flex items-center gap-2 p-2 my-4 w-fit max-w-full mx-auto rounded-md bg-slate-200">
             <Button @click="showTab = 0" class="text-xs w-fit h-8 bg-transparent text-black"
                 :class="`${showTab === 0 ? 'bg-white!' : 'shadow-none'}`">Tutti</Button>
             <Button @click="showTab = 1" class="text-xs w-fit h-8 bg-transparent text-black"
@@ -79,13 +79,13 @@
                             <p class="text-xs">{{ activeTattoo.creationDate.split('T')[0] }}</p>
                             <p class="text-xs opacity-60">{{ activeTattoo.uuid }}</p>
                         </div>
-                        <div v-if="tattooPhotos.before || tattooPhotos.after" class="flex gap-2 mb-4 flex-wrap">
-                            <div v-if="tattooPhotos.before" class="w-1/2 min-w-[140px]">
+                        <div v-if="tattooPhotos.before || tattooPhotos.after" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 max-w-md">
+                            <div v-if="tattooPhotos.before">
                                 <p class="text-xs font-bold mb-1">Prima</p>
                                 <img :src="tattooPhotos.before" class="w-full border-2 rounded-md object-cover"
                                     alt="Prima del tatuaggio" />
                             </div>
-                            <div v-if="tattooPhotos.after" class="w-1/2 min-w-[140px]">
+                            <div v-if="tattooPhotos.after">
                                 <p class="text-xs font-bold mb-1">Dopo</p>
                                 <img :src="tattooPhotos.after" class="w-full border-2 rounded-md object-cover"
                                     alt="Dopo il tatuaggio" />

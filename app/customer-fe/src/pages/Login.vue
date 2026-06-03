@@ -1,6 +1,8 @@
 <template>
-    <div class="flex items-center h-[100vh]">
-        <LoginForm :error="error" @submit="onsubmit">Click me</LoginForm>
+    <div class="flex items-center justify-center min-h-[calc(100vh-8rem)] py-8">
+        <div class="w-full max-w-sm">
+            <LoginForm :error="error" @submit="onsubmit">Click me</LoginForm>
+        </div>
     </div>
 </template>
 

@@ -1,14 +1,14 @@
 <template>
-    <div>
-        <Button @click="submit" :disabled="!createTattoStore.allValidation()" class="mb-8 w-full h-12">Genera
+    <div class="w-full min-w-0">
+        <Button @click="submit" :disabled="!createTattoStore.allValidation()" class="mb-6 w-full h-12">Genera
             certificato</Button>
-        <p class="flex text-xl font-bold w-fit m-auto">
-            <Calendar class="mr-2" /> 01/01/2026
+        <p class="flex text-xl font-bold w-fit mx-auto">
+            <Calendar class="mr-2 shrink-0" /> 01/01/2026
         </p>
-        <p class="text-sm text-center">INK STUDIO - Tattoo studio</p>
-        <div id="steps" class="py-4 flex justify-around md:justify-center w-5/6 mx-auto">
+        <p class="text-sm text-center text-gray-600">INK STUDIO - Tattoo studio</p>
+        <div id="steps" class="py-4 flex flex-wrap justify-center gap-2 sm:gap-3 max-w-sm mx-auto">
             <Button :disabled="status.name !== 'info' && !createTattoStore.uuid" @click="activeStep = status.name"
-                v-for="status in allSteps" class="w-10 h-14 bg-white flex flex-col md:mx-4"
+                v-for="status in allSteps" class="w-10 h-14 shrink-0 bg-white flex flex-col"
                 :class="`${activeStep === status.name ? 'border-2 border-blue-500' : ''}`">
                 <ClipboardList class="text-black" v-if="status.name === 'info'" />
                 <FileText class="text-black" v-if="status.name === 'declarations'" />
@@ -20,26 +20,26 @@
                 </div>
             </Button>
         </div>
-        <div id="info" class="flex flex-col gap-4 h-1/2 pt-8 pb-12" v-if="activeStep === 'info'">
+        <div id="info" class="flex flex-col gap-4 pt-6 pb-8 min-w-0" v-if="activeStep === 'info'">
             <CustomerInfo />
         </div>
-        <div id="declarations" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 pb-16 pt-8"
+        <div id="declarations" class="flex flex-col gap-4 pb-8 pt-6 min-w-0"
             v-if="activeStep === 'declarations'">
             <Declarations />
         </div>
-        <div id="kirbyDesay" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 pb-16 pt-8"
+        <div id="kirbyDesay" class="flex flex-col gap-4 pb-8 pt-6 min-w-0"
             v-if="activeStep === 'kirbyDesay'">
             <KirbyDesay />
         </div>
-        <div id="ink" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 pb-16 pt-8"
+        <div id="ink" class="flex flex-col gap-4 pb-8 pt-6 min-w-0"
             v-if="activeStep === 'ink'">
             <Inks />
         </div>
-        <div id="tattoo" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 pb-16 pt-8"
+        <div id="tattoo" class="flex flex-col gap-4 pb-8 pt-6 min-w-0"
             v-if="activeStep === 'tattoo'">
             <Tattoo />
         </div>
-        <div id="sign" class="overflow-y-scroll hide-scrollbar flex flex-col gap-4 h-1/2 pb-16 pt-8"
+        <div id="sign" class="flex flex-col gap-4 pb-8 pt-6 min-w-0"
             v-if="activeStep === 'sign'">
             <Signs />
         </div>

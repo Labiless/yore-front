@@ -5,14 +5,16 @@
   <Transition>
     <PopUp v-if="uiStore.popup.text.length && uiStore.popup.action" :uiStore="uiStore" />
   </Transition>
-  <main class="h-screen" :class="`${uiStore.loading ? 'blur' : ''}`">
+  <main class="h-screen overflow-y-auto" :class="`${uiStore.loading ? 'blur' : ''}`">
     <Transition>
-      <RouterView class="lg:w-1/2 mx-auto pt-12 pb-24 px-4" />
+      <RouterView class="app-shell px-4 pt-12 pb-28" />
     </Transition>
   </main>
-  <div class="fixed bottom-0 w-full">
-    <Header v-if="authStore.isAuthenticated" :title="uiStore.title" />
-    <Nav :first-index="0" v-if="authStore.isAuthenticated" :links :route="route" />
+  <div v-if="authStore.isAuthenticated" class="fixed bottom-0 inset-x-0 z-30 flex justify-center pointer-events-none">
+    <div class="app-shell w-full pointer-events-auto bg-white shadow-[0_-4px_24px_rgba(0,0,0,0.06)]">
+      <Header :title="uiStore.title" />
+      <Nav :first-index="0" :links :route="route" />
+    </div>
   </div>
   <Transition>
     <div v-if="uiStore.toast.length"

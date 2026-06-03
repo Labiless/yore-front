@@ -25,7 +25,6 @@
         <Transition>
             <div v-if="!activeTattoo" class="flex flex-col gap-3">
                 <div
-                    v-show="showIfStatus(tattoo.status)"
                     v-for="tattoo in tattoosStore.tattoos"
                     :key="tattoo.uuid"
                     @click="onclickTattoo(tattoo)"
@@ -60,6 +59,25 @@
                             </div>
                         </div>
                     </div>
+                <div ref="loadMoreSentinel" class="h-1 shrink-0" aria-hidden="true" />
+                <p
+                    v-if="tattoosStore.tattoosListLoading && tattoosStore.tattoos.length"
+                    class="text-center text-sm text-gray-500 py-3"
+                >
+                    Caricamento...
+                </p>
+                <p
+                    v-else-if="!tattoosStore.tattoosHasMore && tattoosStore.tattoos.length"
+                    class="text-center text-xs text-gray-400 py-3"
+                >
+                    Fine elenco ({{ tattoosStore.tattoosTotal }} tatuaggi)
+                </p>
+                <p
+                    v-else-if="!tattoosStore.tattoosListLoading && !tattoosStore.tattoos.length"
+                    class="text-center text-sm text-gray-500 py-6"
+                >
+                    Nessun tatuaggio in questa categoria
+                </p>
             </div>
             <div v-else>
                 <div class="flex items-center mb-4">
@@ -110,9 +128,10 @@
 
 import { useUiStore } from '@/stores/ui';
 import { Calendar, Plus, Trash, ArrowLeft, Droplet } from 'lucide-vue-next';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useTatoosStore } from '@/stores/tattoos.store';
-import { deleteTattoo, getTattoosByUserUuid } from '@/services/api.tattoo.service';
+import { deleteTattoo, getTattoByUuid } from '@/services/api.tattoo.service';
+import type { TattooListFilter } from '@/types/tattoos-page';
 import {
     syncTattooPhotos,
     INK_COLOR_LABELS,
@@ -133,6 +152,22 @@ const userStore = useUserStore();
 const activeTattoo = ref<any>(null);
 const activeDelete = ref(false);
 const route = useRoute();
+const loadMoreSentinel = ref<HTMLElement | null>(null);
+let loadMoreObserver: IntersectionObserver | null = null;
+
+const tabToFilter = (tab: number): TattooListFilter => {
+    if (tab === 1) return 'close';
+    if (tab === 2) return 'active';
+    if (tab === 3) return 'deletable';
+    return 'all';
+};
+
+const loadTattoos = async (reset = false) => {
+    await tattoosStore.fetchTattoosPage(userStore.getUiid, {
+        reset,
+        filter: tabToFilter(showTab.value),
+    });
+};
 
 const tattooPhotos = computed(() =>
     activeTattoo.value ? syncTattooPhotos(activeTattoo.value.photoUrl) : {},
@@ -172,13 +207,6 @@ const getTattooUuidFromUrl = (): string => {
     }
 }
 
-const showIfStatus = (status: string) => {
-    if (showTab.value === 0) return true;
-    if (showTab.value === 1) return status === 'CLOSE';
-    if (showTab.value === 2) return status !== 'CLOSE';
-    if (showTab.value === 3) return status !== 'CLOSE' && status !== 'PROGRESS';
-}
-
 const isDeletable = (status: string) => {
     return status !== 'CLOSE' && status !== 'PROGRESS';
 }
@@ -195,24 +223,66 @@ const getStatusColor = (tattoo: { status: string; inks?: string[] }) => {
     return 'bg-orange-500';
 };
 
+watch(showTab, async () => {
+    if (activeTattoo.value) return;
+    uiStore.loading = true;
+    await loadTattoos(true);
+    uiStore.loading = false;
+});
+
+const setupLoadMoreObserver = () => {
+    loadMoreObserver?.disconnect();
+    if (!loadMoreSentinel.value) return;
+    loadMoreObserver = new IntersectionObserver(
+        (entries) => {
+            if (
+                entries[0]?.isIntersecting &&
+                !activeTattoo.value &&
+                tattoosStore.tattoosHasMore &&
+                !tattoosStore.tattoosListLoading
+            ) {
+                loadTattoos(false);
+            }
+        },
+        { root: null, rootMargin: '120px', threshold: 0 },
+    );
+    loadMoreObserver.observe(loadMoreSentinel.value);
+};
+
+watch(loadMoreSentinel, () => {
+    if (!activeTattoo.value) setupLoadMoreObserver();
+});
+
+watch(
+    () => activeTattoo.value,
+    (detail) => {
+        if (detail) {
+            loadMoreObserver?.disconnect();
+        } else {
+            setupLoadMoreObserver();
+        }
+    },
+);
+
 onMounted(async () => {
     uiStore.loading = true;
-    uiStore.title = "Tatuaggi";
+    uiStore.title = 'Tatuaggi';
 
-    if (tattoosStore.tattoos.length === 0) {
-        const res = await getTattoosByUserUuid(userStore.getUiid);
-        tattoosStore.tattoos = res.sort((a: any, b: any) => b.id - a.id);
-    }
+    await loadTattoos(true);
 
     try {
         if (getTattooUuidFromUrl().length > 0) {
             await showClosedTattoo(getTattooUuidFromUrl());
         }
-    } catch (error) {
-        console.log('error in showing closed tattoo');
-        console.log(error);
+    } catch {
+        // ignore
     }
     uiStore.loading = false;
+    setupLoadMoreObserver();
+});
+
+onUnmounted(() => {
+    loadMoreObserver?.disconnect();
 });
 
 const onclickTattoo = async (tattoo: any) => {
@@ -237,9 +307,10 @@ const tattoDeletion = async (tattoo: any) => {
     uiStore.setPopoup('Confermi di voler eliminare il tatuaggio?', async () => {
         uiStore.loading = true;
         await deleteTattoo(tattoo.uuid);
-        tattoosStore.tattoos = tattoosStore.tattoos.filter(el => el.uuid !== tattoo.uuid);
+        tattoosStore.removeTattooFromList(tattoo.uuid);
         activeDelete.value = false;
         showTab.value = 0;
+        await loadTattoos(true);
         uiStore.loading = false;
         uiStore.setToast('Tatuaggio eliminato');
     });
@@ -253,18 +324,26 @@ const goToTatto = (tattooUuid: string) => {
 const showClosedTattoo = async (tattooUuid: string) => {
     uiStore.loading = true;
     try {
-        activeTattoo.value = tattoosStore.tattoos.filter(el => el.uuid === tattooUuid)[0];
-        if (activeTattoo.value.status !== 'CLOSE') {
-            goToTatto(activeTattoo.value.uuid);
-        } else {
-            const customer = await getCustomerByUuid(activeTattoo.value.customerUuid);
-            activeTattoo.value.customer = customer;
+        const tattoo = await getTattoByUuid(tattooUuid);
+        if (tattoo.status !== 'CLOSE') {
+            goToTatto(tattoo.uuid);
+            return;
         }
-    } catch (error) {
+        activeTattoo.value = tattoo;
+        tattoosStore.upsertTattoo(tattoo);
+        if (tattoo.customerUuid) {
+            try {
+                const customer = await getCustomerByUuid(tattoo.customerUuid);
+                activeTattoo.value.customer = customer;
+            } catch {
+                // dettaglio senza dati cliente estesi
+            }
+        }
+    } catch {
         router.push('/tattoos');
     }
     uiStore.loading = false;
-}
+};
 
 const goBackToTattoosList = () => {
     activeTattoo.value = null;

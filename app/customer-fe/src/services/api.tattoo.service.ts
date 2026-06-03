@@ -16,10 +16,30 @@ export const getAllTattoos = async () => {
     return data.data;
 }
 
-export const getTattoosByUserUuid = async (userUuid : string) => {
-    const data = await api.get("/tattoos/user/" + userUuid);
+export const getTattoosByUserUuid = async (userUuid: string) => {
+    const data = await api.get('/tattoos/user/' + userUuid);
     return data.data;
-}
+};
+
+export const getTattoosByUserUuidPage = async (
+    userUuid: string,
+    params: { page: number; limit?: number; filter?: string },
+) => {
+    const data = await api.get(`/tattoos/user/${userUuid}`, {
+        params: {
+            page: params.page,
+            limit: params.limit ?? 20,
+            filter: params.filter ?? 'all',
+        },
+    });
+    return data.data as {
+        items: any[];
+        total: number;
+        page: number;
+        limit: number;
+        hasMore: boolean;
+    };
+};
 
 export const getTattoByUuid = async (uuid: string) => {
     const data = await api.get(`/tattoos/${uuid}`);

@@ -57,7 +57,7 @@ import { Brush, Calendar, ClipboardList, Droplet, FileText, PenTool, PersonStand
 import { useUiStore } from '@/stores/ui';
 import { onMounted, ref } from 'vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
-import { getTattoByUuid, closeTattoo, getAllTattoos, finalizeTattoo } from '@/services/api.tattoo.service';
+import { getTattoByUuid, closeTattoo, finalizeTattoo } from '@/services/api.tattoo.service';
 import { getCustomerByUuid } from '@/services/api.customer.service';
 import { hasKirbyDesayData } from '@/constants/tattoo.config';
 import { hasDeclarationsData } from '@/constants/tattoo-declarations.config';
@@ -229,8 +229,7 @@ const submit = async () => {
                 consent: informedConsentData,
             });
 
-            const res = await getAllTattoos();
-            tattooStore.tattoos = res.sort((a: any, b: any) => b.id - a.id);
+            await tattooStore.fetchTattoosPage(userStore.getUiid, { reset: true, filter: 'all' });
             router.push(`tattoos/${createTattoStore.uuid}`);
             uiStore.setToast('Tatuaggio completato! Email inviata al cliente.');
 

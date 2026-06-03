@@ -23,7 +23,27 @@ export const getLabelsByTattooUuid = async (uuid: string) => {
 export const getLabelsByUser = async (uuid: string) => {
     const data = await api.get(`labels/users/${uuid}`);
     return data.data;
-}
+};
+
+export const getLabelsByUserPage = async (
+    uuid: string,
+    params: { page: number; limit?: number; filter?: 'all' | 'available' | 'used' },
+) => {
+    const data = await api.get(`labels/users/${uuid}`, {
+        params: {
+            page: params.page,
+            limit: params.limit ?? 20,
+            filter: params.filter ?? 'all',
+        },
+    });
+    return data.data as {
+        items: any[];
+        total: number;
+        page: number;
+        limit: number;
+        hasMore: boolean;
+    };
+};
 
 export const updateLabelByUuid = async (uuid: string, updateData: any) => {
     console.log(updateData);

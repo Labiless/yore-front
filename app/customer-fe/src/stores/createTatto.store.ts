@@ -277,7 +277,11 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             return this.inks.length > 0;
         },
         tattooPhotoValidation() {
-            return !!this.photoBeforeUrl && !!this.photoAfterUrl && !!this.tattooArtist;
+            return (
+                !!this.photoBeforeUrl &&
+                !!this.photoAfterUrl &&
+                !!this.tattooArtist?.trim()
+            );
         },
         syncPhotosFromApi(photoUrl: string | string[] | null | undefined) {
             const photos = Array.isArray(photoUrl) ? photoUrl : photoUrl ? [photoUrl] : [];

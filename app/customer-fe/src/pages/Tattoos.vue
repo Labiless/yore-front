@@ -102,13 +102,21 @@
                         <div v-if="tattooPhotos.before || tattooPhotos.after" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 max-w-md">
                             <div v-if="tattooPhotos.before">
                                 <p class="text-xs font-bold mb-1">Prima</p>
-                                <img :src="tattooPhotos.before" class="w-full border-2 rounded-md object-cover"
-                                    alt="Prima del tatuaggio" />
+                                <img
+                                    :key="`before-${activeTattoo.uuid}-${tattooPhotos.before}`"
+                                    :src="tattooPhotos.before"
+                                    class="w-full border-2 rounded-md object-cover"
+                                    alt="Prima del tatuaggio"
+                                />
                             </div>
                             <div v-if="tattooPhotos.after">
                                 <p class="text-xs font-bold mb-1">Dopo</p>
-                                <img :src="tattooPhotos.after" class="w-full border-2 rounded-md object-cover"
-                                    alt="Dopo il tatuaggio" />
+                                <img
+                                    :key="`after-${activeTattoo.uuid}-${tattooPhotos.after}`"
+                                    :src="tattooPhotos.after"
+                                    class="w-full border-2 rounded-md object-cover"
+                                    alt="Dopo il tatuaggio"
+                                />
                             </div>
                         </div>
                         <div class="mb-4">

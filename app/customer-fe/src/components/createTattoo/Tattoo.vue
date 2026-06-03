@@ -119,6 +119,7 @@ import Button from '@shared/components/ui/button/Button.vue';
 import Input from '@shared/components/ui/input/Input.vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
 import { CircleX, ClipboardList, Plus } from 'lucide-vue-next';
+import { buildPhotoUrlArray } from '@/constants/tattoo.config';
 import { addImage, updateTattoo, getTattoByUuid } from '@/services/api.tattoo.service';
 import { useUiStore } from '@/stores/ui';
 import { useTatoosStore } from '@/stores/tattoos.store';
@@ -183,7 +184,7 @@ const uploadImage = async (slot: PhotoSlot, img: File) => {
         const { url } = await addImage(tattooUuid, img);
         const before = slot === 'before' ? url : createTattoStore.photoBeforeUrl;
         const after = slot === 'after' ? url : createTattoStore.photoAfterUrl;
-        const photoUrl = [before, after].filter((u): u is string => !!u);
+        const photoUrl = buildPhotoUrlArray(before, after);
 
         await updateTattoo(tattooUuid, { photoUrl });
         const updatedTattoo = await refreshTattooInList(tattooUuid);

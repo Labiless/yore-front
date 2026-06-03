@@ -6,6 +6,7 @@ import {
     type TattooDeclarationsState,
     type DeclarationAnswerKey,
 } from '@/constants/tattoo-declarations.config';
+import { buildPhotoUrlArray, syncTattooPhotos } from '@/constants/tattoo.config';
 
 export const useCreateTattoStore = defineStore('createTattoo', {
     state: () => ({
@@ -284,14 +285,12 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             );
         },
         syncPhotosFromApi(photoUrl: string | string[] | null | undefined) {
-            const photos = Array.isArray(photoUrl) ? photoUrl : photoUrl ? [photoUrl] : [];
-            this.photoBeforeUrl = photos[0];
-            this.photoAfterUrl = photos[1];
+            const { before, after } = syncTattooPhotos(photoUrl);
+            this.photoBeforeUrl = before;
+            this.photoAfterUrl = after;
         },
         buildPhotoUrlPayload(): string[] {
-            return [this.photoBeforeUrl, this.photoAfterUrl].filter(
-                (url): url is string => !!url,
-            );
+            return buildPhotoUrlArray(this.photoBeforeUrl, this.photoAfterUrl);
         },
         signValidation() {
             return !!this.customerSign && !!this.userSign;

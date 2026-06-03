@@ -1,5 +1,5 @@
 <template>
-    <div class="items-start">
+    <div class="mx-auto w-full items-start overflow-y-auto hide-scrollbar pb-24">
         <router-link to="/createtattoo" @click="createTattooStore.resetTattoo">
             <Button class="w-full h-12 mb-4">
                 <Plus />Nuovo tatuaggio
@@ -22,14 +22,16 @@
                 <Trash />
             </Button>
         </div>
-        <div class="overflow-y-scroll hide-scrollbar h-[60vh]">
-            <Transition>
-                <div v-if="!activeTattoo">
-                    <div v-show="showIfStatus(tattoo.status)" @click="onclickTattoo(tattoo)"
-                        class="flex items-start gap-3 shadow-md p-2 pl-4 pr-3 bg-white mb-4 rounded-md w-full hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
-                        :class="`${activeDelete && isDeletable(tattoo.status) ? 'active-delete' : ''}`"
-                        v-for="tattoo in tattoosStore.tattoos"
-                        :key="tattoo.uuid">
+        <Transition>
+            <div v-if="!activeTattoo" class="flex flex-col gap-3">
+                <div
+                    v-show="showIfStatus(tattoo.status)"
+                    v-for="tattoo in tattoosStore.tattoos"
+                    :key="tattoo.uuid"
+                    @click="onclickTattoo(tattoo)"
+                    class="flex items-start gap-3 shadow-md p-2 pl-4 pr-3 bg-white rounded-md w-full h-fit hover:bg-blue-100 hover:cursor-pointer transition-all"
+                    :class="`${activeDelete && isDeletable(tattoo.status) ? 'active-delete' : ''}`"
+                >
                         <div class="shrink-0 w-[30px] h-[30px] mt-0.5">
                             <img v-if="listTattooThumb(tattoo.photoUrl)" :src="listTattooThumb(tattoo.photoUrl)"
                                 class="w-[30px] h-[30px] min-w-[30px] min-h-[30px] rounded-full object-cover"
@@ -58,11 +60,11 @@
                             </div>
                         </div>
                     </div>
+            </div>
+            <div v-else>
+                <div class="flex items-center mb-4">
+                    <ArrowLeft @click="goBackToTattoosList" class="hover:cursor-pointer mr-2 shrink-0" />
                 </div>
-                <div v-else class="overflow-y-scroll hide-scrollbar h-[60vh]">
-                    <div class="flex items-center mb-4">
-                        <ArrowLeft @click="goBackToTattoosList" class="hover:cursor-pointer mr-2" />
-                    </div>
                     <div class="flex flex-wrap gap-2 mb-4">
                         <a v-if="activeTattoo.certificateUrl" :href="activeTattoo.certificateUrl" target="_blank">
                             <Button class="text-xs">Scarica certificato</Button>
@@ -100,9 +102,8 @@
                             <p>Tipo pelle: {{ activeTattoo.skinType ?? '—' }}</p>
                         </div>
                     </div>
-                </div>
-            </Transition>
-        </div>
+            </div>
+        </Transition>
     </div>
 </template>
 <script setup lang="ts">

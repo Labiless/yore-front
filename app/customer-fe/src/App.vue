@@ -10,11 +10,9 @@
       <RouterView class="app-shell px-4 pt-12 pb-28" />
     </Transition>
   </main>
-  <div v-if="authStore.isAuthenticated" class="fixed bottom-0 inset-x-0 z-30 flex justify-center pointer-events-none">
-    <div class="app-shell w-full pointer-events-auto bg-white shadow-[0_-4px_24px_rgba(0,0,0,0.06)]">
-      <Header :title="uiStore.title" />
-      <Nav :first-index="0" :links :route="route" />
-    </div>
+  <div v-if="authStore.isAuthenticated" class="fixed bottom-0 w-full z-30 bg-white">
+    <Header :title="uiStore.title" />
+    <Nav :first-index="0" :links :route="route" />
   </div>
   <Transition>
     <div v-if="uiStore.toast.length"

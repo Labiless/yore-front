@@ -109,6 +109,18 @@ const studioSignPlace = () => (userStore.city ?? '').trim();
 const studioName = () =>
     (userStore.businessName ?? '').trim() || (userStore.email ?? '').trim() || 'Studio';
 
+const studioAddress = () => {
+    const cityLine = [userStore.cap, userStore.city, userStore.province]
+        .map((part) => (part ?? '').trim())
+        .filter(Boolean)
+        .join(' ');
+    return [
+        (userStore.address ?? '').trim(),
+        cityLine,
+        (userStore.country ?? '').trim(),
+    ].filter(Boolean).join(', ');
+};
+
 onMounted(async () => {
     uiStore.loading = true;
     uiStore.title = "Crea Tatuaggio";
@@ -178,7 +190,8 @@ const submit = async () => {
                 date: getToday(),
                 inkType: labelsData[0].inkType,
                 inkColor: labelsData[0].color,
-                codiceUnivoco: '???????',
+                codiceUnivoco:
+                    labelsData[0]?.id != null ? String(labelsData[0].id) : '',
                 inkBatchId: labelsData[0].batchId,
                 sterilizationUrl: labelsData[0].sterilizationCertUrl,
                 chemistryAnalysisUrl: labelsData[0].chemistryAnalysisUrl,
@@ -187,6 +200,9 @@ const submit = async () => {
                 inkFormulaUrl: labelsData[0].inkFormulaUrl,
                 signPlace: studioSignPlace(),
                 tattooStudio: studioName(),
+                tattooStudioAddress: studioAddress(),
+                tattooPhotoUrl:
+                    createTattoStore.photoAfterUrl ?? createTattoStore.photoBeforeUrl,
                 tattooCertificateNumber: String(createTattoStore.id),
             }
 

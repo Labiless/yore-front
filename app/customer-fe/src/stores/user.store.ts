@@ -6,6 +6,10 @@ export const useUserStore = defineStore('user', {
     email: '',
     businessName: '',
     city: '',
+    address: '',
+    cap: '',
+    province: '',
+    country: '',
   }),
 
   getters: {
@@ -30,6 +34,10 @@ export const useUserStore = defineStore('user', {
       this.email = userData.email ?? '';
       this.businessName = userData.businessName ?? '';
       this.city = userData.city ?? '';
+      this.address = userData.address ?? '';
+      this.cap = userData.cap ?? '';
+      this.province = userData.province ?? '';
+      this.country = userData.country ?? '';
     }
   },
 })

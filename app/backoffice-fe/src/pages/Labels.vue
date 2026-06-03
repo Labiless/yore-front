@@ -20,14 +20,22 @@
                     <div  @click="showBatch(labelBatch.uuid)" class="flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:p-6"
                         v-for="labelBatch in labelsStore.allBatches">
                         <p class="font-bold text-2xl">x{{ labelBatch.amount }}</p>
-                        <div class="pl-4 flex justify-between items-center w-11/12">
-                            <div>
+                        <div class="pl-4 flex justify-between items-center gap-2 flex-1 min-w-0">
+                            <div class="min-w-0 flex-1">
                                 <p class="flex capitalize text-sm">
                                     #{{ labelBatch.id }}
                                 </p>
                                 <p class="flex capitalize text-sm -translate-x-2">
                                     <Calendar class="scale-75" />{{ labelBatch.creationDate.split('T')[0] }}
                                 </p>
+                                <p
+                                    v-if="batchStudioDisplayName(labelBatch)"
+                                    class="flex items-start gap-1.5 text-xs text-gray-600 mt-1 min-w-0"
+                                >
+                                    <User class="size-3.5 shrink-0 mt-0.5" />
+                                    <span class="break-words">{{ batchStudioDisplayName(labelBatch) }}</span>
+                                </p>
+                                <p v-else class="text-xs text-gray-500 mt-1">Nessun studio associato</p>
                             </div>
                         </div>
                     </div>
@@ -190,6 +198,17 @@ const loadUserDisplayNames = async () => {
 const labelUserDisplayName = (userUuid: string) =>
     userDisplayNameByUuid.value[userUuid] ?? userUuid;
 
+const batchStudioDisplayName = (batch: {
+    studioName?: string | null;
+    studioUserUuid?: string | null;
+}) => {
+    if (batch.studioName) return batch.studioName;
+    if (batch.studioUserUuid) {
+        return labelUserDisplayName(batch.studioUserUuid);
+    }
+    return null;
+};
+
 const batchNeedsUserAssociation = computed(() => {
     const labels = labelsStore.batchData;
     if (!labels.length) return false;
@@ -312,6 +331,7 @@ const confirmAssociateUser = async () => {
     try {
         await associateBatchToUser(labelsStore.batchUuid, selectedAssociateUserUuid.value);
         labelsStore.batchData = await getBatchByUuid(labelsStore.batchUuid);
+        labelsStore.allBatches = await getAllBatches();
         await loadUserDisplayNames();
         closeAssociateUserModal();
         uiStore.setToast('Etichette associate allo studio');

@@ -122,7 +122,7 @@ export const DECLARATION_QUESTIONS: {
 
 export const DECLARATION_ANSWER_KEYS = DECLARATION_QUESTIONS.map((q) => q.key);
 
-/** Tutte le voci partono da No; l'utente può cambiare in Sì dove necessario. */
+/** Tutte le voci partono con toggle spento (No); attivando il toggle si risponde Sì. */
 export function createEmptyDeclarations(): TattooDeclarationsState {
   return {
     declPreviousPigmentation: false,

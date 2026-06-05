@@ -23,7 +23,10 @@ const username = ref('');
 const password = ref('');
 
 const onsubmit = () => {
-    emit('submit', { username: username.value, password: password.value });
+    emit('submit', {
+        username: username.value.trim().toLowerCase(),
+        password: password.value,
+    });
 };
 
 </script>

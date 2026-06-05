@@ -32,6 +32,7 @@ api.interceptors.response.use(
       // router.push('/home');
     }
     uiStore.loading = false;
+    uiStore.loadingMessage = '';
     return Promise.reject(error)
   },
 )

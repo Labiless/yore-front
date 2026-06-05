@@ -1,16 +1,20 @@
 <template>
-  <div class="flex justify-center items-center w-full h-full fixed z-10 bg-gray-500 opacity-35" v-if="uiStore.loading">
-    <div class="w-16 h-16 bg-white rounded-full animate-bounce"></div>
-  </div>
   <Transition>
     <PopUp v-if="uiStore.popup.text.length && uiStore.popup.action" :uiStore="uiStore" />
   </Transition>
-  <main class="h-screen overflow-y-auto" :class="`${uiStore.loading ? 'blur' : ''}`">
+  <main
+    class="h-screen overflow-y-auto"
+    :class="`${uiStore.loading ? 'blur pointer-events-none select-none' : ''}`"
+  >
     <Transition>
       <RouterView class="app-shell px-4 pt-12 pb-28" />
     </Transition>
   </main>
-  <div v-if="authStore.isAuthenticated" class="fixed bottom-0 w-full z-30 bg-white">
+  <div
+    v-if="authStore.isAuthenticated"
+    class="fixed bottom-0 w-full z-30 bg-white"
+    :class="`${uiStore.loading ? 'pointer-events-none' : ''}`"
+  >
     <Header :title="uiStore.title" />
     <Nav :first-index="0" :links :route="route" />
   </div>
@@ -21,6 +25,21 @@
       {{ uiStore.toast }}
     </div>
   </Transition>
+  <div
+    v-if="uiStore.loading"
+    class="loading-overlay fixed inset-0 z-[200] flex justify-center items-center bg-gray-900/45 px-6"
+    role="alertdialog"
+    aria-modal="true"
+    aria-busy="true"
+    aria-label="Caricamento in corso"
+  >
+    <div class="flex flex-col items-center gap-4 max-w-sm w-full rounded-2xl bg-white px-6 py-8 shadow-2xl text-center pointer-events-auto">
+      <div class="w-12 h-12 rounded-full border-4 border-gray-200 border-t-blue-500 animate-spin" />
+      <p v-if="uiStore.loadingMessage" class="text-sm text-gray-700 leading-relaxed">
+        {{ uiStore.loadingMessage }}
+      </p>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -31,7 +50,7 @@ import Nav from '@shared/components/Nav.vue';
 import PopUp from '@shared/components/PopUp.vue';
 import { useUiStore } from '@/stores/ui';
 import { useAuthStore } from './stores/auth';
-import { onMounted } from 'vue';
+import { onUnmounted, watch } from 'vue';
 import { useUserStore } from './stores/user.store';
 import router from './router';
 import { getUserByUuid } from '../../backoffice-fe/src/services/api.user.service';
@@ -41,6 +60,18 @@ const uiStore = useUiStore();
 const authStore = useAuthStore();
 const userStore = useUserStore();
 const route = useRoute();
+
+watch(
+  () => uiStore.loading,
+  (loading) => {
+    document.body.style.overflow = loading ? 'hidden' : '';
+  },
+  { immediate: true },
+);
+
+onUnmounted(() => {
+  document.body.style.overflow = '';
+});
 
 (async () => {
   if (!userStore.getUiid) {
@@ -94,4 +125,9 @@ const links = [
 </script>
 
 
-<style scoped></style>
+<style scoped>
+.loading-overlay {
+  touch-action: none;
+  overscroll-behavior: none;
+}
+</style>

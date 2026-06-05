@@ -257,9 +257,12 @@ const submit = async () => {
             if (!customerEmail) {
                 uiStore.setToast('Email del cliente obbligatoria per l\'invio dei documenti', 'error');
                 uiStore.loading = false;
+                uiStore.loadingMessage = '';
                 return;
             }
 
+            uiStore.loadingMessage =
+                'Stiamo generando tutti i documenti, potrebbe volerci un attimo :)';
             await finalizeTattoo(createTattoStore.uuid, {
                 customerEmail,
                 customerName: [createTattoStore.info.name, createTattoStore.info.surname]
@@ -269,6 +272,7 @@ const submit = async () => {
                 certificate: certificateData,
                 consent: informedConsentData,
             });
+            uiStore.loadingMessage = '';
 
             await tattooStore.fetchTattoosPage(userStore.getUiid, { reset: true, filter: 'all' });
             router.push(`/tattoos/${createTattoStore.uuid}`);
@@ -283,6 +287,7 @@ const submit = async () => {
         uiStore.setToast('Nessun ID tatuaggio', 'error');
     }
     uiStore.loading = false;
+    uiStore.loadingMessage = '';
 }
 
 </script>

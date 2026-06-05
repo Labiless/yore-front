@@ -5,6 +5,7 @@ export const useUiStore = defineStore('ui', {
   state: () => ({
     title: "",
     loading: false,
+    loadingMessage: '' as string,
     toast : '',
     toastType: '',
       popup: {

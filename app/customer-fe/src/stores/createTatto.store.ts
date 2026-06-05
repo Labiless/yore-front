@@ -227,7 +227,7 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             if (Array.isArray(tattoo.inks) && tattoo.inks.length > 0) {
                 confirmed.inks = true;
             }
-            if (this.tattooPhotoValidation()) {
+            if (this.photoBeforeUrl && this.photoAfterUrl) {
                 confirmed.tattoo = true;
             }
             if (this.signValidation()) {

@@ -59,67 +59,164 @@
                             </div>
                         </div>
                         <div class="flex flex-wrap w-full gap-2 h-fit min-w-0">
-                            <div class="mb-4 bg-white rounded-xl w-full p-4 min-w-0">
-                                <p class="font-bold mb-2">Contatti</p>
-                                <div v-if="selectedUser.email" class="user-info-row">
-                                    <Mail class="user-info-icon" />
-                                    <span class="user-field" x-apple-data-detectors="false">{{ selectedUser.email }}</span>
-                                </div>
-                                <div v-if="selectedUser.phone" class="user-info-row">
-                                    <Phone class="user-info-icon" />
-                                    <span class="user-field">{{ selectedUser.phone }}</span>
-                                </div>
-                            </div>
-                            <div class="mb-4 bg-white rounded-xl w-full p-4 min-w-0">
-                                <p class="font-bold mb-2">Indirizzo</p>
-                                <div v-if="selectedUser.country" class="user-info-row">
-                                    <Globe class="user-info-icon" />
-                                    <span class="user-field">{{ selectedUser.country }}</span>
-                                </div>
-                                <div v-if="selectedUser.city" class="user-info-row">
-                                    <MapPin class="user-info-icon" />
-                                    <span class="user-field">{{ selectedUser.city }}</span>
-                                </div>
-                                <div v-if="selectedUser.cap" class="user-info-row">
-                                    <Mailbox class="user-info-icon" />
-                                    <span class="user-field">{{ selectedUser.cap }}</span>
-                                </div>
-                                <div v-if="selectedUser.province" class="user-info-row">
-                                    <MapPinned class="user-info-icon" />
-                                    <span class="user-field">{{ selectedUser.province }}</span>
-                                </div>
-                                <div v-if="selectedUser.address" class="user-info-row">
-                                    <Home class="user-info-icon" />
-                                    <span class="user-field">{{ selectedUser.address }}</span>
-                                </div>
-                            </div>
-                            <div class="mb-4 bg-white rounded-xl w-full p-4 min-w-0">
-                                <p class="font-bold mb-2">Dati azienda</p>
-                                <div v-if="selectedUser.legalForm" class="user-info-row">
-                                    <Scale class="user-info-icon" />
-                                    <span class="user-field">{{ selectedUser.legalForm }}</span>
-                                </div>
-                                <div v-if="selectedUser.piva" class="user-info-row">
-                                    <BookMarked class="user-info-icon" />
-                                    <span class="user-field">{{ selectedUser.piva }}</span>
-                                </div>
-                                <div v-if="selectedUser.cf" class="user-info-row">
-                                    <IdCard class="user-info-icon" />
-                                    <span class="user-field">{{ selectedUser.cf }}</span>
-                                </div>
-                                <div v-if="selectedUser.fePecAddress" class="user-info-row">
-                                    <Inbox class="user-info-icon" />
-                                    <span class="user-field">{{ selectedUser.fePecAddress }}</span>
-                                </div>
-                                <div v-if="selectedUser.pecMail" class="user-info-row">
-                                    <AtSign class="user-info-icon" />
-                                    <span class="user-field" x-apple-data-detectors="false">{{ selectedUser.pecMail }}</span>
-                                </div>
-                                <div v-if="selectedUser.taxCode" class="user-info-row">
-                                    <FileText class="user-info-icon" />
-                                    <span class="user-field">{{ selectedUser.taxCode }}</span>
-                                </div>
-                            </div>
+                            <form
+                                class="mb-4 bg-white rounded-xl w-full p-4 min-w-0 flex flex-col gap-3"
+                                @submit.prevent="saveContacts"
+                            >
+                                <p class="font-bold mb-1">Contatti</p>
+                                <label class="user-edit-label" for="edit-user-email">Email</label>
+                                <Input
+                                    id="edit-user-email"
+                                    v-model="editContacts.email"
+                                    class="bg-white"
+                                    type="email"
+                                    required
+                                />
+                                <label class="user-edit-label" for="edit-user-phone">Telefono</label>
+                                <Input
+                                    id="edit-user-phone"
+                                    v-model="editContacts.phone"
+                                    class="bg-white"
+                                    type="tel"
+                                    inputmode="tel"
+                                />
+                                <Button type="submit" class="h-10 w-full" :disabled="savingContacts">
+                                    {{ savingContacts ? 'Salvataggio...' : 'Salva contatti' }}
+                                </Button>
+                            </form>
+                            <form
+                                class="mb-4 bg-white rounded-xl w-full p-4 min-w-0 flex flex-col gap-3"
+                                @submit.prevent="saveAddress"
+                            >
+                                <p class="font-bold mb-1">Indirizzo</p>
+                                <label class="user-edit-label" for="edit-user-country">Paese</label>
+                                <Input
+                                    id="edit-user-country"
+                                    v-model="editAddress.country"
+                                    class="bg-white"
+                                    type="text"
+                                />
+                                <label class="user-edit-label" for="edit-user-city">Città</label>
+                                <Input
+                                    id="edit-user-city"
+                                    v-model="editAddress.city"
+                                    class="bg-white"
+                                    type="text"
+                                />
+                                <label class="user-edit-label" for="edit-user-cap">CAP</label>
+                                <Input
+                                    id="edit-user-cap"
+                                    v-model="editAddress.cap"
+                                    class="bg-white"
+                                    type="text"
+                                />
+                                <label class="user-edit-label" for="edit-user-province">Provincia</label>
+                                <Input
+                                    id="edit-user-province"
+                                    v-model="editAddress.province"
+                                    class="bg-white"
+                                    type="text"
+                                />
+                                <label class="user-edit-label" for="edit-user-address">Indirizzo</label>
+                                <Input
+                                    id="edit-user-address"
+                                    v-model="editAddress.address"
+                                    class="bg-white"
+                                    type="text"
+                                />
+                                <Button type="submit" class="h-10 w-full" :disabled="savingAddress">
+                                    {{ savingAddress ? 'Salvataggio...' : 'Salva indirizzo' }}
+                                </Button>
+                            </form>
+                            <form
+                                class="mb-4 bg-white rounded-xl w-full p-4 min-w-0 flex flex-col gap-3"
+                                @submit.prevent="saveCompany"
+                            >
+                                <p class="font-bold mb-1">Dati azienda</p>
+                                <label class="user-edit-label" for="edit-user-legal-form">Forma giuridica</label>
+                                <Input
+                                    id="edit-user-legal-form"
+                                    v-model="editCompany.legalForm"
+                                    class="bg-white"
+                                    type="text"
+                                />
+                                <label class="user-edit-label" for="edit-user-business-name">Ragione sociale</label>
+                                <Input
+                                    id="edit-user-business-name"
+                                    v-model="editCompany.businessName"
+                                    class="bg-white"
+                                    type="text"
+                                />
+                                <label class="user-edit-label" for="edit-user-piva">Partita IVA</label>
+                                <Input
+                                    id="edit-user-piva"
+                                    v-model="editCompany.piva"
+                                    class="bg-white"
+                                    type="text"
+                                    maxlength="11"
+                                />
+                                <label class="user-edit-label" for="edit-user-cf">Codice fiscale</label>
+                                <Input
+                                    id="edit-user-cf"
+                                    v-model="editCompany.cf"
+                                    class="bg-white"
+                                    type="text"
+                                    maxlength="16"
+                                />
+                                <label class="user-edit-label" for="edit-user-fe-pec">Codice destinatario FE</label>
+                                <Input
+                                    id="edit-user-fe-pec"
+                                    v-model="editCompany.fePecAddress"
+                                    class="bg-white"
+                                    type="text"
+                                />
+                                <label class="user-edit-label" for="edit-user-pec-mail">Indirizzo PEC FE</label>
+                                <Input
+                                    id="edit-user-pec-mail"
+                                    v-model="editCompany.pecMail"
+                                    class="bg-white"
+                                    type="email"
+                                />
+                                <label class="user-edit-label" for="edit-user-tax-code">Codice tributo</label>
+                                <Input
+                                    id="edit-user-tax-code"
+                                    v-model="editCompany.taxCode"
+                                    class="bg-white"
+                                    type="text"
+                                />
+                                <Button type="submit" class="h-10 w-full" :disabled="savingCompany">
+                                    {{ savingCompany ? 'Salvataggio...' : 'Salva dati azienda' }}
+                                </Button>
+                            </form>
+                            <form
+                                class="mb-4 bg-white rounded-xl w-full p-4 min-w-0 flex flex-col gap-3"
+                                @submit.prevent="savePassword"
+                            >
+                                <p class="font-bold mb-1">Credenziali</p>
+                                <label class="user-edit-label" for="edit-user-password">Nuova password</label>
+                                <Input
+                                    id="edit-user-password"
+                                    v-model="editPassword.password"
+                                    class="bg-white"
+                                    type="password"
+                                    autocomplete="new-password"
+                                    minlength="8"
+                                    required
+                                />
+                                <label class="user-edit-label" for="edit-user-password-confirm">Conferma password</label>
+                                <Input
+                                    id="edit-user-password-confirm"
+                                    v-model="editPassword.confirm"
+                                    class="bg-white"
+                                    type="password"
+                                    autocomplete="new-password"
+                                    minlength="8"
+                                    required
+                                />
+                                <Button type="submit" class="h-10 w-full" :disabled="savingPassword">
+                                    {{ savingPassword ? 'Salvataggio...' : 'Aggiorna password' }}
+                                </Button>
+                            </form>
                         </div>
                         <section class="mb-4 bg-white rounded-xl w-full p-4 min-w-0">
                             <p class="font-bold text-xl mb-4">
@@ -217,7 +314,12 @@
 <script setup lang="ts">
 
 import { ref, watch, onMounted, onBeforeUnmount, computed, nextTick } from 'vue';
-import { getAllUsers, getUserByUuid } from "@/services/api.user.service";
+import {
+    getAllUsers,
+    getUserByUuid,
+    updateUser,
+    updateUserPassword,
+} from '@/services/api.user.service';
 import {
     Search,
     Plus,
@@ -229,17 +331,6 @@ import {
     Building2,
     Hash,
     Calendar,
-    Phone,
-    Globe,
-    MapPin,
-    Mailbox,
-    MapPinned,
-    Home,
-    Scale,
-    IdCard,
-    Inbox,
-    AtSign,
-    FileText,
 } from 'lucide-vue-next';
 import { useUiStore } from '@/stores/ui';
 import { useUsersStore } from '@/stores/users.store';
@@ -285,6 +376,29 @@ const labelsFilterEmptyMessage = computed(() => {
 });
 
 const skipRouteWatch = ref(true);
+
+const editContacts = ref({ email: '', phone: '' });
+const editAddress = ref({
+    country: '',
+    city: '',
+    cap: '',
+    province: '',
+    address: '',
+});
+const editCompany = ref({
+    legalForm: '',
+    businessName: '',
+    piva: '',
+    cf: '',
+    fePecAddress: '',
+    pecMail: '',
+    taxCode: '',
+});
+const editPassword = ref({ password: '', confirm: '' });
+const savingContacts = ref(false);
+const savingAddress = ref(false);
+const savingCompany = ref(false);
+const savingPassword = ref(false);
 
 const getRouteUserUuid = (): string => {
     const userUuid = route.params.userUuid;
@@ -412,6 +526,60 @@ const clearUserDetail = () => {
     userLabels.value = [];
     labelsTotal.value = 0;
     labelsLoadMoreObserver?.disconnect();
+    resetEditForms();
+};
+
+const resetEditForms = () => {
+    editContacts.value = { email: '', phone: '' };
+    editAddress.value = {
+        country: '',
+        city: '',
+        cap: '',
+        province: '',
+        address: '',
+    };
+    editCompany.value = {
+        legalForm: '',
+        businessName: '',
+        piva: '',
+        cf: '',
+        fePecAddress: '',
+        pecMail: '',
+        taxCode: '',
+    };
+    editPassword.value = { password: '', confirm: '' };
+};
+
+const syncEditFormsFromUser = (user: Record<string, string | null | undefined>) => {
+    editContacts.value = {
+        email: user.email ?? '',
+        phone: user.phone ?? '',
+    };
+    editAddress.value = {
+        country: user.country ?? '',
+        city: user.city ?? '',
+        cap: user.cap ?? '',
+        province: user.province ?? '',
+        address: user.address ?? '',
+    };
+    editCompany.value = {
+        legalForm: user.legalForm ?? '',
+        businessName: user.businessName ?? '',
+        piva: user.piva ?? '',
+        cf: user.cf ?? '',
+        fePecAddress: user.fePecAddress ?? '',
+        pecMail: user.pecMail ?? '',
+        taxCode: user.taxCode ?? '',
+    };
+    editPassword.value = { password: '', confirm: '' };
+};
+
+const applyUserUpdate = (updatedUser: any) => {
+    selectedUser.value = updatedUser;
+    usersStore.allUsers = usersStore.allUsers.map((user: { uuid: string }) =>
+        user.uuid === updatedUser.uuid ? updatedUser : user,
+    );
+    syncEditFormsFromUser(updatedUser);
 };
 
 const openUserDetail = async (uuid: string) => {
@@ -438,8 +606,76 @@ const openUserDetail = async (uuid: string) => {
 
     selectedUser.value = user;
     selectedUserUuid.value = user.uuid;
+    syncEditFormsFromUser(user);
     labelsFilter.value = 'all';
     await loadUserLabels(true);
+};
+
+const saveContacts = async () => {
+    if (!selectedUserUuid.value || savingContacts.value) return;
+    savingContacts.value = true;
+    try {
+        const updatedUser = await updateUser(selectedUserUuid.value, {
+            email: editContacts.value.email,
+            phone: editContacts.value.phone,
+        });
+        applyUserUpdate(updatedUser);
+        uiStore.setToast('Contatti aggiornati');
+    } catch {
+        uiStore.setToast('Errore durante il salvataggio dei contatti', 'error');
+    } finally {
+        savingContacts.value = false;
+    }
+};
+
+const saveAddress = async () => {
+    if (!selectedUserUuid.value || savingAddress.value) return;
+    savingAddress.value = true;
+    try {
+        const updatedUser = await updateUser(selectedUserUuid.value, { ...editAddress.value });
+        applyUserUpdate(updatedUser);
+        uiStore.setToast('Indirizzo aggiornato');
+    } catch {
+        uiStore.setToast('Errore durante il salvataggio dell\'indirizzo', 'error');
+    } finally {
+        savingAddress.value = false;
+    }
+};
+
+const saveCompany = async () => {
+    if (!selectedUserUuid.value || savingCompany.value) return;
+    savingCompany.value = true;
+    try {
+        const updatedUser = await updateUser(selectedUserUuid.value, { ...editCompany.value });
+        applyUserUpdate(updatedUser);
+        uiStore.setToast('Dati azienda aggiornati');
+    } catch {
+        uiStore.setToast('Errore durante il salvataggio dei dati azienda', 'error');
+    } finally {
+        savingCompany.value = false;
+    }
+};
+
+const savePassword = async () => {
+    if (!selectedUserUuid.value || savingPassword.value) return;
+    if (editPassword.value.password !== editPassword.value.confirm) {
+        uiStore.setToast('Le password non coincidono', 'error');
+        return;
+    }
+    if (editPassword.value.password.length < 8) {
+        uiStore.setToast('La password deve avere almeno 8 caratteri', 'error');
+        return;
+    }
+    savingPassword.value = true;
+    try {
+        await updateUserPassword(selectedUserUuid.value, editPassword.value.password);
+        editPassword.value = { password: '', confirm: '' };
+        uiStore.setToast('Password aggiornata');
+    } catch {
+        uiStore.setToast('Errore durante l\'aggiornamento della password', 'error');
+    } finally {
+        savingPassword.value = false;
+    }
 };
 
 const syncFromRoute = async () => {
@@ -530,5 +766,10 @@ const copyUuidToClipboard = async (uuid: string) => {
     flex-shrink: 0;
     margin-top: 0.125rem;
     color: rgb(75 85 99);
+}
+
+.users-page .user-edit-label {
+    font-size: 12px;
+    color: inherit;
 }
 </style>

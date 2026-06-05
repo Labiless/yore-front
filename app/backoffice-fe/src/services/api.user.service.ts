@@ -13,4 +13,14 @@ export const getAllUsers = async () => {
 export const getUserByUuid = async (uuid: string) => {
     const data = await api.get(`/users/${uuid}`);
     return data.data;
-}
+};
+
+export const updateUser = async (uuid: string, userData: Record<string, unknown>) => {
+    const data = await api.patch(`/users/${uuid}`, userData);
+    return data.data;
+};
+
+export const updateUserPassword = async (uuid: string, password: string) => {
+    const data = await api.patch(`/users/${uuid}/password`, { password });
+    return data.data;
+};

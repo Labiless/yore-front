@@ -94,6 +94,8 @@ import Input from '@shared/components/ui/input/Input.vue';
 import Button from '@shared/components/ui/button/Button.vue';
 import { ClipboardList } from 'lucide-vue-next';
 import { watch } from 'vue';
+import router from '@/router';
+import { useRoute } from 'vue-router';
 import { createCustomer, updateCustomer } from '@/services/api.customer.service';
 import { createTattoo, getAllTattoos, getTattoByUuid, updateTattoo } from '@/services/api.tattoo.service';
 import { useUserStore } from '@/stores/user.store';
@@ -104,6 +106,7 @@ const createTattoStore = useCreateTattoStore();
 const userStore = useUserStore();
 const tattoosStore = useTatoosStore();
 const uiStore = useUiStore();
+const route = useRoute();
 
 watch(
     () => ({ ...createTattoStore.info }),
@@ -147,6 +150,9 @@ const onsubmit = async () => {
         tattoosStore.tattoos.push(res);
         tattoosStore.tattoos = tattoosStore.tattoos.sort((a: any, b: any) => b.id - a.id)
         createTattoStore.confirmSection('info');
+        if (!route.params.tattooUuid) {
+            await router.replace(`/createtattoo/${tattooUuid}`);
+        }
         uiStore.loading = false;
         uiStore.setToast('Dati cliente aggiunti correttamente');
     }

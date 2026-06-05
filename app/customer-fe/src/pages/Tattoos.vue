@@ -497,8 +497,7 @@ const tattoDeletion = async (tattoo: any) => {
 }
 
 const goToTatto = (tattooUuid: string) => {
-    createTattooStore.uuid = tattooUuid;
-    router.push('/createtattoo');
+    router.push(`/createtattoo/${tattooUuid}`);
 }
 
 const showClosedTattoo = async (tattooUuid: string) => {

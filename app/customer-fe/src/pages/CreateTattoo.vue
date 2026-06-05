@@ -58,7 +58,8 @@ import Tattoo from '@/components/createTattoo/Tattoo.vue';
 import Signs from '@/components/createTattoo/Signs.vue';
 import { Brush, Calendar, ClipboardList, Droplet, FileText, PenTool, PersonStanding } from 'lucide-vue-next';
 import { useUiStore } from '@/stores/ui';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { useCreateTattoStore, type TattooSectionKey } from '@/stores/createTatto.store';
 import { getTattoByUuid, closeTattoo, finalizeTattoo } from '@/services/api.tattoo.service';
 import { getCustomerByUuid } from '@/services/api.customer.service';
@@ -74,8 +75,10 @@ const uiStore = useUiStore();
 const createTattoStore = useCreateTattoStore();
 const tattooStore = useTatoosStore();
 const userStore = useUserStore();
+const route = useRoute();
 
 const activeStep = ref('info');
+const skipRouteWatch = ref(true);
 
 const goToStep = (step: string) => {
     if (!createTattoStore.canAccessSection(step as TattooSectionKey)) {
@@ -116,6 +119,64 @@ const studioAddress = () => {
     ].filter(Boolean).join(', ');
 };
 
+const getRouteTattooUuid = (): string => {
+    const tattooUuid = route.params.tattooUuid;
+    return typeof tattooUuid === 'string' ? tattooUuid : '';
+};
+
+const applyTattooToStore = async (tattoo: Awaited<ReturnType<typeof getTattoByUuid>>) => {
+    createTattoStore.uuid = tattoo.uuid;
+    createTattoStore.id = tattoo.id;
+    if (tattoo.customerUuid) {
+        const customer = await getCustomerByUuid(tattoo.customerUuid);
+        createTattoStore.initCustomer(customer);
+    }
+    createTattoStore.inks = tattoo.inks ?? [];
+    if (hasDeclarationsData(tattoo)) {
+        createTattoStore.updateDeclarationsFromApi(tattoo);
+    }
+    if (hasKirbyDesayData(tattoo)) {
+        createTattoStore.updateKirbyDesay({
+            skinType: tattoo.skinType,
+            position: tattoo.position,
+            color: tattoo.color,
+            tattooStyle: tattoo.tattooStyle,
+            tattooType: tattoo.tattooType,
+        });
+    }
+    createTattoStore.tattooArtist = tattoo.tattooArtist;
+    createTattoStore.syncPhotosFromApi(tattoo.photoUrl);
+    createTattoStore.customerSign = tattoo.customerSign;
+    createTattoStore.userSign = tattoo.userSign;
+    createTattoStore.syncSectionsConfirmedFromTattoo(tattoo);
+};
+
+const hydrateTattooFromRoute = async (tattooUuid: string) => {
+    createTattoStore.setHydrating(true);
+    try {
+        const tattoo = await getTattoByUuid(tattooUuid);
+        if (tattoo.status === 'CLOSE') {
+            await router.replace(`/tattoos/${tattooUuid}`);
+            return;
+        }
+        await applyTattooToStore(tattoo);
+    } catch {
+        uiStore.setToast('Tatuaggio non trovato', 'error');
+        await router.replace('/createtattoo');
+    } finally {
+        createTattoStore.setHydrating(false);
+    }
+};
+
+const syncFromRoute = async () => {
+    const tattooUuid = getRouteTattooUuid();
+    createTattoStore.resetTattoo();
+    activeStep.value = 'info';
+    if (tattooUuid) {
+        await hydrateTattooFromRoute(tattooUuid);
+    }
+};
+
 onMounted(async () => {
     uiStore.loading = true;
     uiStore.title = "Crea Tatuaggio";
@@ -124,42 +185,21 @@ onMounted(async () => {
     } catch {
         // proceed with cached profile
     }
-    const tattooUuid = createTattoStore.uuid;
-    createTattoStore.resetTattoo();
-    if (tattooUuid) {
-        createTattoStore.setHydrating(true);
-        try {
-            const tattoo = await getTattoByUuid(tattooUuid);
-            createTattoStore.uuid = tattoo.uuid;
-            createTattoStore.id = tattoo.id;
-            if (tattoo.customerUuid) {
-                const customer = await getCustomerByUuid(tattoo.customerUuid);
-                createTattoStore.initCustomer(customer);
-            }
-            createTattoStore.inks = tattoo.inks ?? [];
-            if (hasDeclarationsData(tattoo)) {
-                createTattoStore.updateDeclarationsFromApi(tattoo);
-            }
-            if (hasKirbyDesayData(tattoo)) {
-                createTattoStore.updateKirbyDesay({
-                    skinType: tattoo.skinType,
-                    position: tattoo.position,
-                    color: tattoo.color,
-                    tattooStyle: tattoo.tattooStyle,
-                    tattooType: tattoo.tattooType,
-                });
-            }
-            createTattoStore.tattooArtist = tattoo.tattooArtist;
-            createTattoStore.syncPhotosFromApi(tattoo.photoUrl);
-            createTattoStore.customerSign = tattoo.customerSign;
-            createTattoStore.userSign = tattoo.userSign;
-            createTattoStore.syncSectionsConfirmedFromTattoo(tattoo);
-        } finally {
-            createTattoStore.setHydrating(false);
-        }
-    }
+    await syncFromRoute();
+    skipRouteWatch.value = false;
     uiStore.loading = false;
 });
+
+watch(
+    () => route.params.tattooUuid as string | undefined,
+    async (tattooUuid, previousUuid) => {
+        if (skipRouteWatch.value || tattooUuid === previousUuid) return;
+        if (tattooUuid && createTattoStore.uuid === tattooUuid) return;
+        uiStore.loading = true;
+        await syncFromRoute();
+        uiStore.loading = false;
+    },
+);
 
 const getToday = () => {
     const today = new Date();

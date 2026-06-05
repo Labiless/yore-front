@@ -46,7 +46,7 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: '/createtattoo',
+      path: '/createtattoo/:tattooUuid?',
       name: 'createtattoo',
       component: CreateTattoo,
       meta: { requiresAuth: true },

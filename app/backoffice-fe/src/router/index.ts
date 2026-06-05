@@ -12,6 +12,7 @@ import InkBatch from '@/pages/InkBatch.vue';
 import Ink from '@/pages/Ink.vue';
 import LabelBatch from '@/pages/LabelBatch.vue';
 import CreateUser from '@/pages/CreateUser.vue';
+import UserTattooDetail from '@/pages/UserTattooDetail.vue';
 import { useLabelsStore } from '@/stores/lables.store';
 
 const router = createRouter({
@@ -74,6 +75,12 @@ const router = createRouter({
       path: '/users',
       name: 'users',
       component: Users,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/users/:userUuid/tattoos/:tattooUuid',
+      name: 'userTattoo',
+      component: UserTattooDetail,
       meta: { requiresAuth: true },
     },
     {

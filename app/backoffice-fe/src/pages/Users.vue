@@ -156,16 +156,33 @@
                                     v-for="ink in userLabels"
                                     :key="ink.uuid"
                                     class="flex justify-between items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all"
-                                    @click="copyUuidToClipboard(ink.uuid)"
+                                    @click="onLabelClick(ink)"
                                 >
                                     <div class="flex items-center justify-start gap-2 min-w-0">
-                                        <Copy :size="20" class="shrink-0" />
-                                        <p class="text-sm break-all">{{ ink.uuid }}</p>
+                                        <Eye
+                                            v-if="isCompletedTattooLabel(ink)"
+                                            :size="20"
+                                            class="shrink-0"
+                                        />
+                                        <Copy
+                                            v-else
+                                            :size="20"
+                                            class="shrink-0"
+                                        />
+                                        <div class="min-w-0">
+                                            <p class="text-sm break-all">{{ ink.uuid }}</p>
+                                            <p
+                                                v-if="ink.burningDate"
+                                                class="text-xs text-gray-500 mt-1"
+                                            >
+                                                Bruciata il {{ formatLabelDate(ink.burningDate) }}
+                                            </p>
+                                        </div>
                                     </div>
                                     <div class="shrink-0 ml-2">
                                         <div
-                                            class="w-3 h-3 rounded-full bg-green-500"
-                                            :class="ink.burningDate ? 'bg-red-500!' : ''"
+                                            class="w-3 h-3 rounded-full mb-2 mr-4"
+                                            :class="labelStatusDotClass(ink)"
                                         />
                                     </div>
                                 </div>
@@ -208,6 +225,7 @@ import {
     Mail,
     ArrowLeft,
     Copy,
+    Eye,
     Building2,
     Hash,
     Calendar,
@@ -439,6 +457,35 @@ const showUser = (uuid: string) => {
 
 const goBackToUsersList = () => {
     router.push('/users');
+};
+
+const formatLabelDate = (value?: string | null) => {
+    if (!value) return '—';
+    return String(value).split('T')[0];
+};
+
+const isBurnedLabel = (ink: { burningDate?: string | null }) => !!ink.burningDate;
+
+const isCompletedTattooLabel = (ink: {
+    burningDate?: string | null;
+    tattooStatus?: string | null;
+    tattooUuid?: string | null;
+}) => isBurnedLabel(ink) && ink.tattooStatus === 'CLOSE' && !!ink.tattooUuid;
+
+const labelStatusDotClass = (ink: { burningDate?: string | null }) =>
+    isBurnedLabel(ink) ? 'bg-red-500' : 'bg-green-500';
+
+const onLabelClick = (ink: {
+    uuid: string;
+    burningDate?: string | null;
+    tattooStatus?: string | null;
+    tattooUuid?: string | null;
+}) => {
+    if (isCompletedTattooLabel(ink) && ink.tattooUuid) {
+        router.push(`/users/${selectedUserUuid.value}/tattoos/${ink.tattooUuid}`);
+        return;
+    }
+    copyUuidToClipboard(ink.uuid);
 };
 
 const copyUuidToClipboard = async (uuid: string) => {

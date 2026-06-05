@@ -96,7 +96,7 @@ const submit = async () => {
     try {
         const newUser = await createUser(createUSerStore.getAllData());
         usersStore.resetUsersStore();
-        router.push(`users/${newUser.uuid}`);
+        router.push(`/users/${newUser.uuid}`);
         uiStore.loading = false;
         uiStore.setToast('Utente creato',);
     } catch (error) {

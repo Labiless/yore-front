@@ -38,9 +38,12 @@
                 </div>
                 <div v-else>
                     <div class="items-center mb-4 gap-2">
-                        <ArrowLeft @click="usersStore.userUuid = '';" class="hover:cursor-pointer mr-2" />
+                        <ArrowLeft @click="goBackToUsersList" class="hover:cursor-pointer mr-2" />
                     </div>
-                    <div class="flex flex-col overflow-y-scroll h-[60vh] hide-scrollbar pb-24">
+                    <div
+                        ref="userDetailScrollRef"
+                        class="flex flex-col overflow-y-scroll h-[60vh] hide-scrollbar pb-24"
+                    >
                         <div class="mb-4 bg-white rounded-xl w-full p-4 flex flex-col gap-3 min-w-0">
                             <div v-if="selectedUser.businessName" class="user-info-row">
                                 <Building2 class="user-info-icon" />
@@ -118,73 +121,75 @@
                                 </div>
                             </div>
                         </div>
-                        <Accordion type="single" collapsible class="w-full">
-                            <AccordionItem value="item-1">
-                                <AccordionTrigger class="no-underline hover:no-underline">
-                                    <p class="font-bold text-xl">Etichette associate</p>
-                                </AccordionTrigger>
-                                <AccordionContent>
-                                    <div class="mb-4 rounded-xl w-full">
-                                        <p v-if="!selectedUser.inks.length">Nessuna etichetta associata</p>
-                                        <template v-else>
-                                            <div class="flex flex-wrap items-center gap-2 p-2 mb-4 rounded-md bg-slate-200">
-                                                <Button @click="labelsFilter = 'all'" type="button"
-                                                    class="text-xs w-fit h-8 bg-transparent text-black"
-                                                    :class="labelsFilter === 'all' ? 'bg-white!' : ''">
-                                                    Tutte
-                                                </Button>
-                                                <Button @click="labelsFilter = 'available'" type="button"
-                                                    class="text-xs w-fit h-8 bg-transparent text-black"
-                                                    :class="labelsFilter === 'available' ? 'bg-white!' : ''">
-                                                    Disponibili
-                                                </Button>
-                                                <Button @click="labelsFilter = 'burned'" type="button"
-                                                    class="text-xs w-fit h-8 bg-transparent text-black"
-                                                    :class="labelsFilter === 'burned' ? 'bg-white!' : ''">
-                                                    Bruciate
-                                                </Button>
-                                            </div>
-                                            <p v-if="filteredLabels.length === 0" class="text-sm text-gray-600">
-                                                {{ labelsFilterEmptyMessage }}
-                                            </p>
-                                            <div v-else @click="copyUuidToClipboard(ink.uuid)"
-                                                class="flex justify-between items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all"
-                                                v-for="ink in filteredLabels"
-                                                :key="ink.uuid">
-                                                <div class="flex items-center justify-start gap-2">
-                                                    <Copy :size="20" />
-                                                    <p class="text-sm">{{ ink.uuid }}</p>
-                                                </div>
-                                                <div>
-                                                    <div class="w-3 h-3 rounded-full mb-2 mr-4 bg-green-500"
-                                                        :class="`${ink.burningDate ? 'bg-red-500!' : ''}`"></div>
-                                                </div>
-                                            </div>
-                                        </template>
+                        <section class="mb-4 bg-white rounded-xl w-full p-4 min-w-0">
+                            <p class="font-bold text-xl mb-4">
+                                Etichette associate
+                                <span v-if="labelsTotal > 0" class="text-sm font-normal text-gray-500">
+                                    ({{ labelsTotal }})
+                                </span>
+                            </p>
+                            <div class="flex flex-wrap items-center gap-2 p-2 mb-4 rounded-md bg-slate-200">
+                                <Button @click="setLabelsFilter('all')" type="button"
+                                    class="text-xs w-fit h-8 bg-transparent text-black"
+                                    :class="labelsFilter === 'all' ? 'bg-white!' : ''">
+                                    Tutte
+                                </Button>
+                                <Button @click="setLabelsFilter('available')" type="button"
+                                    class="text-xs w-fit h-8 bg-transparent text-black"
+                                    :class="labelsFilter === 'available' ? 'bg-white!' : ''">
+                                    Disponibili
+                                </Button>
+                                <Button @click="setLabelsFilter('burned')" type="button"
+                                    class="text-xs w-fit h-8 bg-transparent text-black"
+                                    :class="labelsFilter === 'burned' ? 'bg-white!' : ''">
+                                    Bruciate
+                                </Button>
+                            </div>
+                            <p
+                                v-if="!labelsLoading && userLabels.length === 0"
+                                class="text-sm text-gray-600"
+                            >
+                                {{ labelsFilterEmptyMessage }}
+                            </p>
+                            <template v-else>
+                                <div
+                                    v-for="ink in userLabels"
+                                    :key="ink.uuid"
+                                    class="flex justify-between items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all"
+                                    @click="copyUuidToClipboard(ink.uuid)"
+                                >
+                                    <div class="flex items-center justify-start gap-2 min-w-0">
+                                        <Copy :size="20" class="shrink-0" />
+                                        <p class="text-sm break-all">{{ ink.uuid }}</p>
                                     </div>
-                                </AccordionContent>
-                            </AccordionItem>
-                            <AccordionItem value="item-2">
-                                <AccordionTrigger class="no-underline hover:no-underline">
-                                    <p class="font-bold text-xl">Tatuaggi</p>
-                                </AccordionTrigger>
-                                <AccordionContent>
-                                    <div class="mb-4 rounded-xl w-full">
-                                        <p v-if="selectedUser.tattoos.length === 0">Nessun tatuaggio effettuato</p>
-                                        <div v-else>
-                                            <div class="flex justify-between items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all"
-                                                :class="`${''}`" v-for="tattoo in selectedUser.tattoos">
-                                                <p class="text-sm">{{ tattoo.uuid }}</p>
-                                                <div>
-                                                    <div class="w-3 h-3 rounded-full mb-2 mr-4 bg-orange-500"
-                                                        :class="`${tattoo.customerSign ? 'bg-green-500!' : ''}`"></div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div class="shrink-0 ml-2">
+                                        <div
+                                            class="w-3 h-3 rounded-full bg-green-500"
+                                            :class="ink.burningDate ? 'bg-red-500!' : ''"
+                                        />
                                     </div>
-                                </AccordionContent>
-                            </AccordionItem>
-                        </Accordion>
+                                </div>
+                                <div ref="labelsLoadMoreSentinel" class="h-1 shrink-0" aria-hidden="true" />
+                                <p
+                                    v-if="labelsLoading && userLabels.length"
+                                    class="text-center text-sm text-gray-500 py-3"
+                                >
+                                    Caricamento...
+                                </p>
+                                <p
+                                    v-else-if="!labelsHasMore && userLabels.length"
+                                    class="text-center text-xs text-gray-400 py-3"
+                                >
+                                    Fine elenco ({{ labelsTotal }} etichette)
+                                </p>
+                            </template>
+                            <p
+                                v-if="labelsLoading && !userLabels.length"
+                                class="text-center text-sm text-gray-500 py-6"
+                            >
+                                Caricamento...
+                            </p>
+                        </section>
                     </div>
                 </div>
             </Transition>
@@ -194,7 +199,7 @@
 
 <script setup lang="ts">
 
-import { ref, watch, onMounted, onBeforeUnmount, computed } from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount, computed, nextTick } from 'vue';
 import { getAllUsers, getUserByUuid } from "@/services/api.user.service";
 import {
     Search,
@@ -222,16 +227,9 @@ import { useUiStore } from '@/stores/ui';
 import { useUsersStore } from '@/stores/users.store';
 import Input from '@shared/components/ui/input/Input.vue';
 import Button from '@shared/components/ui/button/Button.vue';
-import { getLabelsByUser } from '@/services/api.label.service';
-import { tattooService } from '@/services/api.tattoo.service'
+import { getLabelsByUserPage } from '@/services/api.label.service';
 import router from '@/router';
 import { useRoute } from 'vue-router';
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from '@shared/components/ui/accordion'
 
 const uiStore = useUiStore();
 const usersStore = useUsersStore();
@@ -243,18 +241,24 @@ const showTab = ref(0)
 const searchUuid = ref('');
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const selectedUser = ref<any>(null);
+const selectedUserUuid = ref('');
 const labelsFilter = ref<'all' | 'available' | 'burned'>('all');
+const userLabels = ref<any[]>([]);
+const labelsPage = ref(0);
+const labelsHasMore = ref(true);
+const labelsLoading = ref(false);
+const labelsTotal = ref(0);
+const userDetailScrollRef = ref<HTMLElement | null>(null);
+const labelsLoadMoreSentinel = ref<HTMLElement | null>(null);
+let labelsLoadMoreObserver: IntersectionObserver | null = null;
 
-const filteredLabels = computed(() => {
-    const labels = selectedUser.value?.inks ?? [];
-    if (labelsFilter.value === 'available') {
-        return labels.filter((label: { burningDate?: string | null }) => !label.burningDate);
-    }
-    if (labelsFilter.value === 'burned') {
-        return labels.filter((label: { burningDate?: string | null }) => !!label.burningDate);
-    }
-    return labels;
-});
+const LABELS_PAGE_SIZE = 20;
+
+const labelsFilterToApi = (): 'all' | 'available' | 'used' => {
+    if (labelsFilter.value === 'available') return 'available';
+    if (labelsFilter.value === 'burned') return 'used';
+    return 'all';
+};
 
 const labelsFilterEmptyMessage = computed(() => {
     if (labelsFilter.value === 'available') return 'Nessuna etichetta disponibile';
@@ -262,7 +266,12 @@ const labelsFilterEmptyMessage = computed(() => {
     return 'Nessuna etichetta associata';
 });
 
-const userUuid = typeof route.params.userUuid === 'string' ? route.params.userUuid : '';
+const skipRouteWatch = ref(true);
+
+const getRouteUserUuid = (): string => {
+    const userUuid = route.params.userUuid;
+    return typeof userUuid === 'string' ? userUuid : '';
+};
 
 const isValidUuid = (uuid: string) => {
     return uuidRegex.test(uuid);
@@ -281,33 +290,156 @@ watch(searchUuid, async (newSearchUuid, oldSearchUuid) => {
 onMounted(async () => {
     uiStore.title = "Utenti";
     uiStore.loading = true;
-    //if (!usersStore.allUsers.length) {
     let allUsers = await getAllUsers();
     allUsers = allUsers.filter((el: { role?: string }) => el.role !== 'admin');
     usersStore.allUsers = allUsers.sort((a: any, b: any) => b.id - a.id);
-    //}
-    if (userUuid) {
-        await showUser(userUuid);
-    }
+    await syncFromRoute();
+    skipRouteWatch.value = false;
     uiStore.loading = false;
 });
 
 onBeforeUnmount(() => {
+    labelsLoadMoreObserver?.disconnect();
     usersStore.userUuid = "";
 });
 
-const showUser = async (uuid: string) => {
+const setupLabelsLoadMoreObserver = () => {
+    labelsLoadMoreObserver?.disconnect();
+    if (!labelsLoadMoreSentinel.value) return;
+
+    labelsLoadMoreObserver = new IntersectionObserver(
+        (entries) => {
+            if (
+                entries[0]?.isIntersecting &&
+                selectedUserUuid.value &&
+                labelsHasMore.value &&
+                !labelsLoading.value
+            ) {
+                loadUserLabels(false);
+            }
+        },
+        {
+            root: userDetailScrollRef.value,
+            rootMargin: '120px',
+            threshold: 0,
+        },
+    );
+    labelsLoadMoreObserver.observe(labelsLoadMoreSentinel.value);
+};
+
+const loadUserLabels = async (reset = false) => {
+    if (!selectedUserUuid.value || labelsLoading.value) return;
+    if (!reset && !labelsHasMore.value) return;
+
+    if (reset) {
+        userLabels.value = [];
+        labelsPage.value = 0;
+        labelsHasMore.value = true;
+        labelsTotal.value = 0;
+    }
+
+    const nextPage = reset ? 1 : labelsPage.value + 1;
+    labelsLoading.value = true;
+    try {
+        const res = await getLabelsByUserPage(selectedUserUuid.value, {
+            page: nextPage,
+            limit: LABELS_PAGE_SIZE,
+            filter: labelsFilterToApi(),
+        });
+        if (reset) {
+            userLabels.value = res.items;
+        } else {
+            const existing = new Set(userLabels.value.map((label) => label.uuid));
+            for (const item of res.items) {
+                if (!existing.has(item.uuid)) {
+                    userLabels.value.push(item);
+                }
+            }
+        }
+        labelsPage.value = res.page;
+        labelsTotal.value = res.total;
+        labelsHasMore.value = res.hasMore;
+    } finally {
+        labelsLoading.value = false;
+        await nextTick();
+        setupLabelsLoadMoreObserver();
+    }
+};
+
+const setLabelsFilter = async (filter: 'all' | 'available' | 'burned') => {
+    if (labelsFilter.value === filter) return;
+    labelsFilter.value = filter;
+    await loadUserLabels(true);
+};
+
+watch(labelsLoadMoreSentinel, () => {
+    if (selectedUserUuid.value) {
+        setupLabelsLoadMoreObserver();
+    }
+});
+
+watch(
+    () => route.params.userUuid as string | undefined,
+    async (userUuid, previousUuid) => {
+        if (skipRouteWatch.value || userUuid === previousUuid) return;
+        if (userUuid && selectedUserUuid.value === userUuid) return;
+        await syncFromRoute();
+    },
+);
+
+const clearUserDetail = () => {
+    usersStore.userUuid = '';
+    selectedUser.value = null;
+    selectedUserUuid.value = '';
+    userLabels.value = [];
+    labelsTotal.value = 0;
+    labelsLoadMoreObserver?.disconnect();
+};
+
+const openUserDetail = async (uuid: string) => {
     transitionDirection.value = 'next';
     usersStore.userUuid = uuid;
-    const user = usersStore.allUsers.find((el: { uuid: string }) => el.uuid === uuid);
-    if (!user) return;
+
+    let user = usersStore.allUsers.find((el: { uuid: string }) => el.uuid === uuid);
+    if (!user) {
+        try {
+            user = await getUserByUuid(uuid);
+            if (user.role === 'admin') {
+                throw new Error('admin user');
+            }
+            usersStore.allUsers = [user, ...usersStore.allUsers].sort(
+                (a: { id: number }, b: { id: number }) => b.id - a.id,
+            );
+        } catch {
+            uiStore.setToast('Utente non trovato', 'error');
+            await router.replace('/users');
+            clearUserDetail();
+            return;
+        }
+    }
+
     selectedUser.value = user;
+    selectedUserUuid.value = user.uuid;
     labelsFilter.value = 'all';
-    const inks = await getLabelsByUser(user.uuid);
-    const tattoos = await tattooService.getTattoosByUserUuid(user.uuid);
-    selectedUser.value.tattoos = tattoos.filter((el: string) => el !== '');
-    selectedUser.value.inks = inks;
-}
+    await loadUserLabels(true);
+};
+
+const syncFromRoute = async () => {
+    const userUuid = getRouteUserUuid();
+    if (!userUuid) {
+        clearUserDetail();
+        return;
+    }
+    await openUserDetail(userUuid);
+};
+
+const showUser = (uuid: string) => {
+    router.push(`/users/${uuid}`);
+};
+
+const goBackToUsersList = () => {
+    router.push('/users');
+};
 
 const copyUuidToClipboard = async (uuid: string) => {
     try {
@@ -325,14 +457,6 @@ const copyUuidToClipboard = async (uuid: string) => {
     text-decoration: none;
     color: inherit;
     cursor: default;
-}
-
-.users-page :deep([data-slot="accordion-trigger"]) {
-    text-decoration: none !important;
-}
-
-.users-page :deep([data-slot="accordion-trigger"]:hover) {
-    text-decoration: none !important;
 }
 
 /* Evita che email/PEC vengano stilizzate come link dal browser */

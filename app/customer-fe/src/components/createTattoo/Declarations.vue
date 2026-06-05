@@ -4,7 +4,7 @@
         <span>Dichiarazioni del soggetto</span>
         <span
             class="rounded-full p-1 w-2 h-2 ml-2 shrink-0"
-            :class="createTattoStore.declarationsValidation() ? 'bg-green-700' : 'bg-amber-500'"
+            :class="createTattoStore.declarationsSectionConfirmed() ? 'bg-green-700' : 'bg-amber-500'"
         />
     </div>
     <p class="text-xs text-center text-gray-600 mb-4 px-2">
@@ -63,6 +63,7 @@
 import Button from '@shared/components/ui/button/Button.vue';
 import Input from '@shared/components/ui/input/Input.vue';
 import { ClipboardList } from 'lucide-vue-next';
+import { watch } from 'vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
 import { useUiStore } from '@/stores/ui';
 import { useTatoosStore } from '@/stores/tattoos.store';
@@ -76,6 +77,16 @@ import {
 const createTattoStore = useCreateTattoStore();
 const uiStore = useUiStore();
 const tattoosStore = useTatoosStore();
+
+watch(
+    () => ({ ...createTattoStore.declarations }),
+    () => {
+        if (createTattoStore.declarationsSectionConfirmed()) {
+            createTattoStore.invalidateSection('declarations');
+        }
+    },
+    { deep: true },
+);
 
 const toggleAnswer = (key: DeclarationAnswerKey) => {
     const current = createTattoStore.declarations[key];
@@ -102,6 +113,7 @@ const submit = async () => {
         tattoosStore.tattoos = tattoosStore.tattoos
             .map((tattoo) => (tattoo.uuid === updatedTattoo.uuid ? updatedTattoo : tattoo))
             .sort((a: { id: number }, b: { id: number }) => b.id - a.id);
+        createTattoStore.confirmSection('declarations');
         uiStore.setToast('Dichiarazioni salvate');
     } catch {
         uiStore.setToast('Errore nel salvataggio delle dichiarazioni', 'error');

@@ -4,7 +4,7 @@
         Informazioni Tatuato
         <span
             class="rounded-full p-1 w-2 h-2 ml-2 shrink-0"
-            :class="createTattoStore.infoValidation() ? 'bg-green-700' : 'bg-amber-500'"
+            :class="createTattoStore.infoSectionConfirmed() ? 'bg-green-700' : 'bg-amber-500'"
         />
     </p>
     <hr class="mb-4" />
@@ -93,6 +93,7 @@ import { useCreateTattoStore } from '@/stores/createTatto.store';
 import Input from '@shared/components/ui/input/Input.vue';
 import Button from '@shared/components/ui/button/Button.vue';
 import { ClipboardList } from 'lucide-vue-next';
+import { watch } from 'vue';
 import { createCustomer, updateCustomer } from '@/services/api.customer.service';
 import { createTattoo, getAllTattoos, getTattoByUuid, updateTattoo } from '@/services/api.tattoo.service';
 import { useUserStore } from '@/stores/user.store';
@@ -103,6 +104,16 @@ const createTattoStore = useCreateTattoStore();
 const userStore = useUserStore();
 const tattoosStore = useTatoosStore();
 const uiStore = useUiStore();
+
+watch(
+    () => ({ ...createTattoStore.info }),
+    () => {
+        if (createTattoStore.infoSectionConfirmed()) {
+            createTattoStore.invalidateSection('info');
+        }
+    },
+    { deep: true },
+);
 
 const onsubmit = async () => {
     uiStore.loading = true;
@@ -139,6 +150,7 @@ const onsubmit = async () => {
         const res = await getTattoByUuid(tattooUuid);
         tattoosStore.tattoos.push(res);
         tattoosStore.tattoos = tattoosStore.tattoos.sort((a: any, b: any) => b.id - a.id)
+        createTattoStore.confirmSection('info');
         uiStore.loading = false;
         uiStore.setToast('Dati cliente aggiunti correttamente');
     }

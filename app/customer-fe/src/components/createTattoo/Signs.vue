@@ -3,7 +3,7 @@
         <ClipboardList class="text-black mr-2" />
         Firme
         <span class="rounded-full bg-green-700 p-1 w-2 h-2 ml-2"
-            :class="`${createTattooStore.signValidation() ? '' : 'bg-amber-500!'}`"></span>
+            :class="`${createTattooStore.signSectionConfirmed() ? '' : 'bg-amber-500!'}`"></span>
     </p>
     <p class="text-xs text-center text-gray-600 mb-4 px-2">
         Apponi la firma del tatuato e quella del tatuatore nei riquadri sottostanti.
@@ -80,7 +80,8 @@ const saveSignature = async () => {
     tattoosStore.tattoos = tattoosStore.tattoos.map(tattoo => tattoo.uuid === updatedTattoo.uuid ? updatedTattoo : tattoo)
     tattoosStore.tattoos = tattoosStore.tattoos.sort((a: any, b: any) => b.id - a.id)
 
+    createTattooStore.confirmSection('sign');
     uiStore.loading = false;
-    uiStore.setToast('Firme aggiunte correttamente')
-}
+    uiStore.setToast('Firme aggiunte correttamente');
+};
 </script>

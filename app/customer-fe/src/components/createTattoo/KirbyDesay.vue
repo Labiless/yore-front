@@ -4,7 +4,7 @@
         Caratteristiche del tatuaggio
         <span
             class="rounded-full p-1 w-2 h-2 ml-2 shrink-0"
-            :class="createTattoStore.kirbyDesayValidation() ? 'bg-green-700' : 'bg-amber-500'"
+            :class="createTattoStore.kirbyDesaySectionConfirmed() ? 'bg-green-700' : 'bg-amber-500'"
         />
     </p>
     <hr />
@@ -15,7 +15,7 @@
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     <Button @click="createTattoStore.kirbyDesay.skinType = skinType.id" v-for="skinType in skinTypes"
                         :key="skinType.id"
-                        class="h-28 shadow-xl bg-white text-black flex flex-col"
+                        class="h-28 shadow-xl bg-white hover:bg-white hover:border-2 hover:border-blue-400  text-black flex flex-col"
                         :class="`${createTattoStore.kirbyDesay.skinType === skinType.id ? 'border-2 border-blue-400' : ''}`">
                         <p class="text-center text-sm lowercase w-full rounded-sm p-1"
                             :style="`background-color: ${skinType.bg}`">{{ skinType.name }}</p>
@@ -30,7 +30,7 @@
                 <div class="grid grid-cols-3 sm:grid-cols-5 gap-2 max-w-md mx-auto sm:max-w-none">
                     <Button @click="createTattoStore.kirbyDesay.position = position.id" v-for="position in positions"
                         :key="position.id"
-                        class="h-fit max-w-[5.5rem] sm:max-w-none mx-auto w-full shadow-xl bg-white text-black flex flex-col"
+                        class="hover:bg-white hover:border-2 hover:border-blue-400 h-fit max-w-[5.5rem] sm:max-w-none mx-auto w-full shadow-xl bg-white text-black flex flex-col"
                         :class="`${createTattoStore.kirbyDesay.position === position.id ? 'border-2 border-blue-400' : ''}`">
                         <img :src="`img/kirby_desay/location-${position.id}.svg`" alt="" />
                     </Button>
@@ -45,7 +45,7 @@
                         v-for="inkColor in inkColors"
                         :key="inkColor"
                         @click="createTattoStore.kirbyDesay.color = inkColor"
-                        class="h-24 shadow-xl bg-white text-black flex flex-col justify-center"
+                        class="hover:bg-white hover:border-2 hover:border-blue-400 h-24 shadow-xl bg-white text-black flex flex-col justify-center"
                         :class="`${createTattoStore.kirbyDesay.color === inkColor ? 'border-2 border-blue-400' : ''}`">
                         <div class="w-10 h-10 rounded-full border mx-auto" style="background-color: #000000"></div>
                         <p class="text-center text-sm mt-2">{{ INK_COLOR_LABELS[inkColor] ?? inkColor }}</p>
@@ -61,7 +61,7 @@
                         v-for="style in tattooStyles"
                         :key="style"
                         @click="createTattoStore.kirbyDesay.tattooStyle = style"
-                        class="h-auto min-h-16 shadow-xl bg-white text-black flex flex-col justify-center py-2"
+                        class="hover:bg-white hover:border-2 hover:border-blue-400 h-auto min-h-16 shadow-xl bg-white text-black flex flex-col justify-center py-2"
                         :class="`${createTattoStore.kirbyDesay.tattooStyle === style ? 'border-2 border-blue-400' : ''}`">
                         <p class="text-center text-sm whitespace-normal px-1">{{ style }}</p>
                     </Button>
@@ -76,7 +76,7 @@
                         v-for="type in tattooTypes"
                         :key="type"
                         @click="createTattoStore.kirbyDesay.tattooType = type"
-                        class="h-auto min-h-20 shadow-xl bg-white text-black flex flex-col justify-start py-3"
+                        class="hover:bg-white hover:border-2 hover:border-blue-400 h-auto min-h-20 shadow-xl bg-white text-black flex flex-col justify-start py-3"
                         :class="`${createTattoStore.kirbyDesay.tattooType === type ? 'border-2 border-blue-400' : ''}`">
                         <p class="text-center rounded-sm p-1 whitespace-normal font-medium">
                             {{ TATTOO_TYPE_LABELS[type]?.title ?? type }}
@@ -100,7 +100,7 @@ import {
 } from '@shared/components/ui/accordion';
 import Button from '@shared/components/ui/button/Button.vue';
 import { ClipboardList } from 'lucide-vue-next';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
 import { getTattoByUuid, getTattooConfig, updateTattoo } from '@/services/api.tattoo.service';
 import { useUiStore } from '@/stores/ui';
@@ -120,6 +120,16 @@ const uiStore = useUiStore();
 const inkColors = ref<string[]>([...FALLBACK_INK_COLORS]);
 const tattooStyles = ref<string[]>([...FALLBACK_TATTOO_STYLES]);
 const tattooTypes = ref<string[]>([...FALLBACK_TATTOO_TYPES]);
+
+watch(
+    () => ({ ...createTattoStore.kirbyDesay }),
+    () => {
+        if (createTattoStore.kirbyDesaySectionConfirmed()) {
+            createTattoStore.invalidateSection('kirbyDesay');
+        }
+    },
+    { deep: true },
+);
 
 onMounted(async () => {
     try {
@@ -149,6 +159,7 @@ const submit = async () => {
         tattoosStore.tattoos = tattoosStore.tattoos
             .map((tattoo) => (tattoo.uuid === updatedTattoo.uuid ? updatedTattoo : tattoo))
             .sort((a: { id: number }, b: { id: number }) => b.id - a.id);
+        createTattoStore.confirmSection('kirbyDesay');
         uiStore.loading = false;
         uiStore.setToast('Caratteristiche del tatuaggio aggiunte');
     } else {

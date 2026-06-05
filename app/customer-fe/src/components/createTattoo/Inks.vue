@@ -4,7 +4,7 @@
         <span>Inchiostro</span>
         <span
             class="rounded-full p-1 w-2 h-2 ml-2 shrink-0"
-            :class="createTattoStore.inksValidation() ? 'bg-green-700' : 'bg-amber-500'"
+            :class="createTattoStore.inksSectionConfirmed() ? 'bg-green-700' : 'bg-amber-500'"
         />
     </div>
     <hr class="mb-4" />
@@ -73,6 +73,15 @@
         <video ref="videoEl" class="video w-full max-w-200" autoplay playsinline muted />
         <CircleX @click="stopScanner" color="red" class="mt-4" :size="30" />
     </div>
+
+    <Button
+        type="button"
+        class="w-full h-12"
+        :disabled="!createTattoStore.inksValidation()"
+        @click="confirmInksSection"
+    >
+        Conferma sezione inchiostro
+    </Button>
 </template>
 <script setup lang="ts">
 import Button from '@shared/components/ui/button/Button.vue';
@@ -148,6 +157,7 @@ const addInkByUuid = async (rawUuid: string) => {
                 status: 'PROGRESS',
             });
             createTattoStore.inks = inks;
+            createTattoStore.invalidateSection('inks');
             tattoosStore.tattoos = tattoosStore.tattoos
                 .map((tattoo) => (tattoo.uuid === updatedTattoo.uuid ? updatedTattoo : tattoo))
                 .sort((a: { id: number }, b: { id: number }) => b.id - a.id);
@@ -215,6 +225,15 @@ const startScanner = async (deviceId?: string) => {
         uiStore.setToast('Camera non disponibile', 'error');
         stopScanner();
     }
+};
+
+const confirmInksSection = () => {
+    if (!createTattoStore.inksValidation()) {
+        uiStore.setToast('Associa almeno un inchiostro prima di confermare', 'error');
+        return;
+    }
+    createTattoStore.confirmSection('inks');
+    uiStore.setToast('Sezione inchiostro confermata');
 };
 
 const stopScanner = () => {

@@ -74,31 +74,13 @@ const userStore = useUserStore();
 
 const activeStep = ref('info');
 const allSteps = [
-    {
-        name: 'info',
-        validation: createTattoStore.infoValidation
-    },
-    {
-        name: 'declarations',
-        validation: createTattoStore.declarationsValidation
-    },
-    {
-        name: 'kirbyDesay',
-        validation: createTattoStore.kirbyDesayValidation
-    },
-    {
-        name: 'ink',
-        validation: createTattoStore.inksValidation
-    },
-    {
-        name: 'tattoo',
-        validation: createTattoStore.tattooPhotoValidation
-    },
-    {
-        name: 'sign',
-        validation: createTattoStore.signValidation
-    },
-]
+    { name: 'info', validation: createTattoStore.infoSectionConfirmed },
+    { name: 'declarations', validation: createTattoStore.declarationsSectionConfirmed },
+    { name: 'kirbyDesay', validation: createTattoStore.kirbyDesaySectionConfirmed },
+    { name: 'ink', validation: createTattoStore.inksSectionConfirmed },
+    { name: 'tattoo', validation: createTattoStore.tattooSectionConfirmed },
+    { name: 'sign', validation: createTattoStore.signSectionConfirmed },
+];
 
 const refreshStudioProfile = async () => {
     const profile = await userService.getUserByUuid(userStore.getUiid);
@@ -156,6 +138,7 @@ onMounted(async () => {
         createTattoStore.syncPhotosFromApi(tattoo.photoUrl);
         createTattoStore.customerSign = tattoo.customerSign;
         createTattoStore.userSign = tattoo.userSign;
+        createTattoStore.syncSectionsConfirmedFromTattoo(tattoo);
     }
     uiStore.loading = false;
 });

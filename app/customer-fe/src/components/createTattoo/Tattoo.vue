@@ -4,11 +4,11 @@
         <span>Tatuaggio</span>
         <span
             class="rounded-full p-1 w-2 h-2 ml-2 shrink-0"
-            :class="createTattoStore.tattooPhotoValidation() ? 'bg-green-700' : 'bg-amber-500'"
+            :class="createTattoStore.tattooSectionConfirmed() ? 'bg-green-700' : 'bg-amber-500'"
         />
     </div>
-    <p v-if="!createTattoStore.tattooPhotoValidation()" class="text-xs text-center text-gray-600 mb-4 px-2">
-        Per completare la sezione servono nome tatuatore salvato, foto prima e foto dopo.
+    <p v-if="!createTattoStore.tattooSectionConfirmed()" class="text-xs text-center text-gray-600 mb-4 px-2">
+        Compila tutti i campi, salva i dati e clicca «Conferma sezione tatuaggio» per completare la sezione.
     </p>
     <hr class="mb-4" />
 
@@ -41,7 +41,7 @@
             <button
                 v-if="createTattoStore.photoBeforeUrl"
                 type="button"
-                class="w-30 h-30 rounded-xl overflow-hidden shadow-2xl border-1 bg-white hover:opacity-90 transition-opacity"
+                class="hover:bg-white hover:border-2 hover:border-blue-400 w-30 h-30 rounded-xl overflow-hidden shadow-2xl border-1 bg-white hover:opacity-90 transition-opacity"
                 @click="openPhotoPreview(createTattoStore.photoBeforeUrl, 'Prima del tatuaggio')"
             >
                 <img
@@ -52,7 +52,7 @@
             </button>
             <Button
                 type="button"
-                class="w-30 bg-white text-black shadow-2xl border-1 whitespace-normal flex flex-col h-30"
+                class="hover:bg-white hover:border-2 hover:border-blue-400 w-30 bg-white text-black shadow-2xl border-1 whitespace-normal flex flex-col h-30"
                 @click="selectFile('before')"
             >
                 {{ createTattoStore.photoBeforeUrl ? 'Sostituisci foto' : 'Aggiungi foto' }}
@@ -93,6 +93,15 @@
         </p>
     </section>
 
+    <Button
+        type="button"
+        class="w-full h-12"
+        :disabled="!createTattoStore.tattooPhotoValidation()"
+        @click="confirmTattooSection"
+    >
+        Conferma sezione tatuaggio
+    </Button>
+
     <div
         v-if="photoPreview"
         class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90 p-4"
@@ -123,7 +132,7 @@ import { buildPhotoUrlArray } from '@/constants/tattoo.config';
 import { addImage, updateTattoo, getTattoByUuid } from '@/services/api.tattoo.service';
 import { useUiStore } from '@/stores/ui';
 import { useTatoosStore } from '@/stores/tattoos.store';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 type PhotoSlot = 'before' | 'after';
 
@@ -142,11 +151,36 @@ const closePhotoPreview = () => {
     photoPreview.value = null;
 };
 
+watch(
+    () => ({
+        artist: createTattoStore.tattooArtist,
+        before: createTattoStore.photoBeforeUrl,
+        after: createTattoStore.photoAfterUrl,
+    }),
+    () => {
+        if (createTattoStore.tattooSectionConfirmed()) {
+            createTattoStore.invalidateSection('tattoo');
+        }
+    },
+);
+
 onMounted(() => {
     if (createTattoStore.tattooArtist?.trim()) {
         tattooArtistSaved.value = true;
     }
 });
+
+const confirmTattooSection = () => {
+    if (!createTattoStore.tattooPhotoValidation()) {
+        uiStore.setToast(
+            'Servono nome tatuatore salvato, foto prima e foto dopo',
+            'error',
+        );
+        return;
+    }
+    createTattoStore.confirmSection('tattoo');
+    uiStore.setToast('Sezione tatuaggio confermata');
+};
 
 const refreshTattooInList = async (tattooUuid: string) => {
     const updatedTattoo = await getTattoByUuid(tattooUuid);

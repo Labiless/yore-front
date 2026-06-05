@@ -6,7 +6,25 @@ import {
     type TattooDeclarationsState,
     type DeclarationAnswerKey,
 } from '@/constants/tattoo-declarations.config';
-import { buildPhotoUrlArray, syncTattooPhotos } from '@/constants/tattoo.config';
+import { buildPhotoUrlArray, hasKirbyDesayData, syncTattooPhotos } from '@/constants/tattoo.config';
+import { hasDeclarationsData } from '@/constants/tattoo-declarations.config';
+
+export type TattooSectionKey =
+    | 'info'
+    | 'declarations'
+    | 'kirbyDesay'
+    | 'inks'
+    | 'tattoo'
+    | 'sign';
+
+const emptySectionsConfirmed = (): Record<TattooSectionKey, boolean> => ({
+    info: false,
+    declarations: false,
+    kirbyDesay: false,
+    inks: false,
+    tattoo: false,
+    sign: false,
+});
 
 export const useCreateTattoStore = defineStore('createTattoo', {
     state: () => ({
@@ -45,6 +63,7 @@ export const useCreateTattoStore = defineStore('createTattoo', {
         photoAfterUrl: undefined as string | undefined,
         customerSign: undefined as string | undefined,
         userSign: undefined as string | undefined,
+        sectionsConfirmed: emptySectionsConfirmed(),
     }),
 
     getters: {
@@ -136,6 +155,53 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             this.photoAfterUrl = undefined;
             this.customerSign = undefined;
             this.userSign = undefined;
+            this.sectionsConfirmed = emptySectionsConfirmed();
+        },
+        confirmSection(section: TattooSectionKey) {
+            this.sectionsConfirmed[section] = true;
+        },
+        invalidateSection(section: TattooSectionKey) {
+            this.sectionsConfirmed[section] = false;
+        },
+        infoSectionConfirmed() {
+            return this.sectionsConfirmed.info;
+        },
+        declarationsSectionConfirmed() {
+            return this.sectionsConfirmed.declarations;
+        },
+        kirbyDesaySectionConfirmed() {
+            return this.sectionsConfirmed.kirbyDesay;
+        },
+        inksSectionConfirmed() {
+            return this.sectionsConfirmed.inks;
+        },
+        tattooSectionConfirmed() {
+            return this.sectionsConfirmed.tattoo;
+        },
+        signSectionConfirmed() {
+            return this.sectionsConfirmed.sign;
+        },
+        syncSectionsConfirmedFromTattoo(tattoo: Record<string, unknown>) {
+            const confirmed = emptySectionsConfirmed();
+            if (this.infoValidation() && tattoo.customerUuid) {
+                confirmed.info = true;
+            }
+            if (hasDeclarationsData(tattoo)) {
+                confirmed.declarations = true;
+            }
+            if (hasKirbyDesayData(tattoo)) {
+                confirmed.kirbyDesay = true;
+            }
+            if (Array.isArray(tattoo.inks) && tattoo.inks.length > 0) {
+                confirmed.inks = true;
+            }
+            if (this.tattooPhotoValidation()) {
+                confirmed.tattoo = true;
+            }
+            if (this.signValidation()) {
+                confirmed.sign = true;
+            }
+            this.sectionsConfirmed = confirmed;
         },
         initCustomer(customer: any) {
             this.customerUuid = customer.uuid;
@@ -155,14 +221,7 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             this.info.province = customer.province;
         },
         allValidation() {
-            return (
-                this.infoValidation() &&
-                this.declarationsValidation() &&
-                this.kirbyDesayValidation() &&
-                this.inksValidation() &&
-                this.tattooPhotoValidation() &&
-                this.signValidation()
-            );
+            return Object.values(this.sectionsConfirmed).every(Boolean);
         },
         infoValidation() {
             return (
@@ -251,6 +310,7 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             if (question?.detailKey && value === false) {
                 this.declarations[question.detailKey] = '';
             }
+            this.invalidateSection('declarations');
         },
         kirbyDesayValidation() {
             return (
@@ -273,6 +333,7 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             if (data.color) this.kirbyDesay.color = data.color;
             if (data.tattooStyle) this.kirbyDesay.tattooStyle = data.tattooStyle;
             if (data.tattooType) this.kirbyDesay.tattooType = data.tattooType;
+            this.invalidateSection('kirbyDesay');
         },
         inksValidation() {
             return this.inks.length > 0;

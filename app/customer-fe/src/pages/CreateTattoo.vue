@@ -7,8 +7,11 @@
         </p>
         <p class="text-sm text-center text-gray-600">INK STUDIO - Tattoo studio</p>
         <div id="steps" class="py-4 flex flex-wrap justify-center gap-2 sm:gap-3 max-w-sm mx-auto">
-            <Button :disabled="status.name !== 'info' && !createTattoStore.uuid" @click="activeStep = status.name"
-                v-for="status in allSteps" class="w-10 h-14 shrink-0 bg-white flex flex-col"
+            <Button
+                :disabled="!createTattoStore.canAccessSection(status.name)"
+                @click="goToStep(status.name)"
+                v-for="status in allSteps"
+                class="w-10 h-14 shrink-0 bg-white flex flex-col"
                 :class="`${activeStep === status.name ? 'border-2 border-blue-500' : ''}`">
                 <ClipboardList class="text-black" v-if="status.name === 'info'" />
                 <FileText class="text-black" v-if="status.name === 'declarations'" />
@@ -24,23 +27,23 @@
             <CustomerInfo />
         </div>
         <div id="declarations" class="flex flex-col gap-4 pb-8 pt-6 min-w-0"
-            v-if="activeStep === 'declarations'">
+            v-if="activeStep === 'declarations' && createTattoStore.infoSectionConfirmed()">
             <Declarations />
         </div>
         <div id="kirbyDesay" class="flex flex-col gap-4 pb-8 pt-6 min-w-0"
-            v-if="activeStep === 'kirbyDesay'">
+            v-if="activeStep === 'kirbyDesay' && createTattoStore.infoSectionConfirmed()">
             <KirbyDesay />
         </div>
         <div id="ink" class="flex flex-col gap-4 pb-8 pt-6 min-w-0"
-            v-if="activeStep === 'ink'">
+            v-if="activeStep === 'ink' && createTattoStore.infoSectionConfirmed()">
             <Inks />
         </div>
         <div id="tattoo" class="flex flex-col gap-4 pb-8 pt-6 min-w-0"
-            v-if="activeStep === 'tattoo'">
+            v-if="activeStep === 'tattoo' && createTattoStore.infoSectionConfirmed()">
             <Tattoo />
         </div>
         <div id="sign" class="flex flex-col gap-4 pb-8 pt-6 min-w-0"
-            v-if="activeStep === 'sign'">
+            v-if="activeStep === 'sign' && createTattoStore.infoSectionConfirmed()">
             <Signs />
         </div>
     </div>
@@ -56,7 +59,7 @@ import Signs from '@/components/createTattoo/Signs.vue';
 import { Brush, Calendar, ClipboardList, Droplet, FileText, PenTool, PersonStanding } from 'lucide-vue-next';
 import { useUiStore } from '@/stores/ui';
 import { onMounted, ref } from 'vue';
-import { useCreateTattoStore } from '@/stores/createTatto.store';
+import { useCreateTattoStore, type TattooSectionKey } from '@/stores/createTatto.store';
 import { getTattoByUuid, closeTattoo, finalizeTattoo } from '@/services/api.tattoo.service';
 import { getCustomerByUuid } from '@/services/api.customer.service';
 import { hasKirbyDesayData } from '@/constants/tattoo.config';
@@ -73,6 +76,16 @@ const tattooStore = useTatoosStore();
 const userStore = useUserStore();
 
 const activeStep = ref('info');
+
+const goToStep = (step: string) => {
+    if (!createTattoStore.canAccessSection(step as TattooSectionKey)) {
+        uiStore.setToast('Inserisci e conferma prima i dati del tatuato', 'error');
+        activeStep.value = 'info';
+        return;
+    }
+    activeStep.value = step;
+};
+
 const allSteps = [
     { name: 'info', validation: createTattoStore.infoSectionConfirmed },
     { name: 'declarations', validation: createTattoStore.declarationsSectionConfirmed },
@@ -114,31 +127,36 @@ onMounted(async () => {
     const tattooUuid = createTattoStore.uuid;
     createTattoStore.resetTattoo();
     if (tattooUuid) {
-        const tattoo = await getTattoByUuid(tattooUuid);
-        createTattoStore.uuid = tattoo.uuid;
-        createTattoStore.id = tattoo.id;
-        if (tattoo.customerUuid) {
-            const customer = await getCustomerByUuid(tattoo.customerUuid)
-            createTattoStore.initCustomer(customer);
+        createTattoStore.setHydrating(true);
+        try {
+            const tattoo = await getTattoByUuid(tattooUuid);
+            createTattoStore.uuid = tattoo.uuid;
+            createTattoStore.id = tattoo.id;
+            if (tattoo.customerUuid) {
+                const customer = await getCustomerByUuid(tattoo.customerUuid);
+                createTattoStore.initCustomer(customer);
+            }
+            createTattoStore.inks = tattoo.inks ?? [];
+            if (hasDeclarationsData(tattoo)) {
+                createTattoStore.updateDeclarationsFromApi(tattoo);
+            }
+            if (hasKirbyDesayData(tattoo)) {
+                createTattoStore.updateKirbyDesay({
+                    skinType: tattoo.skinType,
+                    position: tattoo.position,
+                    color: tattoo.color,
+                    tattooStyle: tattoo.tattooStyle,
+                    tattooType: tattoo.tattooType,
+                });
+            }
+            createTattoStore.tattooArtist = tattoo.tattooArtist;
+            createTattoStore.syncPhotosFromApi(tattoo.photoUrl);
+            createTattoStore.customerSign = tattoo.customerSign;
+            createTattoStore.userSign = tattoo.userSign;
+            createTattoStore.syncSectionsConfirmedFromTattoo(tattoo);
+        } finally {
+            createTattoStore.setHydrating(false);
         }
-        createTattoStore.inks = tattoo.inks ?? [];
-        if (hasDeclarationsData(tattoo)) {
-            createTattoStore.updateDeclarationsFromApi(tattoo);
-        }
-        if (hasKirbyDesayData(tattoo)) {
-            createTattoStore.updateKirbyDesay({
-                skinType: tattoo.skinType,
-                position: tattoo.position,
-                color: tattoo.color,
-                tattooStyle: tattoo.tattooStyle,
-                tattooType: tattoo.tattooType,
-            });
-        }
-        createTattoStore.tattooArtist = tattoo.tattooArtist;
-        createTattoStore.syncPhotosFromApi(tattoo.photoUrl);
-        createTattoStore.customerSign = tattoo.customerSign;
-        createTattoStore.userSign = tattoo.userSign;
-        createTattoStore.syncSectionsConfirmedFromTattoo(tattoo);
     }
     uiStore.loading = false;
 });

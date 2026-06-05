@@ -107,11 +107,7 @@ const uiStore = useUiStore();
 
 watch(
     () => ({ ...createTattoStore.info }),
-    () => {
-        if (createTattoStore.infoSectionConfirmed()) {
-            createTattoStore.invalidateSection('info');
-        }
-    },
+    () => createTattoStore.touchInfoSection(),
     { deep: true },
 );
 

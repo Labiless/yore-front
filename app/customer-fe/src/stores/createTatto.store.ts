@@ -64,6 +64,8 @@ export const useCreateTattoStore = defineStore('createTattoo', {
         customerSign: undefined as string | undefined,
         userSign: undefined as string | undefined,
         sectionsConfirmed: emptySectionsConfirmed(),
+        infoSnapshot: '',
+        isHydrating: false,
     }),
 
     getters: {
@@ -156,11 +158,41 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             this.customerSign = undefined;
             this.userSign = undefined;
             this.sectionsConfirmed = emptySectionsConfirmed();
+            this.infoSnapshot = '';
+            this.isHydrating = false;
+        },
+        setHydrating(value: boolean) {
+            this.isHydrating = value;
+        },
+        canAccessSection(section: TattooSectionKey) {
+            return section === 'info' || this.sectionsConfirmed.info;
+        },
+        serializeInfo() {
+            return JSON.stringify(this.info);
+        },
+        captureInfoSnapshot() {
+            this.infoSnapshot = this.serializeInfo();
+        },
+        infoChangedSinceSnapshot() {
+            return this.infoSnapshot !== this.serializeInfo();
+        },
+        touchInfoSection() {
+            if (
+                this.sectionsConfirmed.info &&
+                !this.isHydrating &&
+                this.infoChangedSinceSnapshot()
+            ) {
+                this.sectionsConfirmed.info = false;
+            }
         },
         confirmSection(section: TattooSectionKey) {
             this.sectionsConfirmed[section] = true;
+            if (section === 'info') {
+                this.captureInfoSnapshot();
+            }
         },
         invalidateSection(section: TattooSectionKey) {
+            if (this.isHydrating) return;
             this.sectionsConfirmed[section] = false;
         },
         infoSectionConfirmed() {
@@ -183,7 +215,7 @@ export const useCreateTattoStore = defineStore('createTattoo', {
         },
         syncSectionsConfirmedFromTattoo(tattoo: Record<string, unknown>) {
             const confirmed = emptySectionsConfirmed();
-            if (this.infoValidation() && tattoo.customerUuid) {
+            if (this.customerUuid || tattoo.customerUuid) {
                 confirmed.info = true;
             }
             if (hasDeclarationsData(tattoo)) {
@@ -202,6 +234,9 @@ export const useCreateTattoStore = defineStore('createTattoo', {
                 confirmed.sign = true;
             }
             this.sectionsConfirmed = confirmed;
+            if (confirmed.info) {
+                this.captureInfoSnapshot();
+            }
         },
         initCustomer(customer: any) {
             this.customerUuid = customer.uuid;
@@ -212,9 +247,11 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             this.info.country = customer.country;
             this.info.city = customer.city;
             this.info.address = customer.address;
-            this.info.consent1 = customer.consent1;
-            this.info.consent2 = customer.consent2;
-            this.info.birthDate = customer.birthDate;
+            this.info.consent1 = !!customer.consent1;
+            this.info.consent2 = !!customer.consent2;
+            this.info.birthDate = customer.birthDate
+                ? String(customer.birthDate).split('T')[0]
+                : undefined;
             this.info.birthPlace = customer.birthPlace;
             this.info.streetNumber = customer.streetNumber;
             this.info.cap = customer.cap;

@@ -44,8 +44,8 @@
                     <div class="flex items-center mb-4">
                         <ArrowLeft @click="backToBatchesList" class="hover:cursor-pointer mr-2" />
                         <p class="font-bold text-md flex -translate-x-2">
-                            <Calendar class="scale-75" /> {{ labelsStore.batchData[0].creationDate.split('T')[0] }} /
-                            {{ labelsStore.batchUuid }}
+                            <Calendar class="scale-75" />
+                            {{ batchHeaderDate }} / {{ labelsStore.batchUuid }}
                         </p>
                     </div>
                     <section class="mb-4">
@@ -76,43 +76,71 @@
                     <section>
                         <p class="text-sm font-semibold text-gray-700 mb-2">Etichette lotto</p>
                         <div class="flex flex-wrap items-center gap-2 p-2 mb-4 rounded-md bg-slate-200">
-                            <Button @click="labelsFilter = 'all'" type="button"
+                            <Button @click="setBatchLabelsFilter('all')" type="button"
                                 class="text-xs w-fit h-8 bg-transparent text-black"
                                 :class="labelsFilter === 'all' ? 'bg-white!' : ''">
                                 Tutte
                             </Button>
-                            <Button @click="labelsFilter = 'available'" type="button"
+                            <Button @click="setBatchLabelsFilter('available')" type="button"
                                 class="text-xs w-fit h-8 bg-transparent text-black"
                                 :class="labelsFilter === 'available' ? 'bg-white!' : ''">
                                 Disponibili
                             </Button>
-                            <Button @click="labelsFilter = 'burned'" type="button"
+                            <Button @click="setBatchLabelsFilter('burned')" type="button"
                                 class="text-xs w-fit h-8 bg-transparent text-black"
                                 :class="labelsFilter === 'burned' ? 'bg-white!' : ''">
                                 Bruciate
                             </Button>
                         </div>
-                        <p v-if="filteredBatchLabels.length === 0" class="text-sm text-gray-600 mb-4">
+                        <p
+                            v-if="!batchLabelsLoading && batchLabels.length === 0"
+                            class="text-sm text-gray-600 mb-4"
+                        >
                             {{ labelsFilterEmptyMessage }}
                         </p>
-                        <div
-                            v-else
-                            class="flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-full min-w-0 h-fit hover:bg-blue-100 hover:cursor-pointer transition-all"
-                            v-for="label in filteredBatchLabels"
-                            :key="label.uuid">
-                            <p class="font-bold text-md shrink-0">{{ label.id }}</p>
-                            <div class="pl-4 flex justify-between items-center gap-2 flex-1 min-w-0">
-                                <div class="min-w-0 flex-1">
-                                    <p v-if="label.userUuid" class="flex items-start gap-1.5 text-xs min-w-0">
-                                        <User class="size-3.5 shrink-0 mt-0.5" />
-                                        <span class="break-words">{{ labelUserDisplayName(label.userUuid) }}</span>
-                                    </p>
-                                    <p v-else class="text-xs text-gray-500">Nessun utente associato</p>
+                        <template v-else>
+                            <div
+                                v-for="label in batchLabels"
+                                :key="label.uuid"
+                                class="flex justify-between items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-full min-w-0 h-fit hover:bg-blue-100 hover:cursor-pointer transition-all"
+                                @click="copyLabelUuid(label.uuid)"
+                            >
+                                <div class="flex items-center justify-start gap-2 min-w-0 flex-1">
+                                    <Copy :size="20" class="shrink-0" />
+                                    <div class="min-w-0">
+                                        <p class="text-sm break-all">{{ label.uuid }}</p>
+                                        <p v-if="label.userUuid" class="flex items-start gap-1.5 text-xs min-w-0 mt-1">
+                                            <User class="size-3.5 shrink-0 mt-0.5" />
+                                            <span class="break-words">{{ labelUserDisplayName(label.userUuid) }}</span>
+                                        </p>
+                                        <p v-else class="text-xs text-gray-500 mt-1">Nessun utente associato</p>
+                                    </div>
                                 </div>
-                                <p class="w-3 h-3 rounded-full shrink-0"
-                                    :class="label.burningDate ? 'bg-red-500' : 'bg-green-500'"></p>
+                                <div
+                                    class="w-3 h-3 rounded-full shrink-0 ml-2"
+                                    :class="label.burningDate ? 'bg-red-500' : 'bg-green-500'"
+                                />
                             </div>
-                        </div>
+                            <div ref="batchLoadMoreSentinel" class="h-1 shrink-0" aria-hidden="true" />
+                            <p
+                                v-if="batchLabelsLoading && batchLabels.length"
+                                class="text-center text-sm text-gray-500 py-3"
+                            >
+                                Caricamento...
+                            </p>
+                            <p
+                                v-else-if="!batchLabelsHasMore && batchLabels.length"
+                                class="text-center text-xs text-gray-400 py-3"
+                            >
+                                Fine elenco ({{ batchLabelsTotal }} etichette)
+                            </p>
+                        </template>
+                        <p
+                            v-if="batchLabelsLoading && !batchLabels.length"
+                            class="text-center text-sm text-gray-500 py-6"
+                        >
+                            Caricamento...
+                        </p>
                     </section>
                 </div>
             </Transition>
@@ -162,9 +190,14 @@
 
 <script setup lang="ts">
 
-import { onMounted, ref, watch, computed } from 'vue';
-import { Search, User, ArrowLeft, Plus, Calendar, Download, UserPlus } from 'lucide-vue-next';
-import { getAllBatches, getBatchByUuid, getLabelByUuid, associateBatchToUser } from "@/services/api.label.service";
+import { onMounted, onBeforeUnmount, ref, watch, computed, nextTick } from 'vue';
+import { Search, User, ArrowLeft, Plus, Calendar, Download, UserPlus, Copy } from 'lucide-vue-next';
+import {
+    getAllBatches,
+    getBatchByUuidPage,
+    getLabelByUuid,
+    associateBatchToUser,
+} from '@/services/api.label.service';
 import { getAllUsers } from '@/services/api.user.service';
 import { useUiStore } from '@/stores/ui';
 import { useLabelsStore } from '@/stores/lables.store';
@@ -209,24 +242,29 @@ const batchStudioDisplayName = (batch: {
     return null;
 };
 
-const batchNeedsUserAssociation = computed(() => {
-    const labels = labelsStore.batchData;
-    if (!labels.length) return false;
-    return labels.every((label: { userUuid?: string | null }) => !label.userUuid);
+const currentBatchMeta = computed(() =>
+    labelsStore.allBatches.find((batch: { uuid: string }) => batch.uuid === labelsStore.batchUuid),
+);
+
+const batchHeaderDate = computed(() => {
+    const date = currentBatchMeta.value?.creationDate;
+    return date ? String(date).split('T')[0] : '—';
 });
+
+const batchNeedsUserAssociation = computed(
+    () => !!labelsStore.batchUuid && !currentBatchMeta.value?.studioUserUuid,
+);
 
 const labelsFilter = ref<'all' | 'available' | 'burned'>('all');
+const batchLabels = ref<any[]>([]);
+const batchLabelsPage = ref(0);
+const batchLabelsHasMore = ref(true);
+const batchLabelsLoading = ref(false);
+const batchLabelsTotal = ref(0);
+const batchLoadMoreSentinel = ref<HTMLElement | null>(null);
+let batchLoadMoreObserver: IntersectionObserver | null = null;
 
-const filteredBatchLabels = computed(() => {
-    const labels = labelsStore.batchData;
-    if (labelsFilter.value === 'available') {
-        return labels.filter((label: { burningDate?: string | null }) => !label.burningDate);
-    }
-    if (labelsFilter.value === 'burned') {
-        return labels.filter((label: { burningDate?: string | null }) => !!label.burningDate);
-    }
-    return labels;
-});
+const BATCH_LABELS_PAGE_SIZE = 20;
 
 const labelsFilterEmptyMessage = computed(() => {
     if (labelsFilter.value === 'available') return 'Nessuna etichetta disponibile';
@@ -245,25 +283,32 @@ const isValidUuid = (uuid: string) => {
     return uuidRegex.test(uuid);
 }
 
-watch(searchUuid, async (newSearchUuid, oldSearchUuid) => {
+watch(searchUuid, async (newSearchUuid) => {
     newSearchUuid = newSearchUuid.replace(/\s+/g, '');
-    if (isValidUuid(newSearchUuid)) {
+    if (!isValidUuid(newSearchUuid)) return;
+
+    try {
         const label = await getLabelByUuid(newSearchUuid);
-        console.log('label', label);
-        if (label.batchId) {
-            labelsStore.batchUuid = label.batchId;
-            labelsStore.batchData = [label];
-            // warehouseStore.inkData = ink;
+        if (label?.batchId) {
+            await openBatch(label.batchId);
+            return;
         }
-        else {
-            const batch = await getBatchByUuid(newSearchUuid);
-            if (batch.length) {
-                labelsStore.batchUuid = newSearchUuid;
-                labelsStore.batchData = batch;
-            }
-        }
+    } catch {
+        // non è un'etichetta singola
     }
-})
+
+    await openBatch(newSearchUuid);
+});
+
+watch(batchLoadMoreSentinel, () => {
+    if (labelsStore.batchUuid) {
+        setupBatchLoadMoreObserver();
+    }
+});
+
+onBeforeUnmount(() => {
+    batchLoadMoreObserver?.disconnect();
+});
 
 onMounted(async () => {
     uiStore.title = "Etichette";
@@ -280,20 +325,101 @@ onMounted(async () => {
     uiStore.loading = false;
 });
 
+const setupBatchLoadMoreObserver = () => {
+    batchLoadMoreObserver?.disconnect();
+    if (!batchLoadMoreSentinel.value) return;
+
+    batchLoadMoreObserver = new IntersectionObserver(
+        (entries) => {
+            if (
+                entries[0]?.isIntersecting &&
+                labelsStore.batchUuid &&
+                batchLabelsHasMore.value &&
+                !batchLabelsLoading.value
+            ) {
+                loadBatchLabels(false);
+            }
+        },
+        { root: null, rootMargin: '120px', threshold: 0 },
+    );
+    batchLoadMoreObserver.observe(batchLoadMoreSentinel.value);
+};
+
+const loadBatchLabels = async (reset = false) => {
+    if (!labelsStore.batchUuid || batchLabelsLoading.value) return;
+    if (!reset && !batchLabelsHasMore.value) return;
+
+    if (reset) {
+        batchLabels.value = [];
+        batchLabelsPage.value = 0;
+        batchLabelsHasMore.value = true;
+        batchLabelsTotal.value = 0;
+    }
+
+    const nextPage = reset ? 1 : batchLabelsPage.value + 1;
+    batchLabelsLoading.value = true;
+    try {
+        const res = await getBatchByUuidPage(labelsStore.batchUuid, {
+            page: nextPage,
+            limit: BATCH_LABELS_PAGE_SIZE,
+            filter: labelsFilter.value,
+        });
+        if (reset) {
+            batchLabels.value = res.items;
+        } else {
+            const existing = new Set(batchLabels.value.map((label) => label.uuid));
+            for (const item of res.items) {
+                if (!existing.has(item.uuid)) {
+                    batchLabels.value.push(item);
+                }
+            }
+        }
+        batchLabelsPage.value = res.page;
+        batchLabelsTotal.value = res.total;
+        batchLabelsHasMore.value = res.hasMore;
+    } finally {
+        batchLabelsLoading.value = false;
+        await nextTick();
+        setupBatchLoadMoreObserver();
+    }
+};
+
+const setBatchLabelsFilter = async (filter: 'all' | 'available' | 'burned') => {
+    if (labelsFilter.value === filter) return;
+    labelsFilter.value = filter;
+    await loadBatchLabels(true);
+};
+
 const backToBatchesList = () => {
     labelsFilter.value = 'all';
+    batchLabels.value = [];
+    batchLoadMoreObserver?.disconnect();
     labelsStore.resetSearch();
 };
 
-const showBatch = async (uuid: string) => {
+const openBatch = async (uuid: string) => {
     transitionDirection.value = 'next';
     labelsFilter.value = 'all';
     labelsStore.batchUuid = uuid;
-    labelsStore.batchData = await getBatchByUuid(labelsStore.batchUuid);
+    labelsStore.batchData = [];
     if (!Object.keys(userDisplayNameByUuid.value).length) {
         await loadUserDisplayNames();
     }
-}
+    await loadBatchLabels(true);
+};
+
+const showBatch = async (uuid: string) => {
+    await openBatch(uuid);
+};
+
+const copyLabelUuid = async (uuid: string) => {
+    try {
+        await navigator.clipboard.writeText(uuid);
+        uiStore.setToast('UUID etichetta copiato negli appunti');
+    } catch {
+        uiStore.setToast('Errore durante la copia dell\'UUID', 'error');
+    }
+};
 
 const showLabel = async (uuid: string) => {
     transitionDirection.value = 'next';
@@ -330,8 +456,8 @@ const confirmAssociateUser = async () => {
     uiStore.loading = true;
     try {
         await associateBatchToUser(labelsStore.batchUuid, selectedAssociateUserUuid.value);
-        labelsStore.batchData = await getBatchByUuid(labelsStore.batchUuid);
         labelsStore.allBatches = await getAllBatches();
+        await loadBatchLabels(true);
         await loadUserDisplayNames();
         closeAssociateUserModal();
         uiStore.setToast('Etichette associate allo studio');

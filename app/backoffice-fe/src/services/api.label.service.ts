@@ -57,6 +57,26 @@ export const getBatchByUuid = async (uuid: string) => {
     return data.data;
 };
 
+export const getBatchByUuidPage = async (
+    batchId: string,
+    params: { page: number; limit?: number; filter?: 'all' | 'available' | 'burned' },
+) => {
+    const data = await api.get(`/labels/batch/${batchId}`, {
+        params: {
+            page: params.page,
+            limit: params.limit ?? 20,
+            filter: params.filter ?? 'all',
+        },
+    });
+    return data.data as {
+        items: any[];
+        total: number;
+        page: number;
+        limit: number;
+        hasMore: boolean;
+    };
+};
+
 export const getPrintFile = async (uuid: string) => {
     const data = await api.get(`/labels/pdf/${uuid}`);
     return data.data;

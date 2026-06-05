@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 import { useUiStore } from '@/stores/ui'
 import router from '@/router';
+import { normalizePayload, shouldNormalizeRequest } from '@shared/lib/normalizePayload';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BE_BASE_URL, // "https://yore-back.onrender.com/api",
@@ -13,6 +14,9 @@ api.interceptors.request.use((config) => {
   if (authStore.token) {
     config.headers = config.headers || {}
     config.headers.Authorization = `Bearer ${authStore.token}`
+  }
+  if (shouldNormalizeRequest(config.method, config.data)) {
+    config.data = normalizePayload(config.data)
   }
   return config
 })

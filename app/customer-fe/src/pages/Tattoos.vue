@@ -79,55 +79,171 @@
                     Nessun tatuaggio in questa categoria
                 </p>
             </div>
-            <div v-else>
-                <div class="flex items-center mb-4">
-                    <ArrowLeft @click="goBackToTattoosList" class="hover:cursor-pointer mr-2 shrink-0" />
+            <div v-else class="flex flex-col gap-4">
+                <button
+                    type="button"
+                    class="flex items-center gap-2 text-sm font-medium text-gray-700 w-fit"
+                    @click="goBackToTattoosList"
+                >
+                    <ArrowLeft class="size-5 shrink-0" />
+                    Torna all'elenco
+                </button>
+
+                <div v-if="tattooDocuments.length" class="mb-4">
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Documenti</p>
+                    <ul class="flex flex-col gap-2">
+                        <li v-for="doc in tattooDocuments" :key="doc.label">
+                            <a
+                                :href="doc.url"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="block"
+                            >
+                                <Button
+                                    type="button"
+                                    class="w-full h-11 justify-start px-4 text-sm font-normal bg-white text-black border border-gray-200 shadow-sm hover:bg-blue-50"
+                                >
+                                    <Award
+                                        v-if="doc.type === 'certificate'"
+                                        class="size-4 mr-2 shrink-0"
+                                    />
+                                    <FileSignature
+                                        v-else
+                                        class="size-4 mr-2 shrink-0"
+                                    />
+                                    {{ doc.label }}
+                                </Button>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        <a v-if="activeTattoo.certificateUrl" :href="activeTattoo.certificateUrl" target="_blank">
-                            <Button class="text-xs">Scarica certificato</Button>
-                        </a>
-                        <a v-if="activeTattoo.releaseFormUrl" :href="activeTattoo.releaseFormUrl" target="_blank">
-                            <Button class="text-xs">Scarica consenso informato</Button>
-                        </a>
-                    </div>
-                    <div>
-                        <div class="mb-4">
-                            <p class="text-xl font-bold flex items-center mb-2 capitalize">
-                                <User /> {{ activeTattoo.customerName }}
-                            </p>
-                            <p class="text-xs">{{ activeTattoo.creationDate.split('T')[0] }}</p>
-                            <p class="text-xs opacity-60">{{ activeTattoo.uuid }}</p>
+
+                <section class="bg-white rounded-xl shadow-md p-4">
+                    <p class="text-xs font-medium text-green-700 mb-2">Tatuaggio completato</p>
+                    <h2 class="text-xl font-bold capitalize flex items-center gap-2 leading-tight">
+                        <User class="size-5 shrink-0" />
+                        {{ activeTattoo.customerName }}
+                    </h2>
+                    <p class="text-sm text-gray-600 mt-2">
+                        Completato il {{ formatDisplayDate(activeTattoo.creationDate) }}
+                    </p>
+                    <p class="text-xs text-gray-400 mt-1">ID pratica #{{ activeTattoo.id }}</p>
+                </section>
+
+                <section
+                    v-if="hasCustomerDetails"
+                    class="bg-white rounded-xl shadow-md p-4"
+                >
+                    <h3 class="text-sm font-bold mb-3">Dati tatuato</h3>
+                    <dl class="grid gap-3 text-sm">
+                        <div v-if="activeCustomer?.email" class="detail-row">
+                            <dt class="detail-label">
+                                <Mail class="size-4 shrink-0" />
+                                Email
+                            </dt>
+                            <dd class="detail-value">{{ activeCustomer.email }}</dd>
                         </div>
-                        <div v-if="tattooPhotos.before || tattooPhotos.after" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 max-w-md">
-                            <div v-if="tattooPhotos.before">
-                                <p class="text-xs font-bold mb-1">Prima</p>
+                        <div v-if="activeCustomer?.cf" class="detail-row">
+                            <dt class="detail-label">
+                                <IdCard class="size-4 shrink-0" />
+                                Codice fiscale
+                            </dt>
+                            <dd class="detail-value uppercase">{{ activeCustomer.cf }}</dd>
+                        </div>
+                        <div v-if="activeCustomer?.birthDate" class="detail-row">
+                            <dt class="detail-label">
+                                <Calendar class="size-4 shrink-0" />
+                                Data di nascita
+                            </dt>
+                            <dd class="detail-value">{{ formatDisplayDate(activeCustomer.birthDate) }}</dd>
+                        </div>
+                    </dl>
+                </section>
+
+                <section
+                    v-if="tattooPhotos.before || tattooPhotos.after"
+                    class="bg-white rounded-xl shadow-md p-4"
+                >
+                    <h3 class="text-sm font-bold mb-3">Foto del tatuaggio</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div v-if="tattooPhotos.before">
+                            <p class="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Prima</p>
+                            <button
+                                type="button"
+                                class="block w-full overflow-hidden rounded-lg border border-gray-200 bg-gray-50"
+                                @click="openPhotoPreview(tattooPhotos.before, 'Prima del tatuaggio')"
+                            >
                                 <img
                                     :key="`before-${activeTattoo.uuid}-${tattooPhotos.before}`"
                                     :src="tattooPhotos.before"
-                                    class="w-full border-2 rounded-md object-cover"
+                                    class="w-full aspect-[3/4] object-cover"
                                     alt="Prima del tatuaggio"
                                 />
-                            </div>
-                            <div v-if="tattooPhotos.after">
-                                <p class="text-xs font-bold mb-1">Dopo</p>
+                            </button>
+                        </div>
+                        <div v-if="tattooPhotos.after">
+                            <p class="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Dopo</p>
+                            <button
+                                type="button"
+                                class="block w-full overflow-hidden rounded-lg border border-gray-200 bg-gray-50"
+                                @click="openPhotoPreview(tattooPhotos.after, 'Dopo il tatuaggio')"
+                            >
                                 <img
                                     :key="`after-${activeTattoo.uuid}-${tattooPhotos.after}`"
                                     :src="tattooPhotos.after"
-                                    class="w-full border-2 rounded-md object-cover"
+                                    class="w-full aspect-[3/4] object-cover"
                                     alt="Dopo il tatuaggio"
                                 />
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <p class="font-bold">Caratteristiche del tatuaggio</p>
-                            <p>Colore: {{ inkColorLabel }}</p>
-                            <p>Stile: {{ activeTattoo.tattooStyle ?? '—' }}</p>
-                            <p>Tipo: {{ tattooTypeLabel }}</p>
-                            <p>Posizione: {{ activeTattoo.position ?? '—' }}</p>
-                            <p>Tipo pelle: {{ activeTattoo.skinType ?? '—' }}</p>
+                            </button>
                         </div>
                     </div>
+                </section>
+
+                <section class="bg-white rounded-xl shadow-md p-4 mb-2">
+                    <h3 class="text-sm font-bold mb-3">Caratteristiche del tatuaggio</h3>
+                    <dl class="grid gap-3 text-sm">
+                        <div class="detail-row">
+                            <dt class="detail-label">Colore</dt>
+                            <dd class="detail-value">{{ inkColorLabel }}</dd>
+                        </div>
+                        <div class="detail-row">
+                            <dt class="detail-label">Stile</dt>
+                            <dd class="detail-value">{{ activeTattoo.tattooStyle ?? '—' }}</dd>
+                        </div>
+                        <div class="detail-row">
+                            <dt class="detail-label">Tipo</dt>
+                            <dd class="detail-value">{{ tattooTypeLabel }}</dd>
+                        </div>
+                        <div class="detail-row">
+                            <dt class="detail-label">Posizione</dt>
+                            <dd class="detail-value">{{ tattooPositionLabel }}</dd>
+                        </div>
+                        <div class="detail-row">
+                            <dt class="detail-label">Tipo di pelle</dt>
+                            <dd class="detail-value">{{ tattooSkinTypeLabel }}</dd>
+                        </div>
+                    </dl>
+                </section>
+
+                <div
+                    v-if="photoPreview"
+                    class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90 p-4"
+                    @click.self="closePhotoPreview"
+                >
+                    <p class="text-white text-sm font-semibold mb-3">{{ photoPreview.label }}</p>
+                    <img
+                        :src="photoPreview.url"
+                        :alt="photoPreview.label"
+                        class="max-w-full max-h-[75vh] rounded-lg object-contain shadow-2xl"
+                    />
+                    <button
+                        type="button"
+                        class="mt-4 text-white text-sm"
+                        @click="closePhotoPreview"
+                    >
+                        Chiudi
+                    </button>
+                </div>
             </div>
         </Transition>
     </div>
@@ -135,7 +251,18 @@
 <script setup lang="ts">
 
 import { useUiStore } from '@/stores/ui';
-import { Calendar, Plus, Trash, ArrowLeft, Droplet } from 'lucide-vue-next';
+import {
+    Award,
+    Calendar,
+    FileSignature,
+    Plus,
+    Trash,
+    ArrowLeft,
+    Droplet,
+    User,
+    Mail,
+    IdCard,
+} from 'lucide-vue-next';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useTatoosStore } from '@/stores/tattoos.store';
 import { deleteTattoo, getTattoByUuid } from '@/services/api.tattoo.service';
@@ -144,6 +271,9 @@ import {
     syncTattooPhotos,
     INK_COLOR_LABELS,
     TATTOO_TYPE_LABELS,
+    formatDisplayDate,
+    skinTypeLabel,
+    positionLabel,
 } from '@/constants/tattoo.config';
 import { useCreateTattoStore } from '@/stores/createTatto.store';
 import Button from '@shared/components/ui/button/Button.vue';
@@ -158,6 +288,7 @@ const tattoosStore = useTatoosStore();
 const createTattooStore = useCreateTattoStore();
 const userStore = useUserStore();
 const activeTattoo = ref<any>(null);
+const photoPreview = ref<{ url: string; label: string } | null>(null);
 const activeDelete = ref(false);
 const route = useRoute();
 const loadMoreSentinel = ref<HTMLElement | null>(null);
@@ -181,6 +312,24 @@ const tattooPhotos = computed(() =>
     activeTattoo.value ? syncTattooPhotos(activeTattoo.value.photoUrl) : {},
 );
 
+const tattooDocuments = computed(() => {
+    const tattoo = activeTattoo.value;
+    if (!tattoo) return [];
+
+    return [
+        {
+            label: 'Certificato di tatuaggio',
+            url: tattoo.certificateUrl,
+            type: 'certificate' as const,
+        },
+        {
+            label: 'Consenso informato',
+            url: tattoo.releaseFormUrl,
+            type: 'release' as const,
+        },
+    ].filter((doc) => !!doc.url);
+});
+
 const listTattooThumb = (photoUrl: string | string[] | null | undefined) => {
     const { after, before } = syncTattooPhotos(photoUrl);
     return after ?? before;
@@ -196,24 +345,48 @@ const tattooTypeLabel = computed(() => {
     return TATTOO_TYPE_LABELS[type]?.title ?? type;
 });
 
+const activeCustomer = computed(() => activeTattoo.value?.customer ?? null);
+
+const hasCustomerDetails = computed(() => {
+    const c = activeCustomer.value;
+    if (!c) return false;
+    return !!(c.email || c.cf || c.birthDate);
+});
+
+const tattooPositionLabel = computed(() =>
+    positionLabel(activeTattoo.value?.position),
+);
+
+const tattooSkinTypeLabel = computed(() =>
+    skinTypeLabel(activeTattoo.value?.skinType),
+);
+
+const openPhotoPreview = (url: string | undefined, label: string) => {
+    if (!url) return;
+    photoPreview.value = { url, label };
+};
+
+const closePhotoPreview = () => {
+    photoPreview.value = null;
+};
+
 watch(
-    () => route.fullPath,
-    (newPath, oldPath) => {
-        if (newPath === '/tattoos') activeTattoo.value = null;
-        if (getTattooUuidFromUrl() && activeTattoo.value === null) {
-            showClosedTattoo(getTattooUuidFromUrl());
+    () => route.params.tattooUuid as string | undefined,
+    async (tattooUuid) => {
+        if (!tattooUuid) {
+            activeTattoo.value = null;
+            return;
         }
-    }
-)
+        if (!activeTattoo.value || activeTattoo.value.uuid !== tattooUuid) {
+            await showClosedTattoo(tattooUuid);
+        }
+    },
+);
 
 const getTattooUuidFromUrl = (): string => {
-    console.log(route.params.tattooUuid);
-    try {
-        return route.params.tattooUuid as string;
-    } catch (error) {
-        return '';
-    }
-}
+    const tattooUuid = route.params.tattooUuid;
+    return typeof tattooUuid === 'string' ? tattooUuid : '';
+};
 
 const isDeletable = (status: string) => {
     return status !== 'CLOSE' && status !== 'PROGRESS';
@@ -306,8 +479,7 @@ const onclickTattoo = async (tattoo: any) => {
         goToTatto(tattoo.uuid);
         return
     } else {
-        router.push('tattoos/' + tattoo.uuid);
-        await showClosedTattoo(tattoo.uuid);
+        await router.push(`/tattoos/${tattoo.uuid}`);
     }
 }
 
@@ -354,9 +526,10 @@ const showClosedTattoo = async (tattooUuid: string) => {
 };
 
 const goBackToTattoosList = () => {
+    photoPreview.value = null;
     activeTattoo.value = null;
     router.push('/tattoos');
-}
+};
 
 const startDeletion = () => {
     activeDelete.value = !activeDelete.value;
@@ -370,6 +543,36 @@ const startDeletion = () => {
 
 </script>
 <style scoped>
+.detail-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgb(243 244 246);
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.detail-label {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: rgb(107 114 128);
+    flex-shrink: 0;
+}
+
+.detail-value {
+    text-align: right;
+    font-weight: 500;
+    color: rgb(17 24 39);
+    word-break: break-word;
+    min-width: 0;
+}
+
 .green {
     background-color: rgb(148, 255, 148);
 }

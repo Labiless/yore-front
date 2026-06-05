@@ -44,6 +44,38 @@ export const INK_COLOR_LABELS: Record<string, string> = {
   black: 'Nero',
 };
 
+export const SKIN_TYPE_LABELS: Record<number, string> = {
+  1: 'Molto chiara',
+  2: 'Chiara',
+  3: 'Medio chiara',
+  4: 'Medio scura',
+  5: 'Scura',
+  6: 'Molto scura',
+};
+
+export const TATTOO_POSITION_LABELS: Record<number, string> = {
+  1: 'Testa / viso',
+  2: 'Torace',
+  3: 'Gambe superiori',
+  4: 'Gambe inferiori e avambracci',
+  5: 'Piedi e mani',
+};
+
+export function formatDisplayDate(value?: string | null): string {
+  if (!value) return '—';
+  return String(value).split('T')[0];
+}
+
+export function skinTypeLabel(id?: number | null): string {
+  if (id == null || id <= 0) return '—';
+  return SKIN_TYPE_LABELS[id] ?? String(id);
+}
+
+export function positionLabel(id?: number | null): string {
+  if (id == null || id <= 0) return '—';
+  return TATTOO_POSITION_LABELS[id] ?? String(id);
+}
+
 /** Normalizza photoUrl da API (array, stringa singola o JSON serializzato). */
 export function normalizePhotoUrlArray(
   photoUrl: string | string[] | null | undefined,

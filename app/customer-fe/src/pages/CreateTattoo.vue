@@ -231,7 +231,7 @@ const submit = async () => {
             });
 
             await tattooStore.fetchTattoosPage(userStore.getUiid, { reset: true, filter: 'all' });
-            router.push(`tattoos/${createTattoStore.uuid}`);
+            router.push(`/tattoos/${createTattoStore.uuid}`);
             uiStore.setToast('Tatuaggio completato! Email inviata al cliente.');
 
         } catch {

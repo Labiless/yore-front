@@ -217,6 +217,51 @@
                                     {{ savingPassword ? 'Salvataggio...' : 'Aggiorna password' }}
                                 </Button>
                             </form>
+                            <div class="mb-4 bg-white rounded-xl w-full p-4 min-w-0 flex flex-col gap-3 border border-red-200">
+                                <p class="font-bold text-red-600">Elimina utente</p>
+                                <p class="text-sm text-gray-600">
+                                    L'operazione è irreversibile. Le etichette associate verranno scollegate;
+                                    non è possibile eliminare utenti con tatuaggi registrati.
+                                </p>
+                                <template v-if="!showDeleteConfirm">
+                                    <Button
+                                        type="button"
+                                        variant="destructive"
+                                        class="h-10 w-full"
+                                        :disabled="deletingUser"
+                                        @click="showDeleteConfirm = true"
+                                    >
+                                        <Trash2 />
+                                        Elimina utente
+                                    </Button>
+                                </template>
+                                <template v-else>
+                                    <p class="text-sm font-medium">
+                                        Confermi l'eliminazione di
+                                        <span class="font-bold">{{ selectedUser.businessName || selectedUser.email }}</span>?
+                                    </p>
+                                    <div class="flex gap-2">
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            class="h-10 flex-1"
+                                            :disabled="deletingUser"
+                                            @click="showDeleteConfirm = false"
+                                        >
+                                            Annulla
+                                        </Button>
+                                        <Button
+                                            type="button"
+                                            variant="destructive"
+                                            class="h-10 flex-1"
+                                            :disabled="deletingUser"
+                                            @click="confirmDeleteUser"
+                                        >
+                                            {{ deletingUser ? 'Eliminazione...' : 'Conferma eliminazione' }}
+                                        </Button>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
                         <section class="mb-4 bg-white rounded-xl w-full p-4 min-w-0">
                             <p class="font-bold text-xl mb-4">
@@ -319,6 +364,7 @@ import {
     getUserByUuid,
     updateUser,
     updateUserPassword,
+    deleteUser,
 } from '@/services/api.user.service';
 import {
     Search,
@@ -331,6 +377,7 @@ import {
     Building2,
     Hash,
     Calendar,
+    Trash2,
 } from 'lucide-vue-next';
 import { useUiStore } from '@/stores/ui';
 import { useUsersStore } from '@/stores/users.store';
@@ -399,6 +446,8 @@ const savingContacts = ref(false);
 const savingAddress = ref(false);
 const savingCompany = ref(false);
 const savingPassword = ref(false);
+const showDeleteConfirm = ref(false);
+const deletingUser = ref(false);
 
 const getRouteUserUuid = (): string => {
     const userUuid = route.params.userUuid;
@@ -548,6 +597,7 @@ const resetEditForms = () => {
         taxCode: '',
     };
     editPassword.value = { password: '', confirm: '' };
+    showDeleteConfirm.value = false;
 };
 
 const syncEditFormsFromUser = (user: Record<string, string | null | undefined>) => {
@@ -572,6 +622,7 @@ const syncEditFormsFromUser = (user: Record<string, string | null | undefined>) 
         taxCode: user.taxCode ?? '',
     };
     editPassword.value = { password: '', confirm: '' };
+    showDeleteConfirm.value = false;
 };
 
 const applyUserUpdate = (updatedUser: any) => {
@@ -653,6 +704,36 @@ const saveCompany = async () => {
         uiStore.setToast('Errore durante il salvataggio dei dati azienda', 'error');
     } finally {
         savingCompany.value = false;
+    }
+};
+
+const getApiErrorMessage = (error: unknown, fallback: string) => {
+    const message = (error as { response?: { data?: { message?: string | string[] } } })
+        ?.response?.data?.message;
+    if (Array.isArray(message)) return message[0] ?? fallback;
+    if (typeof message === 'string' && message.length) return message;
+    return fallback;
+};
+
+const confirmDeleteUser = async () => {
+    if (!selectedUserUuid.value || deletingUser.value) return;
+    deletingUser.value = true;
+    try {
+        await deleteUser(selectedUserUuid.value);
+        usersStore.allUsers = usersStore.allUsers.filter(
+            (user: { uuid: string }) => user.uuid !== selectedUserUuid.value,
+        );
+        uiStore.setToast('Utente eliminato');
+        await router.push('/users');
+        clearUserDetail();
+    } catch (error) {
+        uiStore.setToast(
+            getApiErrorMessage(error, 'Errore durante l\'eliminazione dell\'utente'),
+            'error',
+        );
+    } finally {
+        deletingUser.value = false;
+        showDeleteConfirm.value = false;
     }
 };
 

@@ -24,3 +24,8 @@ export const updateUserPassword = async (uuid: string, password: string) => {
     const data = await api.patch(`/users/${uuid}/password`, { password });
     return data.data;
 };
+
+export const deleteUser = async (uuid: string) => {
+    const data = await api.delete(`/users/${uuid}`);
+    return data.data;
+};

@@ -32,7 +32,56 @@
         </label>
         <label>
             Data di nascita
-            <Input required v-model="createTattoStore.info.birthDate" type="date" />
+            <div class="flex items-center gap-1.5" role="group" aria-label="Data di nascita">
+                <input
+                    ref="birthDayRef"
+                    :value="birthDay"
+                    type="text"
+                    inputmode="numeric"
+                    autocomplete="bday-day"
+                    maxlength="2"
+                    placeholder="GG"
+                    required
+                    class="birth-part-input w-14 text-center"
+                    @input="onBirthPartInput('day', $event)"
+                    @keydown="onBirthPartKeydown('day', $event)"
+                />
+                <span class="text-gray-500 shrink-0">/</span>
+                <input
+                    ref="birthMonthRef"
+                    :value="birthMonth"
+                    type="text"
+                    inputmode="numeric"
+                    autocomplete="bday-month"
+                    maxlength="2"
+                    placeholder="MM"
+                    required
+                    class="birth-part-input w-14 text-center"
+                    @input="onBirthPartInput('month', $event)"
+                    @keydown="onBirthPartKeydown('month', $event)"
+                />
+                <span class="text-gray-500 shrink-0">/</span>
+                <input
+                    ref="birthYearRef"
+                    :value="birthYear"
+                    type="text"
+                    inputmode="numeric"
+                    autocomplete="bday-year"
+                    maxlength="4"
+                    placeholder="AAAA"
+                    required
+                    class="birth-part-input w-[4.5rem] text-center"
+                    @input="onBirthPartInput('year', $event)"
+                    @keydown="onBirthPartKeydown('year', $event)"
+                />
+            </div>
+            <input
+                type="hidden"
+                :value="createTattoStore.info.birthDate ?? ''"
+                required
+                tabindex="-1"
+                aria-hidden="true"
+            />
         </label>
         <label>
             Luogo di nascita
@@ -93,7 +142,7 @@ import { useCreateTattoStore } from '@/stores/createTatto.store';
 import Input from '@shared/components/ui/input/Input.vue';
 import Button from '@shared/components/ui/button/Button.vue';
 import { ClipboardList } from 'lucide-vue-next';
-import { watch } from 'vue';
+import { ref, watch } from 'vue';
 import router from '@/router';
 import { useRoute } from 'vue-router';
 import { createCustomer, updateCustomer } from '@/services/api.customer.service';
@@ -107,6 +156,124 @@ const userStore = useUserStore();
 const tattoosStore = useTatoosStore();
 const uiStore = useUiStore();
 const route = useRoute();
+
+const birthDay = ref('');
+const birthMonth = ref('');
+const birthYear = ref('');
+const birthDayRef = ref<HTMLInputElement | null>(null);
+const birthMonthRef = ref<HTMLInputElement | null>(null);
+const birthYearRef = ref<HTMLInputElement | null>(null);
+
+let syncingBirthDateFromStore = false;
+
+const buildBirthDateFromParts = (): string | undefined => {
+    const day = birthDay.value;
+    const month = birthMonth.value;
+    const year = birthYear.value;
+    if (!day || month.length < 2 || year.length !== 4) return undefined;
+
+    const dayNum = Number(day);
+    const monthNum = Number(month);
+    const yearNum = Number(year);
+    if (
+        !Number.isInteger(dayNum) ||
+        !Number.isInteger(monthNum) ||
+        !Number.isInteger(yearNum) ||
+        monthNum < 1 ||
+        monthNum > 12 ||
+        dayNum < 1 ||
+        dayNum > 31 ||
+        yearNum < 1900 ||
+        yearNum > new Date().getFullYear()
+    ) {
+        return undefined;
+    }
+
+    const date = new Date(yearNum, monthNum - 1, dayNum);
+    if (
+        date.getFullYear() !== yearNum ||
+        date.getMonth() !== monthNum - 1 ||
+        date.getDate() !== dayNum
+    ) {
+        return undefined;
+    }
+
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+};
+
+const syncBirthDateToStore = () => {
+    syncingBirthDateFromStore = true;
+    createTattoStore.info.birthDate = buildBirthDateFromParts();
+    syncingBirthDateFromStore = false;
+};
+
+const parseBirthDateFromStore = (value?: string) => {
+    if (!value) {
+        birthDay.value = '';
+        birthMonth.value = '';
+        birthYear.value = '';
+        return;
+    }
+    const datePart = String(value).split('T')[0] ?? '';
+    const [year, month, day] = datePart.split('-');
+    birthYear.value = year ?? '';
+    birthMonth.value = month ?? '';
+    birthDay.value = day ?? '';
+};
+
+const onBirthPartInput = (part: 'day' | 'month' | 'year', event: Event) => {
+    const input = event.target as HTMLInputElement;
+    const maxLen = part === 'year' ? 4 : 2;
+    let value = input.value.replace(/\D/g, '').slice(0, maxLen);
+
+    if (part === 'day' && value.length === 1 && Number(value) > 3) {
+        value = `0${value}`;
+    }
+    if (part === 'month' && value.length === 1 && Number(value) > 1) {
+        value = `0${value}`;
+    }
+
+    input.value = value;
+
+    if (part === 'day') birthDay.value = value;
+    else if (part === 'month') birthMonth.value = value;
+    else birthYear.value = value;
+
+    syncBirthDateToStore();
+
+    if (part === 'day' && value.length === 2) {
+        birthMonthRef.value?.focus();
+        birthMonthRef.value?.select();
+    } else if (part === 'month' && value.length === 2) {
+        birthYearRef.value?.focus();
+        birthYearRef.value?.select();
+    }
+};
+
+const onBirthPartKeydown = (part: 'day' | 'month' | 'year', event: KeyboardEvent) => {
+    const input = event.target as HTMLInputElement;
+    if (event.key !== 'Backspace' || input.value !== '' || input.selectionStart !== 0) {
+        return;
+    }
+
+    if (part === 'month') {
+        event.preventDefault();
+        birthDayRef.value?.focus();
+    } else if (part === 'year') {
+        event.preventDefault();
+        birthMonthRef.value?.focus();
+    }
+};
+
+watch(
+    () => createTattoStore.info.birthDate,
+    (value) => {
+        if (syncingBirthDateFromStore) return;
+        if (buildBirthDateFromParts() === value) return;
+        parseBirthDateFromStore(value);
+    },
+    { immediate: true },
+);
 
 watch(
     () => ({ ...createTattoStore.info }),
@@ -163,3 +330,22 @@ const onsubmit = async () => {
     }
 }
 </script>
+
+<style scoped>
+.birth-part-input {
+    height: 2.25rem;
+    min-width: 0;
+    border-radius: 0.375rem;
+    border: 1px solid var(--color-input, #e5e7eb);
+    background: transparent;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+    outline: none;
+}
+
+.birth-part-input:focus-visible {
+    border-color: var(--color-ring, #3b82f6);
+    box-shadow: 0 0 0 3px rgb(59 130 246 / 0.5);
+}
+</style>

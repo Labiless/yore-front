@@ -17,8 +17,12 @@
         <div v-show="showTab === 0">
             <Transition>
                 <div v-if="!labelsStore.batchUuid">
-                    <div  @click="showBatch(labelBatch.uuid)" class="flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:p-6"
-                        v-for="labelBatch in labelsStore.allBatches">
+                    <div
+                        v-for="labelBatch in labelsStore.allBatches"
+                        :key="labelBatch.uuid"
+                        class="flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:p-6"
+                        @click="showBatch(labelBatch.uuid)"
+                    >
                         <p class="font-bold text-2xl">x{{ labelBatch.amount }}</p>
                         <div class="pl-4 flex justify-between items-center gap-2 flex-1 min-w-0">
                             <div class="min-w-0 flex-1">
@@ -39,6 +43,31 @@
                             </div>
                         </div>
                     </div>
+                    <div ref="batchesListLoadMoreSentinel" class="h-1 shrink-0" aria-hidden="true" />
+                    <p
+                        v-if="batchesListLoading && labelsStore.allBatches.length"
+                        class="text-center text-sm text-gray-500 py-3"
+                    >
+                        Caricamento...
+                    </p>
+                    <p
+                        v-else-if="!batchesListHasMore && labelsStore.allBatches.length"
+                        class="text-center text-xs text-gray-400 py-3"
+                    >
+                        Fine elenco ({{ batchesListTotal }} lotti)
+                    </p>
+                    <p
+                        v-else-if="!batchesListLoading && !labelsStore.allBatches.length"
+                        class="text-center text-sm text-gray-500 py-6"
+                    >
+                        Nessun lotto etichette
+                    </p>
+                    <p
+                        v-else-if="batchesListLoading && !labelsStore.allBatches.length"
+                        class="text-center text-sm text-gray-500 py-6"
+                    >
+                        Caricamento...
+                    </p>
                 </div>
                 <div v-else>
                     <div class="flex items-center mb-4">
@@ -193,9 +222,10 @@
 import { onMounted, onBeforeUnmount, ref, watch, computed, nextTick } from 'vue';
 import { Search, User, ArrowLeft, Plus, Calendar, Download, UserPlus, Copy } from 'lucide-vue-next';
 import {
-    getAllBatches,
+    getAllBatchesPage,
     getBatchByUuidPage,
     getLabelByUuid,
+    getLabelBatchByUuid,
     associateBatchToUser,
 } from '@/services/api.label.service';
 import { getAllUsers } from '@/services/api.user.service';
@@ -247,13 +277,17 @@ const currentBatchMeta = computed(() =>
 );
 
 const batchHeaderDate = computed(() => {
-    const date = currentBatchMeta.value?.creationDate;
+    const date =
+        activeBatchMeta.value?.creationDate ?? currentBatchMeta.value?.creationDate;
     return date ? String(date).split('T')[0] : '—';
 });
 
-const batchNeedsUserAssociation = computed(
-    () => !!labelsStore.batchUuid && !currentBatchMeta.value?.studioUserUuid,
-);
+const batchNeedsUserAssociation = computed(() => {
+    if (!labelsStore.batchUuid) return false;
+    const studioUuid =
+        activeBatchMeta.value?.studioUserUuid ?? currentBatchMeta.value?.studioUserUuid;
+    return !studioUuid;
+});
 
 const labelsFilter = ref<'all' | 'available' | 'burned'>('all');
 const batchLabels = ref<any[]>([]);
@@ -265,6 +299,15 @@ const batchLoadMoreSentinel = ref<HTMLElement | null>(null);
 let batchLoadMoreObserver: IntersectionObserver | null = null;
 
 const BATCH_LABELS_PAGE_SIZE = 20;
+const BATCHES_LIST_PAGE_SIZE = 20;
+
+const batchesListPage = ref(0);
+const batchesListHasMore = ref(true);
+const batchesListLoading = ref(false);
+const batchesListTotal = ref(0);
+const batchesListLoadMoreSentinel = ref<HTMLElement | null>(null);
+let batchesListLoadMoreObserver: IntersectionObserver | null = null;
+const activeBatchMeta = ref<any>(null);
 
 const labelsFilterEmptyMessage = computed(() => {
     if (labelsFilter.value === 'available') return 'Nessuna etichetta disponibile';
@@ -306,8 +349,15 @@ watch(batchLoadMoreSentinel, () => {
     }
 });
 
+watch(batchesListLoadMoreSentinel, () => {
+    if (!labelsStore.batchUuid) {
+        setupBatchesListLoadMoreObserver();
+    }
+});
+
 onBeforeUnmount(() => {
     batchLoadMoreObserver?.disconnect();
+    batchesListLoadMoreObserver?.disconnect();
 });
 
 onMounted(async () => {
@@ -321,9 +371,97 @@ onMounted(async () => {
 
     labelsStore.resetSearch();
     await loadUserDisplayNames();
-    labelsStore.allBatches = await getAllBatches();
+    await loadBatchesList(true);
     uiStore.loading = false;
+    setupBatchesListLoadMoreObserver();
 });
+
+const setupBatchesListLoadMoreObserver = () => {
+    batchesListLoadMoreObserver?.disconnect();
+    if (!batchesListLoadMoreSentinel.value || labelsStore.batchUuid) return;
+
+    batchesListLoadMoreObserver = new IntersectionObserver(
+        (entries) => {
+            if (
+                entries[0]?.isIntersecting &&
+                !labelsStore.batchUuid &&
+                batchesListHasMore.value &&
+                !batchesListLoading.value
+            ) {
+                loadBatchesList(false);
+            }
+        },
+        { root: null, rootMargin: '120px', threshold: 0 },
+    );
+    batchesListLoadMoreObserver.observe(batchesListLoadMoreSentinel.value);
+};
+
+const loadBatchesList = async (reset = false) => {
+    if (batchesListLoading.value) return;
+    if (!reset && !batchesListHasMore.value) return;
+
+    if (reset) {
+        labelsStore.allBatches = [];
+        batchesListPage.value = 0;
+        batchesListHasMore.value = true;
+        batchesListTotal.value = 0;
+    }
+
+    const nextPage = reset ? 1 : batchesListPage.value + 1;
+    batchesListLoading.value = true;
+    try {
+        const res = await getAllBatchesPage({
+            page: nextPage,
+            limit: BATCHES_LIST_PAGE_SIZE,
+        });
+        if (reset) {
+            labelsStore.allBatches = res.items;
+        } else {
+            const existing = new Set(
+                labelsStore.allBatches.map((batch: { uuid: string }) => batch.uuid),
+            );
+            for (const item of res.items) {
+                if (!existing.has(item.uuid)) {
+                    labelsStore.allBatches.push(item);
+                }
+            }
+        }
+        batchesListPage.value = res.page;
+        batchesListTotal.value = res.total;
+        batchesListHasMore.value = res.hasMore;
+    } finally {
+        batchesListLoading.value = false;
+        await nextTick();
+        setupBatchesListLoadMoreObserver();
+    }
+};
+
+const upsertBatchMeta = (batch: any) => {
+    const index = labelsStore.allBatches.findIndex(
+        (item: { uuid: string }) => item.uuid === batch.uuid,
+    );
+    if (index >= 0) {
+        labelsStore.allBatches[index] = batch;
+    } else {
+        labelsStore.allBatches.unshift(batch);
+    }
+};
+
+const resolveBatchMeta = async (uuid: string) => {
+    const fromList = labelsStore.allBatches.find(
+        (batch: { uuid: string }) => batch.uuid === uuid,
+    );
+    if (fromList) {
+        activeBatchMeta.value = fromList;
+        return;
+    }
+    try {
+        activeBatchMeta.value = await getLabelBatchByUuid(uuid);
+        upsertBatchMeta(activeBatchMeta.value);
+    } catch {
+        activeBatchMeta.value = null;
+    }
+};
 
 const setupBatchLoadMoreObserver = () => {
     batchLoadMoreObserver?.disconnect();
@@ -393,18 +531,22 @@ const setBatchLabelsFilter = async (filter: 'all' | 'available' | 'burned') => {
 const backToBatchesList = () => {
     labelsFilter.value = 'all';
     batchLabels.value = [];
+    activeBatchMeta.value = null;
     batchLoadMoreObserver?.disconnect();
     labelsStore.resetSearch();
+    setupBatchesListLoadMoreObserver();
 };
 
 const openBatch = async (uuid: string) => {
     transitionDirection.value = 'next';
     labelsFilter.value = 'all';
+    batchesListLoadMoreObserver?.disconnect();
     labelsStore.batchUuid = uuid;
     labelsStore.batchData = [];
     if (!Object.keys(userDisplayNameByUuid.value).length) {
         await loadUserDisplayNames();
     }
+    await resolveBatchMeta(uuid);
     await loadBatchLabels(true);
 };
 
@@ -456,7 +598,9 @@ const confirmAssociateUser = async () => {
     uiStore.loading = true;
     try {
         await associateBatchToUser(labelsStore.batchUuid, selectedAssociateUserUuid.value);
-        labelsStore.allBatches = await getAllBatches();
+        const updatedBatch = await getLabelBatchByUuid(labelsStore.batchUuid);
+        upsertBatchMeta(updatedBatch);
+        activeBatchMeta.value = updatedBatch;
         await loadBatchLabels(true);
         await loadUserDisplayNames();
         closeAssociateUserModal();

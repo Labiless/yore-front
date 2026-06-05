@@ -10,6 +10,27 @@ export const getAllBatches = async () => {
     return data.data;
 };
 
+export const getAllBatchesPage = async (params: { page: number; limit?: number }) => {
+    const data = await api.get('/label-batches', {
+        params: {
+            page: params.page,
+            limit: params.limit ?? 20,
+        },
+    });
+    return data.data as {
+        items: any[];
+        total: number;
+        page: number;
+        limit: number;
+        hasMore: boolean;
+    };
+};
+
+export const getLabelBatchByUuid = async (uuid: string) => {
+    const data = await api.get(`/label-batches/detail/${uuid}`);
+    return data.data;
+};
+
 export const getLabelByUuid = async (uuid: string) => {
     const data = await api.get(`labels/${uuid}`);
     return data.data;

@@ -12,7 +12,7 @@
   </Transition>
   <main class="h-screen overflow-y-auto" :class="`${uiStore.loading ? 'blur' : ''}`">
     <Transition>
-      <RouterView class="w-full max-w-xl mx-auto pt-12 pb-24 px-4" />
+      <RouterView class="app-shell pt-12 pb-24 px-4" />
     </Transition>
     <div class="fixed bottom-0 w-full">
       <Header v-if="authStore.isAuthenticated" :title="uiStore.title" />

@@ -7,7 +7,7 @@
     :class="`${uiStore.loading ? 'blur pointer-events-none select-none' : ''}`"
   >
     <Transition>
-      <RouterView class="app-shell w-full max-w-xl mx-auto px-4 pt-12 pb-28" />
+      <RouterView class="app-shell px-4 pt-12 pb-28" />
     </Transition>
   </main>
   <div

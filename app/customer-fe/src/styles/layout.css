@@ -1,35 +1,3 @@
-/* Larghezza contenuto: mobile pieno, tablet/desktop centrato e limitato */
-.app-shell {
-  width: 100%;
-  max-width: 28rem;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-@media (min-width: 640px) {
-  .app-shell {
-    max-width: 32rem;
-  }
-}
-
-@media (min-width: 768px) {
-  .app-shell {
-    max-width: 36rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .app-shell {
-    max-width: 42rem;
-  }
-}
-
-@media (min-width: 1280px) {
-  .app-shell {
-    max-width: 48rem;
-  }
-}
-
 .customer-form label {
   display: flex;
   flex-direction: column;

@@ -104,14 +104,16 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach(async (to, _from, next) => {
+router.beforeEach(async (to, from, next) => {
   const redirect = await getAuthSession().guardRoute(to);
   if (redirect) {
     next(redirect);
     return;
   }
 
-  if (to.name === 'labels' || to.name === 'labelBatch') {
+  const isLabelRoute = to.name === 'labels' || to.name === 'labelBatch';
+  const fromLabelRoute = from.name === 'labels' || from.name === 'labelBatch';
+  if (isLabelRoute && !fromLabelRoute) {
     useLabelsStore().resetSearch();
   }
 

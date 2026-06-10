@@ -108,10 +108,10 @@ const create = async (userUuid?: string) => {
         if (userUuid) {
             payload.userUuid = userUuid;
         }
-        await createLabels(payload);
+        const batchId = await createLabels(payload);
         creatingLabelsStore.resetCreatingLabels();
         await warehouseStore.refreshWarehouse();
-        router.push('/labels');
+        router.push(`/labels/${batchId}`);
         uiStore.setToast("Etichette create correttamente");
         uiStore.loading = false;
     } catch (error) {

@@ -365,15 +365,13 @@ onMounted(async () => {
     uiStore.loading = true;
 
     const batchFromRoute = routeBatchUuid();
-    if (batchFromRoute) {
-        await router.replace('/labels');
-    }
-
     labelsStore.resetSearch();
     await loadUserDisplayNames();
     await loadBatchesList(true);
     uiStore.loading = false;
-    setupBatchesListLoadMoreObserver();
+    if (batchFromRoute) {
+        await openBatch(batchFromRoute);
+    }
 });
 
 const setupBatchesListLoadMoreObserver = () => {
@@ -535,9 +533,15 @@ const backToBatchesList = () => {
     batchLoadMoreObserver?.disconnect();
     labelsStore.resetSearch();
     setupBatchesListLoadMoreObserver();
+    if (route.name !== 'labels') {
+        router.replace({ name: 'labels' });
+    }
 };
 
 const openBatch = async (uuid: string) => {
+    if (route.name !== 'labelBatch' || route.params.labelsUuid !== uuid) {
+        router.replace({ name: 'labelBatch', params: { labelsUuid: uuid } });
+    }
     transitionDirection.value = 'next';
     labelsFilter.value = 'all';
     batchesListLoadMoreObserver?.disconnect();

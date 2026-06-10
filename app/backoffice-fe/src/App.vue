@@ -29,15 +29,28 @@ import { RouterView, useRoute } from 'vue-router';
 import Header from '@shared/components/Header.vue';
 import Nav from '@shared/components/Nav.vue';
 import PopUp from '@shared/components/PopUp.vue';
+import { onMounted, onUnmounted } from 'vue';
 import { useUiStore } from '@/stores/ui';
 import { useAuthStore } from './stores/auth';
 import { useLabelsStore } from '@/stores/lables.store';
 import router from '@/router';
+import api, { getAuthSession } from '@/services/api.service';
 
 const route = useRoute();
 const uiStore = useUiStore();
 const authStore = useAuthStore();
 const labelsStore = useLabelsStore();
+
+let stopSessionWatcher: (() => void) | null = null;
+
+onMounted(async () => {
+  stopSessionWatcher = getAuthSession().startSessionWatcher();
+  await getAuthSession().ensureAuthenticated();
+});
+
+onUnmounted(() => {
+  stopSessionWatcher?.();
+});
 
 const links = [
   {
@@ -77,8 +90,13 @@ const links = [
   {
     action: () => {
       uiStore.setPopoup('Sei sicuro di voler effettuare il logout?', async () => {
+        try {
+          await api.post('/auth/logout');
+        } catch {
+          // ignore
+        }
         authStore.logout();
-        location.reload();
+        router.push('/login');
       });
     },
     icon: "LogOut",

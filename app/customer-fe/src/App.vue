@@ -50,11 +50,12 @@ import Nav from '@shared/components/Nav.vue';
 import PopUp from '@shared/components/PopUp.vue';
 import { useUiStore } from '@/stores/ui';
 import { useAuthStore } from './stores/auth';
-import { onUnmounted, watch } from 'vue';
+import { onMounted, onUnmounted, watch } from 'vue';
 import { useUserStore } from './stores/user.store';
-import router from './router';
-import { getUserByUuid } from '../../backoffice-fe/src/services/api.user.service';
+import { getUserByUuid } from '@/services/api.user.service';
 import { useRoute } from 'vue-router';
+import api, { getAuthSession } from '@/services/api.service';
+import router from '@/router';
 
 const uiStore = useUiStore();
 const authStore = useAuthStore();
@@ -69,24 +70,28 @@ watch(
   { immediate: true },
 );
 
-onUnmounted(() => {
-  document.body.style.overflow = '';
-});
+let stopSessionWatcher: (() => void) | null = null;
 
-(async () => {
-  if (!userStore.getUiid) {
-    authStore.logout();
-    router.push('login');
-  }
-  else if (userStore.getUiid && authStore.isAuthenticated) {
+onMounted(async () => {
+  stopSessionWatcher = getAuthSession().startSessionWatcher();
+
+  const isAuthenticated = await getAuthSession().ensureAuthenticated();
+  if (!isAuthenticated) return;
+
+  if (userStore.getUiid) {
     try {
       const profile = await getUserByUuid(userStore.getUiid);
       userStore.init(profile);
     } catch {
-      // keep cached profile if refresh fails
+      // keep cached profile if profile refresh fails
     }
   }
-})()
+});
+
+onUnmounted(() => {
+  document.body.style.overflow = '';
+  stopSessionWatcher?.();
+});
 
 const links = [
   {
@@ -112,8 +117,14 @@ const links = [
   {
     action: () => {
       uiStore.setPopoup('Sei sicuro di voler effettuare il logout?', async () => {
+        try {
+          await api.post('/auth/logout');
+        } catch {
+          // ignore
+        }
         authStore.logout();
-        location.reload();
+        userStore.clear();
+        router.push('/login');
       });
     },
     icon: "LogOut",

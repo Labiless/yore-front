@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
+import { bindAuthSession } from './services/api.service'
 import '../../shared/styles/index.css'
 import sharedFavicon from '@shared/images/favicon.ico'
 
@@ -21,6 +22,7 @@ applySharedFavicon()
 const app = createApp(App)
 
 app.use(createPinia())
+bindAuthSession(router)
 app.use(router)
 
 app.mount('#app')

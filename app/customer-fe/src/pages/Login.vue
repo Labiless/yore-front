@@ -14,29 +14,35 @@ import { ref } from 'vue';
 import router from '@/router';
 import { useUiStore } from '@/stores/ui';
 import { useUserStore } from '@/stores/user.store';
+import { getLoginErrorMessage } from '@shared/lib/apiError';
 
-const error = ref("");
+const error = ref('');
 const authStore = useAuthStore();
 const uiStore = useUiStore();
 const userStore = useUserStore();
 
 const onsubmit = async (data: { username: string; password: string }) => {
     uiStore.loading = true;
+    error.value = '';
     try {
         const [username, password] = [data.username, data.password];
-        if (!username || !password) throw new Error("No username or passowrd")
+        if (!username || !password) {
+            error.value = 'Inserisci username e password';
+            return;
+        }
         const res = await api.post('/auth/signin', {
             email: username,
-            password
-        })
+            password,
+        });
         if (res.data.accessToken) {
-            userStore.init(res.data)
+            userStore.init(res.data);
             onLogin(res.data.accessToken);
         }
-    } catch (e : any) {
-        error.value = e.message;
+    } catch (e) {
+        error.value = getLoginErrorMessage(e);
+    } finally {
+        uiStore.loading = false;
     }
-    uiStore.loading = false;
 };
 
 const onLogin = (accessToken : string) => {

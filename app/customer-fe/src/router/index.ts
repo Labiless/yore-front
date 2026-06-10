@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from '@/stores/auth';
+import { getAuthSession } from '@/services/api.service';
 import Home from '@/pages/Home.vue';
 import Login from '@/pages/Login.vue';
 import CreateTattoo from "@/pages/CreateTattoo.vue"
@@ -60,17 +60,13 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
-  const authStore = useAuthStore();
-  if (to.path !== '/login' && !authStore.isAuthenticated) {
-    next('/login');
+router.beforeEach(async (to, _from, next) => {
+  const redirect = await getAuthSession().guardRoute(to);
+  if (redirect) {
+    next(redirect);
+    return;
   }
-  if (to.path === '/login' && authStore.isAuthenticated) {
-    next('/');
-  }
-  else {
-    next();
-  }
+  next();
 })
 
 export default router

@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { isTokenExpired } from '@shared/lib/jwt';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -6,7 +7,7 @@ export const useAuthStore = defineStore('auth', {
   }),
 
   getters: {
-    isAuthenticated: (state) => !!state.token,
+    isAuthenticated: (state) => !!state.token && !isTokenExpired(state.token),
   },
 
   actions: {
@@ -15,11 +16,11 @@ export const useAuthStore = defineStore('auth', {
     },
     logout() {
       this.token = null;
-      localStorage.removeItem('token')
+      localStorage.removeItem('token');
     },
     setToken(token: string) {
       this.token = token;
       localStorage.setItem('token', token);
-    }
+    },
   },
 })

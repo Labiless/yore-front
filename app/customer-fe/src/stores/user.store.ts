@@ -38,6 +38,17 @@ export const useUserStore = defineStore('user', {
       this.cap = userData.cap ?? '';
       this.province = userData.province ?? '';
       this.country = userData.country ?? '';
-    }
+    },
+    clear() {
+      localStorage.removeItem('userUuid');
+      this.uuid = '';
+      this.email = '';
+      this.businessName = '';
+      this.city = '';
+      this.address = '';
+      this.cap = '';
+      this.province = '';
+      this.country = '';
+    },
   },
 })

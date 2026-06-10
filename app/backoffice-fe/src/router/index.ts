@@ -1,6 +1,6 @@
 // src/router/index.ts
 import { createRouter, createWebHistory } from 'vue-router';
-import { useAuthStore } from '@/stores/auth';
+import { getAuthSession } from '@/services/api.service';
 import Login from '@/pages/Login.vue';
 import LoadBatch from '@/pages/LoadBatch.vue';
 import Home from '@/pages/Home.vue';
@@ -104,14 +104,10 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
-  const authStore = useAuthStore();
-  if (to.path !== '/login' && !authStore.isAuthenticated) {
-    next('/login');
-    return;
-  }
-  if (to.path === '/login' && authStore.isAuthenticated) {
-    next('/');
+router.beforeEach(async (to, _from, next) => {
+  const redirect = await getAuthSession().guardRoute(to);
+  if (redirect) {
+    next(redirect);
     return;
   }
 

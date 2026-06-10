@@ -139,7 +139,7 @@ const addInkByUuid = async (rawUuid: string) => {
         const ink = await apiLabelService.getLabelByUuid(uuid);
         if (ink && ink.burningDate === null && ink.userUuid === userStore.getUiid) {
             await apiLabelService.updateLabelByUuid(ink.uuid, {
-                burningDate: new Date(),
+                burningDate: new Date().toISOString(),
                 tattooUuid,
             });
             inkUuid.value = '';

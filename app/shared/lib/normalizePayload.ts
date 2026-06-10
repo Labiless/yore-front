@@ -9,6 +9,12 @@ const PASSWORD_KEYS = new Set([
   'refreshToken',
 ]);
 
+const ENUM_KEYS = new Set([
+  'status',           // TattooStatus: DONE, PROGRESS, READY, ERROR, CLOSE
+  'tattooStyle',      // TATTOO_STYLES: Anime, Black and Grey, Blackwork, ...
+  'kirbyTattooStyle', // alias di tattooStyle nei payload certificato
+]);
+
 const MUTATING_METHODS = new Set(['post', 'put', 'patch']);
 
 function isPasswordKey(key: string): boolean {
@@ -18,10 +24,12 @@ function isPasswordKey(key: string): boolean {
 function shouldSkipStringNormalization(key: string | undefined, value: string): boolean {
   if (key && isPasswordKey(key)) return true;
   if (key && (/sign$/i.test(key) || /url$/i.test(key))) return true;
+  if (key && ENUM_KEYS.has(key)) return true;
 
   const trimmed = value.trim();
   if (!trimmed) return false;
   if (/^https?:\/\//i.test(trimmed)) return true;
+  if (/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:?\d{2})?)?$/.test(trimmed)) return true;
   if (trimmed.length > 200 && /^[A-Za-z0-9+/=_-]+$/.test(trimmed)) return true;
 
   return false;
@@ -45,6 +53,10 @@ export function normalizePayload<T>(data: T, parentKey?: string): T {
       return data;
     }
     return normalizeTextValue(data) as T;
+  }
+
+  if (data instanceof Date) {
+    return data.toISOString() as T;
   }
 
   if (Array.isArray(data)) {

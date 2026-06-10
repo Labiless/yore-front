@@ -1,5 +1,5 @@
 <template>
-    <div class="mx-auto w-full items-start overflow-y-auto h-full px-4">
+    <div class="mx-auto w-full items-start overflow-y-auto hide-scrollbar">
         <router-link to="/createlabels">
             <Button class="w-full h-12 mb-4">
                 <Plus /> Crea etichette

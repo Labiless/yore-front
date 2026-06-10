@@ -1,5 +1,5 @@
 <template>
-    <div class="mx-auto w-full px-4 items-start overflow-y-auto h-full">
+    <div class="mx-auto w-full items-start overflow-y-auto hide-scrollbar">
         <router-link to="/loadbatch">
             <Button class="w-full h-12 mb-4 ">
                 <Plus /> Carica nuovi inchiostri

@@ -1,5 +1,5 @@
 <template>
-    <div class="mx-auto w-full px-4 pb-28 pt-2">
+    <div class="mx-auto w-full pb-28 pt-2">
         <button
             type="button"
             class="flex items-center gap-2 text-sm font-medium text-gray-700 w-fit mb-4"

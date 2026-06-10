@@ -18,7 +18,7 @@
                 Lotti caricamento
             </Button>
         </div>
-        <div v-show="showTab === 0" class="pb-50">
+        <div v-show="showTab === 0" class="pb-24">
             <div v-if="warehouseStore.warehouse.length"
                 class="flex justify-start items-center shadow-md p-4 pl-4 bg-white mb-4 rounded-md w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:p-6"
                 v-for="inks in warehouseStore.warehouse"
@@ -35,7 +35,7 @@
             </div>
             <p v-else class="text-sm text-gray-600 px-1">nessun inchiostro</p>
         </div>
-        <div v-show="showTab === 1" class="pb-50">
+        <div v-show="showTab === 1" class="pb-24">
             <Transition>
                 <div v-if="!warehouseStore.batchUuid">
                     <div v-if="warehouseStore.allBatches.length">

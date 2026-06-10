@@ -1,6 +1,11 @@
 <template>
-  <div class="flex justify-center items-center w-full h-full fixed z-10 bg-gray-500 opacity-35" v-if="uiStore.loading">
-    <div class="w-16 h-16 bg-white rounded-full animate-bounce"></div>
+  <div
+    v-if="uiStore.loading"
+    class="fixed inset-0 z-200 flex justify-center items-center bg-gray-900/45 px-6"
+  >
+    <div class="flex flex-col items-center gap-4 max-w-sm w-full rounded-2xl bg-white px-6 py-8 shadow-2xl text-center">
+      <div class="w-12 h-12 rounded-full border-4 border-gray-200 border-t-blue-500 animate-spin" />
+    </div>
   </div>
   <Transition>
     <PopUp v-if="uiStore.popup.text.length && uiStore.popup.action" :uiStore="uiStore"/>

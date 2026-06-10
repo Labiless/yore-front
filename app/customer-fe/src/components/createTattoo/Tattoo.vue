@@ -38,7 +38,7 @@
             <button
                 v-if="createTattoStore.photoBeforeUrl"
                 type="button"
-                class="hover:bg-white hover:border-2 hover:border-blue-400 w-30 h-30 rounded-xl overflow-hidden shadow-2xl border-1 bg-white hover:opacity-90 transition-opacity"
+                class="hover:bg-white hover:border-2 hover:border-blue-400 w-30 h-30 rounded-xl overflow-hidden shadow-2xl border bg-white hover:opacity-90 transition-opacity"
                 @click="openPhotoPreview(createTattoStore.photoBeforeUrl, 'Prima del tatuaggio')"
             >
                 <img
@@ -49,11 +49,11 @@
             </button>
             <Button
                 type="button"
-                class="hover:bg-white hover:border-2 hover:border-blue-400 w-30 bg-white text-black shadow-2xl border-1 whitespace-normal flex flex-col h-30"
+                class="hover:bg-white hover:border-2 hover:border-blue-400 w-30 bg-white text-black shadow-2xl border whitespace-normal flex flex-col h-30"
                 @click="selectFile('before')"
             >
                 {{ createTattoStore.photoBeforeUrl ? 'Sostituisci foto' : 'Aggiungi foto' }}
-                <Plus class="border-1 rounded-full scale-150 mt-2" />
+                <Plus class="border rounded-full scale-150 mt-2" />
             </Button>
         </div>
     </section>
@@ -66,7 +66,7 @@
             <button
                 v-if="createTattoStore.photoAfterUrl"
                 type="button"
-                class="w-30 h-30 rounded-xl overflow-hidden shadow-2xl border-1 bg-white hover:opacity-90 transition-opacity"
+                class="w-30 h-30 rounded-xl overflow-hidden shadow-2xl border bg-white hover:opacity-90 transition-opacity"
                 @click="openPhotoPreview(createTattoStore.photoAfterUrl, 'Dopo il tatuaggio')"
             >
                 <img
@@ -77,12 +77,12 @@
             </button>
             <Button
                 type="button"
-                class="w-30 bg-white text-black shadow-2xl border-1 whitespace-normal flex flex-col h-30"
+                class="w-30 bg-white text-black shadow-2xl border whitespace-normal flex flex-col h-30"
                 :disabled="!createTattoStore.photoBeforeUrl"
                 @click="selectFile('after')"
             >
                 {{ createTattoStore.photoAfterUrl ? 'Sostituisci foto' : 'Aggiungi foto' }}
-                <Plus class="border-1 rounded-full scale-150 mt-2" />
+                <Plus class="border rounded-full scale-150 mt-2" />
             </Button>
         </div>
         <p v-if="!createTattoStore.photoBeforeUrl" class="text-xs text-center text-gray-500 mt-2">
@@ -185,7 +185,7 @@ const uploadImage = async (slot: PhotoSlot, img: File) => {
 
     uiStore.loading = true;
     try {
-        const { url } = await addImage(tattooUuid, img);
+        const { url } = await addImage(tattooUuid, img, slot);
         const before = slot === 'before' ? url : createTattoStore.photoBeforeUrl;
         const after = slot === 'after' ? url : createTattoStore.photoAfterUrl;
         const photoUrl = buildPhotoUrlArray(before, after);

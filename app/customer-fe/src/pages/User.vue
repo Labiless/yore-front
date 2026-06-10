@@ -1,5 +1,5 @@
 <template>
-    <div v-if="user" class="account-page mx-auto w-full items-start overflow-y-auto hide-scrollbar pb-24 px-1">
+    <div v-if="user" class="account-page mx-auto w-full items-start overflow-y-auto hide-scrollbar pb-24">
         <div class="mb-4 bg-white rounded-xl w-full p-4 flex flex-col gap-3 min-w-0 shadow-md">
             <div v-if="user.businessName" class="user-info-row">
                 <Building2 class="user-info-icon" />

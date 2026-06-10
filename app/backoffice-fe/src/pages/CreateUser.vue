@@ -1,5 +1,5 @@
 <template>
-    <div class="h-min-full overflow-y-scroll hide-scrollbar">
+    <div>
         <form @submit.prevent="submit" class="user-form w-full pb-8">
             <div class="flex flex-col justify-center items-start gap-2 border-black">
                 <div class="flex justify-between items-center w-full">

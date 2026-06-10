@@ -7,7 +7,7 @@
             :class="createTattoStore.kirbyDesaySectionConfirmed() ? 'bg-green-700' : 'bg-amber-500'"
         />
     </p>
-    <hr />
+    <hr class="mb-4" />
     <Accordion type="single" collapsible class="w-full" default-value="item-1">
         <AccordionItem value="item-1">
             <AccordionTrigger>Tipo di pelle</AccordionTrigger>

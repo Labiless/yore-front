@@ -1,6 +1,6 @@
 <template>
-    <form @submit.prevent="onsubmit" class="flex flex-col gap-4 max-w-full mx-auto">
-        <img :src="yoreLogo" alt="Yore" class="w-32 mx-auto" />
+    <form @submit.prevent="onsubmit" class="flex flex-col gap-4 w-full">
+        <img :src="yoreLogo" alt="Yore" class="w-1/8 mx-auto" />
         <Input autocomplete="username" placeholder="Username" v-model="username" required />
         <Input autocomplete="current-password" placeholder="Password" v-model="password" type="password" required/>
         <Button type="submit">Login</Button>

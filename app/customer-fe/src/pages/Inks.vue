@@ -31,7 +31,7 @@
                         <p class="font-bold capitalize">{{ inkTypeLabel }}</p>
                         <p
                             v-if="ink.tattooedPersonName"
-                            class="text-sm text-gray-800 capitalize"
+                            class="text-sm text-gray-700 capitalize"
                         >
                             {{ ink.tattooedPersonName }}
                         </p>

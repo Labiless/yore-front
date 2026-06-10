@@ -31,9 +31,7 @@ onMounted(async () => {
     uiStore.loading = true;
     uiStore.title = "Carica Lotto";
     inkTypes.value = await getInkTypes();
-    console.log(inkTypes.value)
     uiStore.loading = false;
-    console.log(loadingBatchStore)
 })
 
 const addAmount = (data: {

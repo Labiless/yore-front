@@ -61,10 +61,10 @@ export const updateTattoo = async (uuid: string, updateData: any) => {
     return data.data;
 }
 
-export const addImage = async (tattooUuid: string, img: any) => {
+export const addImage = async (tattooUuid: string, img: any, slot: 'before' | 'after') => {
     const formData = new FormData();
     formData.append("file", img);
-    const data = await api.post(`tattoos/img/${tattooUuid}`, formData, {
+    const data = await api.post(`tattoos/img/${tattooUuid}?slot=${slot}`, formData, {
         headers: {
             "Content-Type": "multipart/form-data",
         },

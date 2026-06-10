@@ -10,7 +10,7 @@
     <p class="text-xs text-center text-gray-600 mb-4 px-2">
         Attiva il toggle per rispondere sì a ogni voce; lascialo spento per no.
     </p>
-    <hr />
+    <hr class="mb-4" />
     <div class="flex flex-col gap-4">
         <div
             v-for="question in DECLARATION_QUESTIONS"

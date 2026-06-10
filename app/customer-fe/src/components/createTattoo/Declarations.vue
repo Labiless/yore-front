@@ -56,6 +56,36 @@
                 placeholder="Eventuali patologie o condizioni mediche..."
             />
         </div>
+        <div class="shadow-md bg-white rounded-md p-3">
+            <div class="flex items-start justify-between gap-3">
+                <p class="text-sm flex-1 min-w-0">Do il consenso per il trattamento dati</p>
+                <button
+                    type="button"
+                    role="switch"
+                    aria-checked="true"
+                    aria-label="Consenso per il trattamento dati: Sì"
+                    class="relative h-7 w-12 shrink-0 rounded-full p-1 bg-blue-500 cursor-default"
+                >
+                    <span class="pointer-events-none absolute inset-1 flex items-center text-[9px] font-bold uppercase text-white justify-start pl-1">Sì</span>
+                    <span class="pointer-events-none absolute top-1/2 left-1 size-5 -translate-y-1/2 rounded-full bg-white shadow translate-x-5" />
+                </button>
+            </div>
+        </div>
+        <div class="shadow-md bg-white rounded-md p-3">
+            <div class="flex items-start justify-between gap-3">
+                <p class="text-sm flex-1 min-w-0">Do il consenso per la liberatoria</p>
+                <button
+                    type="button"
+                    role="switch"
+                    aria-checked="true"
+                    aria-label="Consenso per la liberatoria: Sì"
+                    class="relative h-7 w-12 shrink-0 rounded-full p-1 bg-blue-500 cursor-default"
+                >
+                    <span class="pointer-events-none absolute inset-1 flex items-center text-[9px] font-bold uppercase text-white justify-start pl-1">Sì</span>
+                    <span class="pointer-events-none absolute top-1/2 left-1 size-5 -translate-y-1/2 rounded-full bg-white shadow translate-x-5" />
+                </button>
+            </div>
+        </div>
     </div>
     <Button @click="submit" class="w-full h-12 mt-2">Conferma dichiarazioni</Button>
 </template>

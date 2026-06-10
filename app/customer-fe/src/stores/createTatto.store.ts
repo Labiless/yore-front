@@ -41,8 +41,8 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             country: undefined as string | undefined,
             city: undefined as string | undefined,
             address: undefined as string | undefined,
-            consent1: false,
-            consent2: false,
+            consent1: true,
+            consent2: true,
             birthDate: undefined as string | undefined,
             birthPlace: undefined as string | undefined,
             streetNumber: undefined as string | undefined,
@@ -135,8 +135,8 @@ export const useCreateTattoStore = defineStore('createTattoo', {
                 country: undefined,
                 city: undefined,
                 address: undefined,
-                consent1: false,
-                consent2: false,
+                consent1: true,
+                consent2: true,
                 birthDate: undefined,
                 birthPlace: undefined,
                 streetNumber: undefined,
@@ -247,8 +247,8 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             this.info.country = customer.country;
             this.info.city = customer.city;
             this.info.address = customer.address;
-            this.info.consent1 = !!customer.consent1;
-            this.info.consent2 = !!customer.consent2;
+            this.info.consent1 = true;
+            this.info.consent2 = true;
             this.info.birthDate = customer.birthDate
                 ? String(customer.birthDate).split('T')[0]
                 : undefined;
@@ -269,8 +269,6 @@ export const useCreateTattoStore = defineStore('createTattoo', {
                 this.info.country !== undefined &&
                 this.info.city !== undefined &&
                 this.info.address !== undefined &&
-                this.info.consent1 &&
-                this.info.consent2 &&
                 this.info.birthDate !== undefined &&
                 this.info.birthPlace !== undefined &&
                 this.info.streetNumber !== undefined &&
@@ -288,8 +286,8 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             this.info.country = data.country;
             this.info.city = data.city;
             this.info.address = data.address;
-            this.info.consent1 = data.consent1;
-            this.info.consent2 = data.consent2;
+            this.info.consent1 = true;
+            this.info.consent2 = true;
         },
         declarationsValidation() {
             for (const key of DECLARATION_ANSWER_KEYS) {

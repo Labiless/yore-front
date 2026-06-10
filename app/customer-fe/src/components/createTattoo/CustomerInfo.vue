@@ -123,16 +123,6 @@
             <Input placeholder="Provincia di residenza" required v-model="createTattoStore.info.province"
                 pattern="[A-Za-z]{2}" maxlength="2" minlength="2" style="text-transform: uppercase" />
         </label>
-        <div class="sm:col-span-2 flex flex-col gap-3 mt-1">
-            <label class="consent-label">
-                <input type="checkbox" required v-model="createTattoStore.info.consent1" class="mt-0.5 shrink-0" />
-                <span>Do il consenso per il trattamento dati</span>
-            </label>
-            <label class="consent-label">
-                <input type="checkbox" required v-model="createTattoStore.info.consent2" class="mt-0.5 shrink-0" />
-                <span>Do il consenso per la liberatoria</span>
-            </label>
-        </div>
         <Button type="submit" class="sm:col-span-2 mt-2 w-full h-12">Conferma</Button>
     </form>
 </template>

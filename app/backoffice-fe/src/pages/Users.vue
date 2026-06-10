@@ -21,6 +21,7 @@
                         @click="showUser(user.uuid)" :class="`${''}`" v-for="user in usersStore.allUsers">
                         <p class="font-bold text-md">{{ user.id }}</p>
                         <div class="pl-4 flex-1 min-w-0">
+                            <span v-if="user.role === 'admin'" class="inline-block text-xs font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5 mb-1">Admin</span>
                             <p v-if="user.businessName" class="flex items-start gap-2 text-md font-bold">
                                 <Building2 class="size-4 shrink-0 mt-0.5" />
                                 <span class="user-field break-words min-w-0">{{ user.businessName }}</span>
@@ -40,10 +41,7 @@
                     <div class="items-center mb-4 gap-2">
                         <ArrowLeft @click="goBackToUsersList" class="hover:cursor-pointer mr-2" />
                     </div>
-                    <div
-                        ref="userDetailScrollRef"
-                        class="flex flex-col overflow-y-scroll h-[60vh] hide-scrollbar pb-24"
-                    >
+                    <div class="flex flex-col pb-6">
                         <div class="mb-4 bg-white rounded-xl w-full p-4 flex flex-col gap-3 min-w-0">
                             <div v-if="selectedUser.businessName" class="user-info-row">
                                 <Building2 class="user-info-icon" />
@@ -85,6 +83,7 @@
                                 </Button>
                             </form>
                             <form
+                                v-if="selectedUser.role !== 'admin'"
                                 class="mb-4 bg-white rounded-xl w-full p-4 min-w-0 flex flex-col gap-3"
                                 @submit.prevent="saveAddress"
                             >
@@ -129,6 +128,7 @@
                                 </Button>
                             </form>
                             <form
+                                v-if="selectedUser.role !== 'admin'"
                                 class="mb-4 bg-white rounded-xl w-full p-4 min-w-0 flex flex-col gap-3"
                                 @submit.prevent="saveCompany"
                             >
@@ -217,7 +217,7 @@
                                     {{ savingPassword ? 'Salvataggio...' : 'Aggiorna password' }}
                                 </Button>
                             </form>
-                            <div class="mb-4 bg-white rounded-xl w-full p-4 min-w-0 flex flex-col gap-3 border border-red-200">
+                            <div v-if="selectedUser.role !== 'admin'" class="mb-4 bg-white rounded-xl w-full p-4 min-w-0 flex flex-col gap-3 border border-red-200">
                                 <p class="font-bold text-red-600">Elimina utente</p>
                                 <p class="text-sm text-gray-600">
                                     L'operazione è irreversibile. Le etichette associate verranno scollegate;
@@ -263,7 +263,7 @@
                                 </template>
                             </div>
                         </div>
-                        <section class="mb-4 bg-white rounded-xl w-full p-4 min-w-0">
+                        <section v-if="selectedUser.role !== 'admin'" class="mb-4 bg-white rounded-xl w-full p-4 min-w-0">
                             <p class="font-bold text-xl mb-4">
                                 Etichette associate
                                 <span v-if="labelsTotal > 0" class="text-sm font-normal text-gray-500">
@@ -404,7 +404,6 @@ const labelsPage = ref(0);
 const labelsHasMore = ref(true);
 const labelsLoading = ref(false);
 const labelsTotal = ref(0);
-const userDetailScrollRef = ref<HTMLElement | null>(null);
 const labelsLoadMoreSentinel = ref<HTMLElement | null>(null);
 let labelsLoadMoreObserver: IntersectionObserver | null = null;
 
@@ -472,7 +471,6 @@ onMounted(async () => {
     uiStore.title = "Utenti";
     uiStore.loading = true;
     let allUsers = await getAllUsers();
-    allUsers = allUsers.filter((el: { role?: string }) => el.role !== 'admin');
     usersStore.allUsers = allUsers.sort((a: any, b: any) => b.id - a.id);
     await syncFromRoute();
     skipRouteWatch.value = false;
@@ -499,11 +497,7 @@ const setupLabelsLoadMoreObserver = () => {
                 loadUserLabels(false);
             }
         },
-        {
-            root: userDetailScrollRef.value,
-            rootMargin: '120px',
-            threshold: 0,
-        },
+        { root: null, rootMargin: '120px', threshold: 0 },
     );
     labelsLoadMoreObserver.observe(labelsLoadMoreSentinel.value);
 };

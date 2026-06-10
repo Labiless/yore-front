@@ -32,7 +32,7 @@
                         :key="position.id"
                         class="hover:bg-white hover:border-2 hover:border-blue-400 h-fit max-w-[5.5rem] sm:max-w-none mx-auto w-full shadow-xl bg-white text-black flex flex-col"
                         :class="`${createTattoStore.kirbyDesay.position === position.id ? 'border-2 border-blue-400' : ''}`">
-                        <img :src="`img/kirby_desay/location-${position.id}.svg`" alt="" />
+                        <img :src="`/img/kirby_desay/location-${position.id}.svg`" alt="" />
                     </Button>
                 </div>
             </AccordionContent>

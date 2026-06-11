@@ -30,7 +30,7 @@
 import { useUiStore } from '@/stores/ui';
 import Button from '@shared/components/ui/button/Button.vue';
 import { onMounted, ref } from 'vue';
-import { getBatchByUuid, getPrintFile } from '@/services/api.label.service';
+import { getBatchByUuid, getSignedLabelsPdfUrl } from '@/services/api.label.service';
 import { Printer, ArrowLeft } from 'lucide-vue-next';
 import router from '@/router';
 import { useRoute } from 'vue-router';
@@ -52,8 +52,8 @@ onMounted(async () => {
 });
 
 const getPrintFileUrl = async () => {
-    const printFileUrl = await getPrintFile(batchUuid);
-    window.open(`http://localhost:3000/pdf/${printFileUrl}`, "_blank");
+    const url = await getSignedLabelsPdfUrl(batchUuid);
+    window.open(url, "_blank");
 }
 
 </script>

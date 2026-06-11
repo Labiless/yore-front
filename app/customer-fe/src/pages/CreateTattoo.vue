@@ -231,8 +231,7 @@ const submit = async () => {
                 date: getToday(),
                 inkType: labelsData[0].inkType,
                 inkColor: labelsData[0].color,
-                codiceUnivoco:
-                    labelsData[0]?.id != null ? String(labelsData[0].id) : '',
+                codiceUnivoco: createTattoStore.inks.join(', '),
                 inkBatchId: labelsData[0].batchId,
                 sterilizationUrl: labelsData[0].sterilizationCertUrl,
                 chemistryAnalysisUrl: labelsData[0].chemistryAnalysisUrl,
@@ -246,7 +245,6 @@ const submit = async () => {
                     createTattoStore.photoAfterUrl ?? createTattoStore.photoBeforeUrl,
                 tattooCertificateNumber: String(createTattoStore.id),
             }
-
             const informedConsentData = {
                 ...createTattoStore.informedConsentData,
                 date: getToday(),

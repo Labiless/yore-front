@@ -98,9 +98,9 @@ export const getBatchByUuidPage = async (
     };
 };
 
-export const getPrintFile = async (uuid: string) => {
-    const data = await api.get(`/labels/pdf/${uuid}`);
-    return data.data;
+export const getSignedLabelsPdfUrl = async (batchId: string): Promise<string> => {
+    const data = await api.get(`/labels/batch/${batchId}/pdf-url`);
+    return data.data.url;
 }
 
 export const associateBatchToUser = async (batchId: string, userUuid: string) => {

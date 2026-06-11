@@ -227,6 +227,7 @@ import {
     getLabelByUuid,
     getLabelBatchByUuid,
     associateBatchToUser,
+    getSignedLabelsPdfUrl,
 } from '@/services/api.label.service';
 import { getAllUsers } from '@/services/api.user.service';
 import { useUiStore } from '@/stores/ui';
@@ -574,7 +575,8 @@ const showLabel = async (uuid: string) => {
 }
 
 const getPrintFileUrl = async () => {
-    window.open(`https://res.cloudinary.com/dctifrnyc/labels/printfile_${labelsStore.batchUuid}.pdf`, "_blank");
+    const url = await getSignedLabelsPdfUrl(labelsStore.batchUuid);
+    window.open(url, "_blank");
 }
 
 const openAssociateUserModal = async () => {

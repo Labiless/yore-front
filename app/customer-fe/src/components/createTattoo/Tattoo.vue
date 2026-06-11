@@ -198,8 +198,26 @@ const uploadImage = async (slot: PhotoSlot, img: File) => {
         uiStore.setToast(
             slot === 'before' ? 'Foto pre-tatuaggio aggiunta' : 'Foto post-tatuaggio aggiunta',
         );
-    } catch {
-        uiStore.setToast('Errore nel caricamento della foto', 'error');
+    } catch (error: unknown) {
+        const status = (error as any)?.response?.status;
+        const msg: string = (
+            (error as any)?.response?.data?.message ??
+            (error as any)?.response?.data?.error?.message ??
+            (error as any)?.message ??
+            ''
+        ).toLowerCase();
+        const isTooLarge =
+            status === 413 ||
+            msg.includes('size') ||
+            msg.includes('large') ||
+            msg.includes('too big') ||
+            msg.includes('maximum');
+        uiStore.setToast(
+            isTooLarge
+                ? "L'immagine è troppo grande. Carica un'immagine più piccola."
+                : 'Errore nel caricamento della foto',
+            'error',
+        );
     }
     uiStore.loading = false;
 };

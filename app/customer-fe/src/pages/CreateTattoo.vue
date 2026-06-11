@@ -215,7 +215,6 @@ const submit = async () => {
         try {
             await refreshStudioProfile();
 
-            const closedTattoo = await closeTattoo(createTattoStore.uuid);
             const labelsData = await apiLabelService.getLabelsByTattooUuid(createTattoStore.uuid);
 
             for (let i = 0; i < labelsData.length; i++) {
@@ -270,6 +269,7 @@ const submit = async () => {
                 certificate: certificateData,
                 consent: informedConsentData,
             });
+            await closeTattoo(createTattoStore.uuid);
             uiStore.loadingMessage = '';
 
             await tattooStore.fetchTattoosPage(userStore.getUiid, { reset: true, filter: 'all' });

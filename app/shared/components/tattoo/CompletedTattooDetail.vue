@@ -188,7 +188,7 @@ const tattooPhotos = computed(() => syncTattooPhotos(props.tattoo.photoUrl));
 const tattooDocuments = computed(() => {
     return [
         {
-            label: 'Certificato di tatuaggio',
+            label: 'Certificato del tatuaggio',
             url: props.tattoo.certificateUrl,
             type: 'certificate' as const,
         },

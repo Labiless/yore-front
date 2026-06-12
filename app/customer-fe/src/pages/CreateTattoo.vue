@@ -223,7 +223,7 @@ const submit = async () => {
 
     uiStore.loading = true;
     uiStore.setLoadingSteps([
-        'Generazione certificato di tatuaggio',
+        'Generazione certificato del tatuaggio',
         'Generazione consenso informato',
         'Invio documenti e chiusura',
     ]);

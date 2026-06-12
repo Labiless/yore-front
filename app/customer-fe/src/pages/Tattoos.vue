@@ -318,7 +318,7 @@ const tattooDocuments = computed(() => {
 
     return [
         {
-            label: 'Certificato di tatuaggio',
+            label: 'Certificato del tatuaggio',
             url: tattoo.certificateUrl,
             type: 'certificate' as const,
         },

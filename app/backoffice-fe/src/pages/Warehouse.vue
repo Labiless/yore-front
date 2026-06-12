@@ -160,7 +160,7 @@ const batchInkSummary = computed(() => {
 });
 
 const searchUuid = ref('');
-const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const uuidRegex = /^([a-z]{2,4}_)?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const isValidUuid = (uuid: string) => {
     return uuidRegex.test(uuid);

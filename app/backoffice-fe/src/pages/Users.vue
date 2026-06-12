@@ -398,7 +398,7 @@ const transitionDirection = ref('next');
 const showTab = ref(0)
 
 const searchUuid = ref('');
-const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const uuidRegex = /^([a-z]{2,4}_)?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const selectedUser = ref<any>(null);
 const selectedUserUuid = ref('');
 const labelsFilter = ref<'all' | 'available' | 'burned'>('all');

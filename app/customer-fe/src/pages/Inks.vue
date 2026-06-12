@@ -1,8 +1,8 @@
 <template>
     <div class="mx-auto w-full items-start overflow-y-auto hide-scrollbar pb-24">
-        <Button class="w-full h-12 mb-4">
+        <!--<Button class="w-full h-12 mb-4">
             <Plus /> Carica Inchiostro
-        </Button>
+        </Button>-->
 
         <section class="mb-6">
             <h2 class="text-lg font-bold mb-3">Inchiostri disponibili</h2>

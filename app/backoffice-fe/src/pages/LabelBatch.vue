@@ -10,7 +10,7 @@
         </Button>
     </div>
     <div class="mx-auto w-full items-start">
-        <router-link :to="`${batchUuid}/${label.uuid}`"
+        <router-link :to="`/labels/${batchUuid}/${label.uuid}`"
             class="flex mb-4 justify-start items-center shadow-2xl p-4 bg-white rounded-2xl w-auto h-fit hover:bg-blue-100 hover:cursor-pointer transition-all hover:scale-103"
             v-for="label in batchData">
             <p class="font-bold text-2xl pr-4">{{ label.id }}</p>

@@ -16,7 +16,106 @@
 
         <div v-show="showTab === 0">
             <Transition>
-                <div v-if="!labelsStore.batchUuid">
+                <div v-if="selectedLabelUuid && selectedLabelData" class="pb-24">
+                    <div class="flex items-start gap-2 mb-4">
+                        <ArrowLeft @click="backFromLabelDetail" class="hover:cursor-pointer shrink-0 mt-1" />
+                        <p class="text-xs text-gray-500 break-all mt-1">{{ selectedLabelUuid }}</p>
+                    </div>
+
+                    <!-- Documenti -->
+                    <div v-if="labelDocuments.length" class="mb-4">
+                        <p class="text-sm font-semibold text-gray-700 mb-2">Documenti</p>
+                        <ul class="flex flex-col gap-2">
+                            <li v-for="doc in labelDocuments" :key="doc.label">
+                                <a :href="doc.url" target="_blank" rel="noopener noreferrer" class="block">
+                                    <Button
+                                        type="button"
+                                        class="w-full h-11 justify-start px-4 text-sm font-normal bg-white text-black border border-gray-200 shadow-sm hover:bg-blue-50"
+                                    >
+                                        <FileText class="size-4 mr-2 shrink-0" />
+                                        {{ doc.label }}
+                                    </Button>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div v-else-if="selectedLabelInk" class="mb-4">
+                        <p class="text-sm font-semibold text-gray-700 mb-2">Documenti</p>
+                        <p class="text-sm text-gray-400 italic">Nessun documento disponibile</p>
+                    </div>
+
+                    <!-- Stato -->
+                    <div class="bg-white rounded-2xl shadow-md p-4 mb-4">
+                        <p class="font-semibold text-sm text-gray-500 mb-2">Stato</p>
+                        <div class="flex items-center gap-2">
+                            <span
+                                class="w-2.5 h-2.5 rounded-full shrink-0"
+                                :class="selectedLabelData.tattooUuid ? 'bg-red-500' : 'bg-green-500'"
+                            />
+                            <p class="font-bold">{{ selectedLabelData.tattooUuid ? 'Bruciata' : 'Disponibile' }}</p>
+                        </div>
+                        <p v-if="selectedLabelData.burningDate" class="text-xs text-gray-500 mt-1">
+                            Il {{ new Date(selectedLabelData.burningDate).toLocaleDateString('it-IT') }}
+                        </p>
+                    </div>
+
+                    <!-- Lotto etichette -->
+                    <div
+                        class="bg-white rounded-2xl shadow-md p-4 mb-4 hover:bg-blue-50 hover:cursor-pointer transition-all"
+                        @click="openBatch(selectedLabelData.batchId)"
+                    >
+                        <p class="font-semibold text-sm text-gray-500 mb-1">Lotto etichette</p>
+                        <p class="text-sm break-all text-blue-600 font-medium">{{ selectedLabelData.batchId }}</p>
+                    </div>
+
+                    <!-- Studio associato -->
+                    <div
+                        v-if="selectedLabelUser"
+                        class="bg-white rounded-2xl shadow-md p-4 mb-4 hover:bg-blue-50 hover:cursor-pointer transition-all"
+                        @click="router.push(`/users/${selectedLabelData.userUuid}`)"
+                    >
+                        <p class="font-semibold text-sm text-gray-500 mb-1">Studio associato</p>
+                        <p class="font-bold">{{ selectedLabelUser.businessName || selectedLabelUser.email }}</p>
+                        <p v-if="selectedLabelUser.businessName && selectedLabelUser.email" class="text-xs text-gray-500">{{ selectedLabelUser.email }}</p>
+                    </div>
+                    <div v-else-if="selectedLabelData.userUuid" class="bg-white rounded-2xl shadow-md p-4 mb-4">
+                        <p class="font-semibold text-sm text-gray-500 mb-1">Studio associato</p>
+                        <p class="text-sm break-all text-gray-600">{{ selectedLabelData.userUuid }}</p>
+                    </div>
+                    <div v-else class="bg-white rounded-2xl shadow-md p-4 mb-4">
+                        <p class="font-semibold text-sm text-gray-500 mb-1">Studio associato</p>
+                        <p class="text-sm text-gray-400 italic">Non associata a nessuno studio</p>
+                    </div>
+
+                    <!-- Inchiostro -->
+                    <div v-if="selectedLabelInk" class="bg-white rounded-2xl shadow-md p-4">
+                        <p class="font-semibold text-sm text-gray-500 mb-3">Inchiostro</p>
+                        <div
+                            class="flex items-start gap-2 mb-3 hover:cursor-pointer group"
+                            @click="goToInkOrTattoo"
+                        >
+                            <ExternalLink class="shrink-0 mt-0.5 text-blue-500 group-hover:text-blue-700" :size="16" />
+                            <div>
+                                <p class="text-sm break-all text-blue-600 group-hover:underline font-medium">{{ selectedLabelData.inkUuid }}</p>
+                                <p class="text-xs text-gray-400 mt-0.5">
+                                    {{ selectedLabelData.tattooUuid ? 'Bruciato — vai al tatuaggio' : "Vai all'inchiostro" }}
+                                </p>
+                            </div>
+                        </div>
+                        <div
+                            v-if="selectedLabelInk.batchId"
+                            class="flex items-start gap-2 hover:cursor-pointer group"
+                            @click="router.push(`/warehouse/${selectedLabelInk.batchId}`)"
+                        >
+                            <Package class="shrink-0 mt-0.5 text-gray-400 group-hover:text-gray-600" :size="16" />
+                            <div>
+                                <p class="text-xs text-gray-500">Lotto caricamento magazzino</p>
+                                <p class="text-sm break-all text-blue-600 group-hover:underline">{{ selectedLabelInk.batchId }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div v-else-if="!labelsStore.batchUuid">
                     <div
                         v-for="labelBatch in labelsStore.allBatches"
                         :key="labelBatch.uuid"
@@ -220,7 +319,7 @@
 <script setup lang="ts">
 
 import { onMounted, onBeforeUnmount, ref, watch, computed, nextTick } from 'vue';
-import { Search, User, ArrowLeft, Plus, Calendar, Download, UserPlus, Copy } from 'lucide-vue-next';
+import { Search, User, ArrowLeft, Plus, Calendar, Download, UserPlus, Copy, ExternalLink, Package, FileText } from 'lucide-vue-next';
 import {
     getAllBatchesPage,
     getBatchByUuidPage,
@@ -229,7 +328,8 @@ import {
     associateBatchToUser,
     getSignedLabelsPdfUrl,
 } from '@/services/api.label.service';
-import { getAllUsers } from '@/services/api.user.service';
+import { getAllUsers, getUserByUuid } from '@/services/api.user.service';
+import { getInkByUuid } from '@/services/api.ink.service';
 import { useUiStore } from '@/stores/ui';
 import { useLabelsStore } from '@/stores/lables.store';
 import Input from '@shared/components/ui/input/Input.vue';
@@ -310,6 +410,23 @@ const batchesListLoadMoreSentinel = ref<HTMLElement | null>(null);
 let batchesListLoadMoreObserver: IntersectionObserver | null = null;
 const activeBatchMeta = ref<any>(null);
 
+const selectedLabelUuid = ref('');
+const selectedLabelData = ref<any>(null);
+const selectedLabelInk = ref<any>(null);
+const selectedLabelUser = ref<any>(null);
+
+const labelDocuments = computed(() => {
+    const ink = selectedLabelInk.value;
+    if (!ink) return [];
+    return [
+        { label: 'Formula inchiostro', url: ink.inkFormulaUrl },
+        { label: 'SDS', url: ink.sdsUrl },
+        { label: 'Certificato sterilizzazione', url: ink.sterilizationCertUrl },
+        { label: 'Analisi chimiche', url: ink.chemistryAnalysisUrl },
+        { label: 'Analisi microbiologiche', url: ink.microbiologicalAnalysisUrl },
+    ].filter((doc) => !!doc.url);
+});
+
 const labelsFilterEmptyMessage = computed(() => {
     if (labelsFilter.value === 'available') return 'Nessuna etichetta disponibile';
     if (labelsFilter.value === 'burned') return 'Nessuna etichetta bruciata';
@@ -334,7 +451,7 @@ watch(searchUuid, async (newSearchUuid) => {
     try {
         const label = await getLabelByUuid(newSearchUuid);
         if (label?.batchId) {
-            await openBatch(label.batchId);
+            await openLabelDetail(newSearchUuid, label);
             return;
         }
     } catch {
@@ -568,11 +685,40 @@ const copyLabelUuid = async (uuid: string) => {
     }
 };
 
-const showLabel = async (uuid: string) => {
-    transitionDirection.value = 'next';
-    labelsStore.labelUuid = uuid;
-    labelsStore.labelData = await getLabelByUuid(uuid);
-}
+const openLabelDetail = async (uuid: string, labelData?: any) => {
+    uiStore.loading = true;
+    try {
+        selectedLabelUuid.value = uuid;
+        selectedLabelData.value = labelData ?? await getLabelByUuid(uuid);
+        selectedLabelInk.value = null;
+        selectedLabelUser.value = null;
+        if (selectedLabelData.value?.inkUuid) {
+            selectedLabelInk.value = await getInkByUuid(selectedLabelData.value.inkUuid);
+        }
+        if (selectedLabelData.value?.userUuid) {
+            selectedLabelUser.value = await getUserByUuid(selectedLabelData.value.userUuid);
+        }
+    } catch {
+        selectedLabelUuid.value = '';
+        selectedLabelData.value = null;
+    }
+    uiStore.loading = false;
+};
+
+const backFromLabelDetail = () => {
+    selectedLabelUuid.value = '';
+    selectedLabelData.value = null;
+    selectedLabelInk.value = null;
+    selectedLabelUser.value = null;
+};
+
+const goToInkOrTattoo = () => {
+    if (selectedLabelData.value?.tattooUuid && selectedLabelData.value?.userUuid) {
+        router.push(`/users/${selectedLabelData.value.userUuid}/tattoos/${selectedLabelData.value.tattooUuid}`);
+    } else if (selectedLabelInk.value?.batchId && selectedLabelData.value?.inkUuid) {
+        router.push(`/warehouse/${selectedLabelInk.value.batchId}/${selectedLabelData.value.inkUuid}`);
+    }
+};
 
 const getPrintFileUrl = async () => {
     const url = await getSignedLabelsPdfUrl(labelsStore.batchUuid);

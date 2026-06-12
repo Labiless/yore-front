@@ -380,6 +380,7 @@ import {
 } from 'lucide-vue-next';
 import { useUiStore } from '@/stores/ui';
 import { useUsersStore } from '@/stores/users.store';
+import Input from '@shared/components/ui/input/Input.vue';
 import Button from '@shared/components/ui/button/Button.vue';
 import SearchBar from '@/components/SearchBar.vue';
 import { getLabelsByUserPage } from '@/services/api.label.service';

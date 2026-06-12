@@ -113,8 +113,20 @@ const detectMobileOrTablet = () => {
 const INK_CONFIRM_MESSAGE =
     'Sei sicuro di voler utilizzare questo inchiostro? L\'operazione non è reversibile.';
 
-onMounted(() => {
+onMounted(async () => {
     isMobileOrTablet.value = detectMobileOrTablet();
+    if (isMobileOrTablet.value) {
+        try {
+            // Request permission once so subsequent getUserMedia calls don't prompt again.
+            // Also pre-populate the device list: listVideoInputDevices() calls getUserMedia
+            // internally, so doing it here avoids a second prompt when the scanner opens.
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            stream.getTracks().forEach((track) => track.stop());
+            devices.value = await BrowserQRCodeReader.listVideoInputDevices();
+        } catch {
+            // permesso negato o fotocamera non disponibile — gestito al momento della scansione
+        }
+    }
 });
 
 onBeforeUnmount(() => {
@@ -201,7 +213,9 @@ const startScanner = async (deviceId?: string) => {
         controls.value = null;
         codeReader.value = null;
         codeReader.value = new BrowserQRCodeReader();
-        devices.value = await BrowserQRCodeReader.listVideoInputDevices();
+        if (!devices.value.length) {
+            devices.value = await BrowserQRCodeReader.listVideoInputDevices();
+        }
         controls.value = await codeReader.value.decodeFromVideoDevice(
             deviceId ?? devices.value[0]?.deviceId,
             videoEl.value,

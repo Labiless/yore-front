@@ -6,34 +6,34 @@
             :class="`${createTattooStore.signSectionConfirmed() ? '' : 'bg-amber-500!'}`"></span>
     </p>
     <p class="text-xs text-center text-gray-600 mb-4 px-2">
-        Apponi la firma del tatuato e quella del tatuatore nei riquadri sottostanti.
+        Aggiungi le firme per completare la sessione.
     </p>
     <hr />
     <div v-if="!createTattooStore.customerSign && !createTattooStore.userSign">
         <section class="mb-4">
-            <p class="text-sm font-bold mb-2">Firma del tatuato</p>
+            <p class="text-sm font-bold mb-2">Firma della persona tatuata</p>
             <p class="text-xs text-gray-600 mb-2">Persona che riceve il tatuaggio</p>
             <Sign ref="customerSign" :width="400" :height="200" />
         </section>
         <hr />
         <section class="mb-4">
-            <p class="text-sm font-bold mb-2">Firma del tatuatore</p>
-            <p class="text-xs text-gray-600 mb-2">Operatore che esegue il tatuaggio</p>
+            <p class="text-sm font-bold mb-2">Firma dell'artista</p>
+            <p class="text-xs text-gray-600 mb-2">Artista che esegue il tatuaggio</p>
             <Sign ref="userSign" :width="400" :height="200" />
         </section>
         <Button class="w-full h-12" @click="saveSignature">Conferma</Button>
     </div>
     <div v-else>
         <section class="mb-4">
-            <p class="text-sm font-bold mb-2 text-center">Firma del tatuato</p>
+            <p class="text-sm font-bold mb-2 text-center">Firma della persona tatuata</p>
             <img class="bg-white mx-auto rounded-md shadow-md" :src="createTattooStore.customerSign"
-                alt="Firma del tatuato" />
+                alt="Firma della persona tatuata" />
         </section>
         <hr />
         <section>
-            <p class="text-sm font-bold mb-2 text-center">Firma del tatuatore</p>
+            <p class="text-sm font-bold mb-2 text-center">Firma dell'artista</p>
             <img class="bg-white mx-auto rounded-md shadow-md" :src="createTattooStore.userSign"
-                alt="Firma del tatuatore" />
+                alt="Firma dell'artista" />
         </section>
     </div>
 </template>

@@ -1,14 +1,14 @@
 <template>
     <div class="text-center font-bold mb-2 w-fit flex items-center mx-auto">
         <ClipboardList class="text-black mr-2 shrink-0" />
-        <span>Dichiarazioni del soggetto</span>
+        <span>Consenso informato</span>
         <span
             class="rounded-full p-1 w-2 h-2 ml-2 shrink-0"
             :class="createTattoStore.declarationsSectionConfirmed() ? 'bg-green-700' : 'bg-amber-500'"
         />
     </div>
     <p class="text-xs text-center text-gray-600 mb-4 px-2">
-        Attiva il toggle per rispondere sì a ogni voce; lascialo spento per no.
+        Attiva l’interruttore per indicare “sì”; lascialo spento per indicare “no”
     </p>
     <hr class="mb-4" />
     <div class="flex flex-col gap-4">

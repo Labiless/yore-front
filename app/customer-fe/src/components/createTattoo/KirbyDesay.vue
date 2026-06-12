@@ -10,7 +10,7 @@
     <hr class="mb-4" />
     <Accordion type="single" collapsible class="w-full" default-value="item-1">
         <AccordionItem value="item-1">
-            <AccordionTrigger>Tipo di pelle</AccordionTrigger>
+            <AccordionTrigger>Fototipo</AccordionTrigger>
             <AccordionContent>
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     <Button @click="createTattoStore.kirbyDesay.skinType = skinType.id" v-for="skinType in skinTypes"

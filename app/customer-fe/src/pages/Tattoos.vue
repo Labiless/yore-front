@@ -219,7 +219,7 @@
                             <dd class="detail-value">{{ tattooPositionLabel }}</dd>
                         </div>
                         <div class="detail-row">
-                            <dt class="detail-label">Tipo di pelle</dt>
+                            <dt class="detail-label">Fototipo</dt>
                             <dd class="detail-value">{{ tattooSkinTypeLabel }}</dd>
                         </div>
                     </dl>

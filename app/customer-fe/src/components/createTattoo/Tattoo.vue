@@ -10,19 +10,19 @@
     <hr class="mb-4" />
 
     <section class="shadow-md bg-white rounded-md p-3 mb-4">
-        <p class="text-sm font-semibold mb-1">Nome tatuatore</p>
+        <p class="text-sm font-semibold mb-1">Nome Artista</p>
         <p class="text-xs text-gray-600 mb-3">
-            Inserisci e salva il nome del tatuatore che ha eseguito il tatuaggio.
+            Inserisci e salva il nome dell’artista che ha eseguito il tatuaggio.
         </p>
         <form @submit.prevent="saveTattooArtist">
             <Input
-                placeholder="Nome tatuatore"
+                placeholder="Nome Artista"
                 required
                 v-model="createTattoStore.tattooArtist"
                 class="mb-2"
             />
             <Button type="submit" class="w-full h-11" :disabled="!createTattoStore.tattooArtist?.trim()">
-                Conferma nome tatuatore
+                Conferma nome Artista
             </Button>
         </form>
         <p v-if="createTattoStore.tattooArtist?.trim()" class="text-xs text-green-700 mt-2">
@@ -225,7 +225,7 @@ const uploadImage = async (slot: PhotoSlot, img: File) => {
 const saveTattooArtist = async () => {
     const name = createTattoStore.tattooArtist?.trim();
     if (!name) {
-        uiStore.setToast('Inserisci il nome del tatuatore', 'error');
+        uiStore.setToast("Inserisci il nome dell'artista", 'error');
         return;
     }
 
@@ -241,9 +241,9 @@ const saveTattooArtist = async () => {
         createTattoStore.tattooArtist = name;
         tattooArtistSaved.value = true;
         await refreshTattooInList(tattooUuid);
-        uiStore.setToast('Nome tatuatore salvato');
+        uiStore.setToast('Nome Artista salvato');
     } catch {
-        uiStore.setToast('Errore nel salvataggio del tatuatore', 'error');
+        uiStore.setToast("Errore nel salvataggio dell'Artista", 'error');
     }
     uiStore.loading = false;
 };

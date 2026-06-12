@@ -20,23 +20,23 @@ export const FALLBACK_TATTOO_STYLES = [
   'Permanent Make up',
   'Realistic',
   'Traditional',
-  'Watercolour',
+  'Watercolor',
 ] as const;
 
 export const FALLBACK_TATTOO_TYPES = ['one_layer', 'cover_up', 'retouch'] as const;
 
 export const TATTOO_TYPE_LABELS: Record<string, { title: string; description: string }> = {
   one_layer: {
-    title: 'Un solo strato di pigmento',
-    description: 'Tatuaggio unico',
+    title: 'Nuovo tatuaggio',
+    description: 'Su pelle non tatuata',
   },
   cover_up: {
-    title: 'Copertura (cover-up)',
-    description: 'Nuovo tatuaggio sopra il precedente',
+    title: 'Cover-up',
+    description: 'Nuovo tatuaggio sopra uno esistente',
   },
   retouch: {
-    title: 'Ritocco o rinforzo',
-    description: 'Due passaggi sullo stesso tatuaggio',
+    title: 'Ritocco / rinforzo',
+    description: 'Secondo passaggio sullo stesso tatuaggio',
   },
 };
 

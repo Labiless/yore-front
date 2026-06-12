@@ -1,12 +1,13 @@
 <template>
     <p class="text-center font-bold mb-2 w-fit flex items-center mx-auto">
         <ClipboardList class="text-black mr-2 shrink-0" />
-        Informazioni Tatuato
+        Informazioni personali
         <span
             class="rounded-full p-1 w-2 h-2 ml-2 shrink-0"
             :class="createTattoStore.infoSectionConfirmed() ? 'bg-green-700' : 'bg-amber-500'"
         />
     </p>
+    <p class="text-xs text-gray-500 text-center mb-3">Queste informazioni vengono utilizzate per la gestione del consenso informato e della sessione</p>
     <hr class="mb-4" />
     <form @submit.prevent="onsubmit" class="customer-form grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
         <label>

@@ -6,10 +6,7 @@
             </Button>
         </router-link>
         <h1 class="text-2xl mb-2 mt-4">Magazzino inchiostro</h1>
-        <div class="flex  justify-start items-center">
-            <Input v-model="searchUuid" class="w-2/3 shadow-xl" type="text" />
-            <Search class="ml-2" />
-        </div>
+        <SearchBar v-model="searchUuid" @search="performSearch" />
         <div class="flex items-center gap-2 p-2 my-4 mx-auto rounded-md bg-slate-200">
             <Button @click="selectMagazzinoTab" type="button" class="text-xs w-fit h-8 bg-transparent text-black"
                 :class="`${showTab === 0 ? 'bg-white!' : ''}`">Magazzino</Button>
@@ -114,12 +111,13 @@
 
 import { ref, watch, onMounted, computed } from 'vue';
 import { getBatchByUuid, getInkByUuid } from "@/services/api.ink.service";
-import { ArrowLeft, FileText, Search, Plus, Droplet, Calendar } from 'lucide-vue-next';
+import { ArrowLeft, FileText, Plus, Droplet, Calendar } from 'lucide-vue-next';
 import { useUiStore } from '@/stores/ui';
 import { useWharehouseStore } from '@/stores/warehouse.store';
-import Input from '@shared/components/ui/input/Input.vue';
 import Button from '@shared/components/ui/button/Button.vue';
+import SearchBar from '@/components/SearchBar.vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useUniversalSearch, getUuidPrefix, UUID_REGEX } from '@/composables/useUniversalSearch';
 
 const showTab = ref(0);
 const route = useRoute();
@@ -129,6 +127,7 @@ const batchUuid = typeof route.params.batchUuid === 'string' ? route.params.batc
 const uiStore = useUiStore();
 const warehouseStore = useWharehouseStore();
 const transitionDirection = ref('next');
+const { navigateByUuid } = useUniversalSearch();
 
 const batchHeaderDate = computed(() => {
     const first = warehouseStore.batchData[0];
@@ -160,29 +159,41 @@ const batchInkSummary = computed(() => {
 });
 
 const searchUuid = ref('');
-const uuidRegex = /^([a-z]{2,4}_)?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-const isValidUuid = (uuid: string) => {
-    return uuidRegex.test(uuid);
-}
+const performSearch = async (uuid: string) => {
+    uuid = uuid.replace(/\s+/g, '');
+    if (!UUID_REGEX.test(uuid)) return;
 
-watch(searchUuid, async (newSearchUuid, oldSearchUuid) => {
-    newSearchUuid = newSearchUuid.replace(/\s+/g, '');
-    if (isValidUuid(newSearchUuid)) {
-        const ink = await getInkByUuid(newSearchUuid);
-        if (ink.batchId) {
+    const prefix = getUuidPrefix(uuid);
+
+    // cross-page navigation for non-warehouse UUIDs
+    if (prefix && !['ink', 'ibt'].includes(prefix)) {
+        navigateByUuid(uuid);
+        return;
+    }
+
+    showTab.value = 1;
+    try {
+        const ink = await getInkByUuid(uuid);
+        if (ink?.batchId) {
             warehouseStore.batchUuid = ink.batchId;
             warehouseStore.batchData = [ink];
+            return;
         }
-        else {
-            const batch = await getBatchByUuid(newSearchUuid);
-            if (batch.length) {
-                warehouseStore.batchUuid = newSearchUuid;
-                warehouseStore.batchData = batch;
-            }
+    } catch { /* not an ink UUID */ }
+
+    try {
+        const batch = await getBatchByUuid(uuid);
+        if (batch.length) {
+            warehouseStore.batchUuid = uuid;
+            warehouseStore.batchData = batch;
         }
-    }
-})
+    } catch { /* not a batch UUID */ }
+};
+
+watch(searchUuid, async (newVal) => {
+    await performSearch(newVal);
+});
 
 onMounted(async () => {
     uiStore.title = "Magazzino";
@@ -191,6 +202,10 @@ onMounted(async () => {
     if (batchUuid) {
         await showBatch(batchUuid);
         showTab.value = 1;
+    }
+    const inkFromQuery = typeof route.query.ink === 'string' ? route.query.ink : '';
+    if (inkFromQuery) {
+        await performSearch(inkFromQuery);
     }
     uiStore.loading = false;
 });

@@ -5,10 +5,7 @@
                 <Plus /> Crea etichette
             </Button>
         </router-link>
-        <div class="flex justify-start items-center">
-            <Input v-model="searchUuid" class="w-2/3 shadow-xl" type="text" />
-            <Search class="ml-2" />
-        </div>
+        <SearchBar v-model="searchUuid" @search="performSearch" />
         <div class="flex items-center gap-2 p-2 my-4 mx-auto rounded-md bg-slate-200">
             <Button @click="showTab = 0" class="text-xs w-fit h-8 bg-transparent text-black"
                 :class="`${showTab === 0 ? 'bg-white!' : 'shadow-none'}`">Lotti etichette</Button>
@@ -17,9 +14,9 @@
         <div v-show="showTab === 0">
             <Transition>
                 <div v-if="selectedLabelUuid && selectedLabelData" class="pb-24">
-                    <div class="flex items-start gap-2 mb-4">
-                        <ArrowLeft @click="backFromLabelDetail" class="hover:cursor-pointer shrink-0 mt-1" />
-                        <p class="text-xs text-gray-500 break-all mt-1">{{ selectedLabelUuid }}</p>
+                    <div class="flex items-center mb-4">
+                        <ArrowLeft @click="backFromLabelDetail" class="hover:cursor-pointer mr-2 shrink-0" />
+                        <p class="font-bold text-md break-all">{{ selectedLabelUuid }}</p>
                     </div>
 
                     <!-- Documenti -->
@@ -319,7 +316,7 @@
 <script setup lang="ts">
 
 import { onMounted, onBeforeUnmount, ref, watch, computed, nextTick } from 'vue';
-import { Search, User, ArrowLeft, Plus, Calendar, Download, UserPlus, Copy, ExternalLink, Package, FileText } from 'lucide-vue-next';
+import { User, ArrowLeft, Plus, Calendar, Download, UserPlus, Copy, ExternalLink, Package, FileText } from 'lucide-vue-next';
 import {
     getAllBatchesPage,
     getBatchByUuidPage,
@@ -332,21 +329,22 @@ import { getAllUsers, getUserByUuid } from '@/services/api.user.service';
 import { getInkByUuid } from '@/services/api.ink.service';
 import { useUiStore } from '@/stores/ui';
 import { useLabelsStore } from '@/stores/lables.store';
-import Input from '@shared/components/ui/input/Input.vue';
 import Button from '@shared/components/ui/button/Button.vue';
+import SearchBar from '@/components/SearchBar.vue';
 import router from '@/router';
 import { useRoute } from 'vue-router';
+import { useUniversalSearch, getUuidPrefix, UUID_REGEX } from '@/composables/useUniversalSearch';
 
 const uiStore = useUiStore();
 const labelsStore = useLabelsStore();
 const route = useRoute();
 const transitionDirection = ref('next');
+const { navigateByUuid } = useUniversalSearch();
 
 const showTab = ref(0);
 
 const searchUuid = ref('');
 const userDisplayNameByUuid = ref<Record<string, string>>({});
-const uuidRegex = /^([a-z]{2,4}_)?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const loadUserDisplayNames = async () => {
     const users = await getAllUsers();
@@ -440,25 +438,33 @@ const studioUsers = ref<{ uuid: string; businessName?: string; email?: string }[
 const routeBatchUuid = () =>
     typeof route.params.labelsUuid === 'string' ? route.params.labelsUuid : '';
 
-const isValidUuid = (uuid: string) => {
-    return uuidRegex.test(uuid);
-}
+const performSearch = async (uuid: string) => {
+    uuid = uuid.replace(/\s+/g, '');
+    if (!UUID_REGEX.test(uuid)) return;
 
-watch(searchUuid, async (newSearchUuid) => {
-    newSearchUuid = newSearchUuid.replace(/\s+/g, '');
-    if (!isValidUuid(newSearchUuid)) return;
+    const prefix = getUuidPrefix(uuid);
+
+    // cross-page navigation for non-label UUIDs
+    if (prefix && !['lbl', 'lbt'].includes(prefix)) {
+        navigateByUuid(uuid);
+        return;
+    }
 
     try {
-        const label = await getLabelByUuid(newSearchUuid);
+        const label = await getLabelByUuid(uuid);
         if (label?.batchId) {
-            await openLabelDetail(newSearchUuid, label);
+            await openLabelDetail(uuid, label);
             return;
         }
     } catch {
         // non è un'etichetta singola
     }
 
-    await openBatch(newSearchUuid);
+    await openBatch(uuid);
+};
+
+watch(searchUuid, async (newVal) => {
+    await performSearch(newVal);
 });
 
 watch(batchLoadMoreSentinel, () => {
@@ -482,14 +488,20 @@ onMounted(async () => {
     uiStore.title = "Etichette";
     uiStore.loading = true;
 
-    const batchFromRoute = routeBatchUuid();
     labelsStore.resetSearch();
     await loadUserDisplayNames();
     await loadBatchesList(true);
-    uiStore.loading = false;
-    if (batchFromRoute) {
+
+    const batchFromRoute = routeBatchUuid();
+    const labelFromQuery = typeof route.query.label === 'string' ? route.query.label : '';
+
+    if (labelFromQuery) {
+        await openLabelDetail(labelFromQuery);
+    } else if (batchFromRoute) {
         await openBatch(batchFromRoute);
     }
+
+    uiStore.loading = false;
 });
 
 const setupBatchesListLoadMoreObserver = () => {

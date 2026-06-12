@@ -5,10 +5,7 @@
                 <Plus /> Crea nuovo utente
             </Button>
         </router-link>
-        <div class="flex justify-start items-center">
-            <Input v-model="searchUuid" class="w-1/3 shadow-xl" type="text" />
-            <Search class="ml-2" />
-        </div>
+        <SearchBar v-model="searchUuid" @search="performSearch" />
         <div class="flex items-center gap-2 p-2 my-4 mx-auto rounded-md bg-slate-200">
             <Button @click="showTab = 0" class="text-xs w-fit h-8 bg-transparent text-black"
                 :class="`${showTab === 0 ? 'bg-white!' : 'shadow-none'}`">Tutti gli utenti</Button>
@@ -370,7 +367,6 @@ import {
     deleteUser,
 } from '@/services/api.user.service';
 import {
-    Search,
     Plus,
     BookMarked,
     Mail,
@@ -384,21 +380,22 @@ import {
 } from 'lucide-vue-next';
 import { useUiStore } from '@/stores/ui';
 import { useUsersStore } from '@/stores/users.store';
-import Input from '@shared/components/ui/input/Input.vue';
 import Button from '@shared/components/ui/button/Button.vue';
+import SearchBar from '@/components/SearchBar.vue';
 import { getLabelsByUserPage } from '@/services/api.label.service';
 import router from '@/router';
 import { useRoute } from 'vue-router';
+import { useUniversalSearch, getUuidPrefix, UUID_REGEX } from '@/composables/useUniversalSearch';
 
 const uiStore = useUiStore();
 const usersStore = useUsersStore();
 const route = useRoute();
 const transitionDirection = ref('next');
+const { navigateByUuid } = useUniversalSearch();
 
 const showTab = ref(0)
 
 const searchUuid = ref('');
-const uuidRegex = /^([a-z]{2,4}_)?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const selectedUser = ref<any>(null);
 const selectedUserUuid = ref('');
 const labelsFilter = ref<'all' | 'available' | 'burned'>('all');
@@ -456,19 +453,25 @@ const getRouteUserUuid = (): string => {
     return typeof userUuid === 'string' ? userUuid : '';
 };
 
-const isValidUuid = (uuid: string) => {
-    return uuidRegex.test(uuid);
-}
+const performSearch = (uuid: string) => {
+    uuid = uuid.replace(/\s+/g, '');
+    if (!UUID_REGEX.test(uuid)) return;
 
-watch(searchUuid, async (newSearchUuid, oldSearchUuid) => {
-    newSearchUuid = newSearchUuid.replace(/\s+/g, '');
-    if (isValidUuid(newSearchUuid)) {
-        const user = usersStore.allUsers.filter(el => el.uuid === newSearchUuid)[0];
-        if (user) {
-            showUser(user.uuid)
-        }
+    const prefix = getUuidPrefix(uuid);
+
+    // cross-page navigation for non-user UUIDs
+    if (prefix && prefix !== 'usr') {
+        navigateByUuid(uuid);
+        return;
     }
-})
+
+    const user = usersStore.allUsers.find(el => el.uuid === uuid);
+    if (user) showUser(user.uuid);
+};
+
+watch(searchUuid, (newVal) => {
+    performSearch(newVal);
+});
 
 onMounted(async () => {
     uiStore.title = "Utenti";

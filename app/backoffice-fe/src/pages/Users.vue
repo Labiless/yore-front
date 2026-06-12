@@ -313,6 +313,9 @@
                                         />
                                         <div class="min-w-0">
                                             <p class="text-sm break-all">{{ ink.uuid }}</p>
+                                            <p class="text-xs text-gray-400 mt-0.5">
+                                                Lotto: {{ ink.batchId }}
+                                            </p>
                                             <p
                                                 v-if="ink.burningDate"
                                                 class="text-xs text-gray-500 mt-1"

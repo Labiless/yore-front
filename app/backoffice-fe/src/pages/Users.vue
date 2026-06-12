@@ -98,6 +98,8 @@
                                     v-model="editAddress.city"
                                     class="bg-white"
                                     type="text"
+                                    pattern="[A-Za-zÀ-ÖØ-öø-ÿ''\s]+"
+                                    title="Città (es. Milano, L'Aquila)"
                                 />
                                 <label class="user-edit-label" for="edit-user-cap">CAP</label>
                                 <Input
@@ -119,6 +121,8 @@
                                     v-model="editAddress.address"
                                     class="bg-white"
                                     type="text"
+                                    pattern="[A-Za-zÀ-ÖØ-öø-ÿ''0-9\s,.\-\/]+"
+                                    title="Indirizzo (es. Via Roma 5, Via L'Aquila)"
                                 />
                                 <Button type="submit" class="h-10 w-full" :disabled="savingAddress">
                                     {{ savingAddress ? 'Salvataggio...' : 'Salva indirizzo' }}

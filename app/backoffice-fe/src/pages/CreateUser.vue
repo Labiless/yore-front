@@ -28,7 +28,7 @@
 
                 <label class="user-form-label" for="user-cf">Codice Fiscale</label>
                 <Input id="user-cf" class="bg-white" v-model="createUSerStore.cf" name="cf" type="text" maxlength="16"
-                    minlength="16" pattern="[A-Za-z]{6}[0-9]{2}[A-Za-z][0-9]{2}[A-Za-z][0-9]{3}[A-Za-z]" />
+                    minlength="11" pattern="[A-Za-z]{6}[0-9]{2}[A-Za-z][0-9]{2}[A-Za-z][0-9]{3}[A-Za-z]|[0-9]{11}" />
 
                 <label class="user-form-label" for="user-piva">Partita Iva</label>
                 <Input id="user-piva" class="bg-white" v-model="createUSerStore.piva" name="piva" type="text" required
@@ -50,11 +50,13 @@
 
                 <label class="user-form-label" for="user-city">Città</label>
                 <Input id="user-city" class="bg-white" v-model="createUSerStore.city" name="city" type="text"
-                    required />
+                    required pattern="[A-Za-zÀ-ÖØ-öø-ÿ''\s]+"
+                    title="Città (es. Milano, L'Aquila)" />
 
                 <label class="user-form-label" for="user-address">Indirizzo</label>
                 <Input id="user-address" class="bg-white" v-model="createUSerStore.address" name="address" type="text"
-                    required />
+                    required pattern="[A-Za-zÀ-ÖØ-öø-ÿ''0-9\s,.\-\/]+"
+                    title="Indirizzo (es. Via Roma 5, Via L'Aquila)" />
 
                 <label class="user-form-label user-form-label--checkbox flex items-center gap-2 py-4">
                     <Checkbox required v-model="createUSerStore.consent" />

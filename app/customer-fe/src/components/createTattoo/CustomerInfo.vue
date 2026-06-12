@@ -12,13 +12,15 @@
     <form @submit.prevent="onsubmit" class="customer-form grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
         <label>
             Nome
-            <Input placeholder="Nome" required v-model="createTattoStore.info.name" pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+" />
+            <Input placeholder="Nome" required v-model="createTattoStore.info.name"
+                pattern="[A-Za-zÀ-ÖØ-öø-ÿ'’]+(?:[ '’\-][A-Za-zÀ-ÖØ-öø-ÿ'’]+)*"
+                title="Nome con lettere, spazi, apostrofi o trattini (es. Maria, D'Angelo)" />
         </label>
         <label>
             Cognome
             <Input placeholder="Cognome" required v-model="createTattoStore.info.surname"
-                pattern="[A-Za-zÀ-ÖØ-öø-ÿ']+(?:[ '\-][A-Za-zÀ-ÖØ-öø-ÿ']+)*"
-                title="Cognome con lettere, spazi, apostrofi o trattini (es. De Luca, D'Angelo)" />
+                pattern="[A-Za-zÀ-ÖØ-öø-ÿ'’]+(?:[ '’\-][A-Za-zÀ-ÖØ-öø-ÿ'’]+)*"
+                title="Cognome con lettere, spazi, apostrofi o trattini (es. De Luca, D'Amico)" />
         </label>
 
         <label class="sm:col-span-2">
@@ -87,24 +89,28 @@
         <label>
             Luogo di nascita
             <Input placeholder="Luogo di nascita" required v-model="createTattoStore.info.birthPlace"
-                pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s]+" />
+                pattern="[A-Za-zÀ-ÖØ-öø-ÿ''\s]+"
+                title="Luogo di nascita (es. Roma, L'Aquila)" />
         </label>
         <label>
             Paese di residenza
             <Input placeholder="Paese di residenza" required v-model="createTattoStore.info.country"
-                pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s]+" />
+                pattern="[A-Za-zÀ-ÖØ-öø-ÿ''\s]+"
+                title="Paese di residenza (es. Italia, Costa d'Avorio)" />
         </label>
 
         <label>
             Città di residenza
             <Input placeholder="Città di residenza" required v-model="createTattoStore.info.city"
-                pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s]+" />
+                pattern="[A-Za-zÀ-ÖØ-öø-ÿ''\s]+"
+                title="Città di residenza (es. Milano, L'Aquila)" />
         </label>
 
         <label class="sm:col-span-2">
             Indirizzo di residenza
             <Input placeholder="Indirizzo di residenza" required v-model="createTattoStore.info.address"
-                pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s]+" />
+                pattern="[A-Za-zÀ-ÖØ-öø-ÿ''0-9\s,.\-\/]+"
+                title="Indirizzo (es. Via L'Aquila, Via dei Mille)" />
         </label>
 
         <label>

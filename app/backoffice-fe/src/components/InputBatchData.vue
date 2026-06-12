@@ -23,11 +23,11 @@
             <label for="sdsUrl">Url SDS</label>
             <Input class="bg-white" v-model="loadingBatchStore.sdsUrl" name="sdsUrl" type="text" required />
 
-            <label for="sterilizationCertUrl">Url certificato analisi chimiche</label>
+            <label for="sterilizationCertUrl">Url certificato sterilizzazione</label>
             <Input class="bg-white" v-model="loadingBatchStore.sterilizationCertUrl" name="sterilizationCertUrl"
                 type="text" required />
 
-            <label for="chemistryAnalysisUrl">Url certificato sterilizzazione</label>
+            <label for="chemistryAnalysisUrl">Url certificato analisi chimiche</label>
             <Input class="bg-white" v-model="loadingBatchStore.chemistryAnalysisUrl" name="chemistryAnalysisUrl"
                 type="text" required />
 

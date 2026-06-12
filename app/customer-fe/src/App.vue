@@ -35,9 +35,25 @@
   >
     <div class="flex flex-col items-center gap-4 max-w-sm w-full rounded-2xl bg-white px-6 py-8 shadow-2xl text-center pointer-events-auto">
       <div class="w-12 h-12 rounded-full border-4 border-gray-200 border-t-blue-500 animate-spin" />
-      <p v-if="uiStore.loadingMessage" class="text-sm text-gray-700 leading-relaxed">
+      <p v-if="uiStore.loadingMessage && !uiStore.loadingSteps.length" class="text-sm text-gray-700 leading-relaxed">
         {{ uiStore.loadingMessage }}
       </p>
+      <ul v-if="uiStore.loadingSteps.length" class="w-full flex flex-col gap-3 text-left mt-1">
+        <li
+          v-for="(step, i) in uiStore.loadingSteps"
+          :key="i"
+          class="flex items-center gap-3 text-sm"
+          :class="step.done ? 'text-gray-800' : 'text-gray-400'"
+        >
+          <span v-if="step.done" class="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center shrink-0">
+            <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </span>
+          <span v-else class="w-5 h-5 rounded-full border-2 border-gray-300 border-t-blue-500 animate-spin shrink-0" />
+          {{ step.label }}
+        </li>
+      </ul>
     </div>
   </div>
 </template>

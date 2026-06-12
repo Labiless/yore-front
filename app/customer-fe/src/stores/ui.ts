@@ -6,6 +6,7 @@ export const useUiStore = defineStore('ui', {
     title: "",
     loading: false,
     loadingMessage: '' as string,
+    loadingSteps: [] as { label: string; done: boolean }[],
     toast : '',
     toastType: '',
       popup: {
@@ -33,6 +34,17 @@ export const useUiStore = defineStore('ui', {
     closePopup() {
       this.popup.text = '';
       this.popup.action = null;
-    }
+    },
+    setLoadingSteps(labels: string[]) {
+      this.loadingSteps = labels.map((label) => ({ label, done: false }));
+    },
+    completeStep(index: number) {
+      if (this.loadingSteps[index]) {
+        this.loadingSteps[index].done = true;
+      }
+    },
+    clearLoadingSteps() {
+      this.loadingSteps = [];
+    },
   },
 })

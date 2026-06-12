@@ -61,7 +61,7 @@ import { useUiStore } from '@/stores/ui';
 import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useCreateTattoStore, type TattooSectionKey } from '@/stores/createTatto.store';
-import { getTattoByUuid, closeTattoo, finalizeTattoo } from '@/services/api.tattoo.service';
+import { getTattoByUuid, createCertificatePdf, createInformedConsentPdf, closeTattooWithEmail } from '@/services/api.tattoo.service';
 import { getCustomerByUuid } from '@/services/api.customer.service';
 import { hasKirbyDesayData } from '@/constants/tattoo.config';
 import { hasDeclarationsData } from '@/constants/tattoo-declarations.config';
@@ -210,79 +210,84 @@ const getToday = () => {
 }
 
 const submit = async () => {
+    if (!createTattoStore.uuid) {
+        uiStore.setToast('Nessun ID tatuaggio', 'error');
+        return;
+    }
+
+    const customerEmail = createTattoStore.info.email;
+    if (!customerEmail) {
+        uiStore.setToast("Email del cliente obbligatoria per l'invio dei documenti", 'error');
+        return;
+    }
+
     uiStore.loading = true;
-    if (createTattoStore.uuid) {
-        try {
-            await refreshStudioProfile();
+    uiStore.setLoadingSteps([
+        'Generazione certificato di tatuaggio',
+        'Generazione consenso informato',
+        'Invio documenti e chiusura',
+    ]);
 
-            const labelsData = await apiLabelService.getLabelsByTattooUuid(createTattoStore.uuid);
+    try {
+        await refreshStudioProfile();
 
-            for (let i = 0; i < labelsData.length; i++) {
-                const inkData = await inkLabelService.getInkByUuid(labelsData[0].inkUuid);
-                labelsData[0] = {
-                    ...labelsData[0],
-                    ...inkData
-                }
-            }
-
-            const certificateData = {
-                ...createTattoStore.certificateData,
-                date: getToday(),
-                inkType: labelsData[0].inkType,
-                inkColor: labelsData[0].color,
-                codiceUnivoco: createTattoStore.inks.join(', '),
-                inkBatchId: labelsData[0].batchId,
-                sterilizationUrl: labelsData[0].sterilizationCertUrl,
-                chemistryAnalysisUrl: labelsData[0].chemistryAnalysisUrl,
-                microbiologicalAnalysisUrl: labelsData[0].microbiologicalAnalysisUrl,
-                inkSds: labelsData[0].sdsUrl,
-                inkFormulaUrl: labelsData[0].inkFormulaUrl,
-                signPlace: studioSignPlace(),
-                tattooStudio: studioName(),
-                tattooStudioAddress: studioAddress(),
-                tattooPhotoUrl:
-                    createTattoStore.photoAfterUrl ?? createTattoStore.photoBeforeUrl,
-                tattooCertificateNumber: String(createTattoStore.id),
-            }
-            const informedConsentData = {
-                ...createTattoStore.informedConsentData,
-                date: getToday(),
-                signPlace: studioSignPlace(),
-            };
-
-            const customerEmail = createTattoStore.info.email;
-            if (!customerEmail) {
-                uiStore.setToast('Email del cliente obbligatoria per l\'invio dei documenti', 'error');
-                uiStore.loading = false;
-                uiStore.loadingMessage = '';
-                return;
-            }
-
-            uiStore.loadingMessage =
-                'Stiamo generando tutti i documenti, potrebbe volerci un attimo :)';
-            await finalizeTattoo(createTattoStore.uuid, {
-                customerEmail,
-                customerName: [createTattoStore.info.name, createTattoStore.info.surname]
-                    .filter(Boolean)
-                    .join(' '),
-                studioName: studioName(),
-                certificate: certificateData,
-                consent: informedConsentData,
-            });
-            await closeTattoo(createTattoStore.uuid);
-            uiStore.loadingMessage = '';
-
-            await tattooStore.fetchTattoosPage(userStore.getUiid, { reset: true, filter: 'all' });
-            router.push(`/tattoos/${createTattoStore.uuid}`);
-            uiStore.setToast('Tatuaggio completato! Email inviata al cliente.');
-
-        } catch {
-            uiStore.setToast('Qualcosa è andato storto', 'error');
+        const labelsData = await apiLabelService.getLabelsByTattooUuid(createTattoStore.uuid);
+        for (let i = 0; i < labelsData.length; i++) {
+            const inkData = await inkLabelService.getInkByUuid(labelsData[0].inkUuid);
+            labelsData[0] = { ...labelsData[0], ...inkData };
         }
 
-    }
-    else {
-        uiStore.setToast('Nessun ID tatuaggio', 'error');
+        const certificateData = {
+            ...createTattoStore.certificateData,
+            date: getToday(),
+            inkType: labelsData[0].inkType,
+            inkColor: labelsData[0].color,
+            codiceUnivoco: createTattoStore.inks.join(', '),
+            inkBatchId: labelsData[0].batchId,
+            sterilizationUrl: labelsData[0].sterilizationCertUrl,
+            chemistryAnalysisUrl: labelsData[0].chemistryAnalysisUrl,
+            microbiologicalAnalysisUrl: labelsData[0].microbiologicalAnalysisUrl,
+            inkSds: labelsData[0].sdsUrl,
+            inkFormulaUrl: labelsData[0].inkFormulaUrl,
+            signPlace: studioSignPlace(),
+            tattooStudio: studioName(),
+            tattooStudioAddress: studioAddress(),
+            tattooPhotoUrl: createTattoStore.photoAfterUrl ?? createTattoStore.photoBeforeUrl,
+            tattooCertificateNumber: String(createTattoStore.id),
+        };
+        const informedConsentData = {
+            ...createTattoStore.informedConsentData,
+            date: getToday(),
+            signPlace: studioSignPlace(),
+        };
+        const customerName = [createTattoStore.info.name, createTattoStore.info.surname]
+            .filter(Boolean)
+            .join(' ');
+
+        // Step 1 — certificato
+        await createCertificatePdf(createTattoStore.uuid, certificateData);
+        uiStore.completeStep(0);
+
+        // Step 2 — consenso informato
+        await createInformedConsentPdf(createTattoStore.uuid, informedConsentData);
+        uiStore.completeStep(1);
+
+        // Step 3 — invio email + chiusura
+        await closeTattooWithEmail(createTattoStore.uuid, {
+            customerEmail,
+            customerName,
+            studioName: studioName(),
+        });
+        uiStore.completeStep(2);
+
+        uiStore.clearLoadingSteps();
+        await tattooStore.fetchTattoosPage(userStore.getUiid, { reset: true, filter: 'all' });
+        router.push(`/tattoos/${createTattoStore.uuid}`);
+        uiStore.setToast('Tatuaggio completato! Email inviata al cliente.');
+
+    } catch {
+        uiStore.clearLoadingSteps();
+        uiStore.setToast('Qualcosa è andato storto', 'error');
     }
     uiStore.loading = false;
     uiStore.loadingMessage = '';

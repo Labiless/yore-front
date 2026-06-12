@@ -104,6 +104,15 @@ export const finalizeTattoo = async (tattooUuid: string, payload: {
     };
 }
 
+export const closeTattooWithEmail = async (tattooUuid: string, payload: {
+    customerEmail: string;
+    customerName: string;
+    studioName?: string;
+}) => {
+    const data = await api.post(`tattoos/close/${tattooUuid}`, payload);
+    return data.data as { emailSent: boolean; emailError: string | null };
+}
+
 export const saveSigns = async (tattooUuid : string, customerSign: string, userSign: string) => {
     const data = await api.post(`tattoos/sign/${tattooUuid}`, {
         customerSign,

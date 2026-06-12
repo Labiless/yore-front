@@ -59,7 +59,8 @@
         v-show="isCameraOpen"
     >
         <p class="text-white mb-2 px-4 text-center">Inquadra il QR code dell'etichetta inchiostro</p>
-        <div class="flex flex-wrap gap-2 mb-2 px-2 justify-center">
+        <!-- Device buttons shown only in desktop fallback (no cached stream) -->
+        <div v-if="!cachedStream && devices.length" class="flex flex-wrap gap-2 mb-2 px-2 justify-center">
             <Button
                 v-for="device in devices"
                 :key="device.deviceId"
@@ -99,6 +100,8 @@ const devices = ref<MediaDeviceInfo[]>([]);
 const codeReader = ref<BrowserQRCodeReader | null>(null);
 const controls = ref<{ stop: () => void } | null>(null);
 const isMobileOrTablet = ref(false);
+// Stream cached after first permission grant — never stopped between scans to avoid re-prompts on iOS
+const cachedStream = ref<MediaStream | null>(null);
 
 const detectMobileOrTablet = () => {
     if (typeof navigator === 'undefined') return false;
@@ -113,24 +116,14 @@ const detectMobileOrTablet = () => {
 const INK_CONFIRM_MESSAGE =
     'Sei sicuro di voler utilizzare questo inchiostro? L\'operazione non è reversibile.';
 
-onMounted(async () => {
+onMounted(() => {
     isMobileOrTablet.value = detectMobileOrTablet();
-    if (isMobileOrTablet.value) {
-        try {
-            // Request permission once so subsequent getUserMedia calls don't prompt again.
-            // Also pre-populate the device list: listVideoInputDevices() calls getUserMedia
-            // internally, so doing it here avoids a second prompt when the scanner opens.
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            stream.getTracks().forEach((track) => track.stop());
-            devices.value = await BrowserQRCodeReader.listVideoInputDevices();
-        } catch {
-            // permesso negato o fotocamera non disponibile — gestito al momento della scansione
-        }
-    }
 });
 
 onBeforeUnmount(() => {
     stopScanner();
+    cachedStream.value?.getTracks().forEach((t) => t.stop());
+    cachedStream.value = null;
 });
 
 const addInkByUuid = async (rawUuid: string) => {
@@ -193,6 +186,19 @@ const openCamera = async () => {
         uiStore.setToast('La fotocamera è disponibile solo su smartphone o tablet', 'error');
         return;
     }
+
+    // Request camera permission only on the very first click; reuse stream on all subsequent opens
+    if (!cachedStream.value) {
+        try {
+            cachedStream.value = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'environment' },
+            });
+        } catch {
+            uiStore.setToast('Accesso fotocamera non disponibile o permesso negato', 'error');
+            return;
+        }
+    }
+
     try {
         await startScanner();
     } catch (e) {
@@ -211,22 +217,37 @@ const startScanner = async (deviceId?: string) => {
             /* nessuna sessione attiva */
         }
         controls.value = null;
-        codeReader.value = null;
         codeReader.value = new BrowserQRCodeReader();
-        if (!devices.value.length) {
-            devices.value = await BrowserQRCodeReader.listVideoInputDevices();
+
+        if (cachedStream.value) {
+            // Pass a clone so that controls.stop() (which stops the clone's tracks)
+            // does not kill the original cached stream, preventing re-prompts on iOS.
+            controls.value = await codeReader.value.decodeFromStream(
+                cachedStream.value.clone(),
+                videoEl.value,
+                (result: { getText: () => string } | undefined) => {
+                    if (result) {
+                        stopScanner();
+                        confirmAddInk(result.getText().trim());
+                    }
+                },
+            );
+        } else {
+            // Desktop fallback: enumerate devices and use decodeFromVideoDevice
+            if (!devices.value.length) {
+                devices.value = await BrowserQRCodeReader.listVideoInputDevices();
+            }
+            controls.value = await codeReader.value.decodeFromVideoDevice(
+                deviceId ?? devices.value[0]?.deviceId,
+                videoEl.value,
+                (result: { getText: () => string } | undefined) => {
+                    if (result) {
+                        stopScanner();
+                        confirmAddInk(result.getText().trim());
+                    }
+                },
+            );
         }
-        controls.value = await codeReader.value.decodeFromVideoDevice(
-            deviceId ?? devices.value[0]?.deviceId,
-            videoEl.value,
-            (result: { getText: () => string } | undefined) => {
-                if (result) {
-                    const scannedUuid = result.getText().trim();
-                    stopScanner();
-                    confirmAddInk(scannedUuid);
-                }
-            },
-        );
     } catch {
         uiStore.setToast('Camera non disponibile', 'error');
         stopScanner();
@@ -242,6 +263,8 @@ const stopScanner = () => {
     controls.value = null;
     codeReader.value = null;
     isCameraOpen.value = false;
+    // cachedStream is intentionally NOT stopped here — it stays alive between scans
+    // so iOS does not re-prompt for camera permission on subsequent openings.
 };
 </script>
 

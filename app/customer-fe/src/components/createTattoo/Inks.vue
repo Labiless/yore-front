@@ -71,7 +71,16 @@
                 {{ device.label }}
             </Button>
         </div>
-        <video ref="videoEl" class="video w-full max-w-200" autoplay playsinline muted />
+        <div class="w-full overflow-hidden" style="max-height: 60dvh;">
+            <video
+                ref="videoEl"
+                class="w-full block"
+                style="object-fit: cover; max-height: 60dvh;"
+                autoplay
+                playsinline
+                muted
+            />
+        </div>
         <CircleX @click="stopScanner" color="red" class="mt-4" :size="30" />
     </div>
 
@@ -210,6 +219,8 @@ const openCamera = async () => {
 const startScanner = async (deviceId?: string) => {
     isCameraOpen.value = true;
     if (!videoEl.value) return;
+    // Needed for iOS WKWebView (Chrome/Firefox on iPad) to prevent native fullscreen takeover
+    videoEl.value.setAttribute('webkit-playsinline', '');
     try {
         try {
             controls.value?.stop();

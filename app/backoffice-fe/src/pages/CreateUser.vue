@@ -27,8 +27,7 @@
                     name="businessName" type="text" required />
 
                 <label class="user-form-label" for="user-cf">Codice Fiscale</label>
-                <Input id="user-cf" class="bg-white" v-model="createUSerStore.cf" name="cf" type="text" maxlength="16"
-                    minlength="11" pattern="[A-Za-z]{6}[0-9]{2}[A-Za-z][0-9]{2}[A-Za-z][0-9]{3}[A-Za-z]|[0-9]{11}" />
+                <Input id="user-cf" class="bg-white" v-model="createUSerStore.cf" name="cf" type="text" maxlength="16" />
 
                 <label class="user-form-label" for="user-piva">Partita Iva</label>
                 <Input id="user-piva" class="bg-white" v-model="createUSerStore.piva" name="piva" type="text" required

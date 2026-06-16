@@ -35,12 +35,14 @@ function shouldSkipStringNormalization(key: string | undefined, value: string): 
   return false;
 }
 
+// Removes characters that could cause XSS or injection issues.
+// Does NOT strip apostrophes (') — they are legitimate in names and addresses.
+// Does NOT lowercase — names and addresses must preserve their original casing.
 export function normalizeTextValue(value: string): string {
   return value
     .trim()
-    .replace(/[<>"'`\\]/g, '')
-    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '')
-    .toLowerCase();
+    .replace(/[<>"`\\]/g, '')
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
 }
 
 export function normalizePayload<T>(data: T, parentKey?: string): T {

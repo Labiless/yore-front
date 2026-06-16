@@ -12,7 +12,7 @@
                 :class="`${showTab === 0 ? 'bg-white!' : ''}`">Magazzino</Button>
             <Button @click="selectLottiTab" type="button" class="text-xs w-fit h-8 bg-transparent text-black"
                 :class="`${showTab === 1 ? 'bg-white!' : ''}`">
-                Lotti caricamento
+                Lotti caricati
             </Button>
         </div>
         <div v-show="showTab === 0" class="pb-24">

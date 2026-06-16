@@ -74,7 +74,7 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             date: undefined,
             inkType: undefined,
             inkColor: undefined,
-            brand: 'Yore',
+            brand: 'YORE Unique Ink Black',
             codiceUnivoco: undefined,
             customerName: [state.info.name, state.info.surname].filter(Boolean).join(' '),
             customerBirthDate: state.info.birthDate,

@@ -54,11 +54,11 @@ export const SKIN_TYPE_LABELS: Record<number, string> = {
 };
 
 export const TATTOO_POSITION_LABELS: Record<number, string> = {
-  1: 'Testa / viso',
-  2: 'Torace',
-  3: 'Gambe superiori',
-  4: 'Gambe inferiori e avambracci',
-  5: 'Piedi e mani',
+  1: 'Testa / collo / viso',
+  2: 'Tronco superiore',
+  3: 'Tronco inferiore',
+  4: 'Avambraccio / gamba',
+  5: 'Polso / mano / caviglia / piede',
 };
 
 export function formatDisplayDate(value?: string | null): string {

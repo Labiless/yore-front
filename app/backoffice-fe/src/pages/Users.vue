@@ -195,21 +195,19 @@
                             >
                                 <p class="font-bold mb-1">Credenziali</p>
                                 <label class="user-edit-label" for="edit-user-password">Nuova password</label>
-                                <Input
+                                <PasswordInput
                                     id="edit-user-password"
                                     v-model="editPassword.password"
                                     class="bg-white"
-                                    type="password"
                                     autocomplete="new-password"
                                     minlength="8"
                                     required
                                 />
                                 <label class="user-edit-label" for="edit-user-password-confirm">Conferma password</label>
-                                <Input
+                                <PasswordInput
                                     id="edit-user-password-confirm"
                                     v-model="editPassword.confirm"
                                     class="bg-white"
-                                    type="password"
                                     autocomplete="new-password"
                                     minlength="8"
                                     required
@@ -385,6 +383,7 @@ import {
 import { useUiStore } from '@/stores/ui';
 import { useUsersStore } from '@/stores/users.store';
 import Input from '@shared/components/ui/input/Input.vue';
+import PasswordInput from '@shared/components/PasswordInput.vue';
 import Button from '@shared/components/ui/button/Button.vue';
 import SearchBar from '@/components/SearchBar.vue';
 import { getLabelsByUserPage } from '@/services/api.label.service';

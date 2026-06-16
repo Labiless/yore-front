@@ -13,8 +13,8 @@
                     required />
 
                 <label class="user-form-label" for="user-password">Password</label>
-                <Input id="user-password" class="bg-white" v-model="createUSerStore.password" name="password"
-                    type="password" required />
+                <PasswordInput id="user-password" class="bg-white" v-model="createUSerStore.password" name="password"
+                    required />
 
                 <p class="font-bold text-xl py-4">Informazioni</p>
 
@@ -71,6 +71,7 @@
 
 <script setup lang="ts">
 import Input from '@shared/components/ui/input/Input.vue';
+import PasswordInput from '@shared/components/PasswordInput.vue';
 import Button from '@shared/components/ui/button/Button.vue';
 import Checkbox from '@shared/components/ui/checkbox/Checkbox.vue';
 import { createUser } from '@/services/api.user.service';

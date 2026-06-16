@@ -389,7 +389,7 @@ export const useCreateTattoStore = defineStore('createTattoo', {
             return buildPhotoUrlArray(this.photoBeforeUrl, this.photoAfterUrl);
         },
         signValidation() {
-            return !!this.customerSign && !!this.userSign;
+            return !!this.customerSign;
         },
     },
 });

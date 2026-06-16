@@ -6,20 +6,14 @@
             :class="`${createTattooStore.signSectionConfirmed() ? '' : 'bg-amber-500!'}`"></span>
     </p>
     <p class="text-xs text-center text-gray-600 mb-4 px-2">
-        Aggiungi le firme per completare la sessione.
+        Aggiungi la firma per completare la sessione.
     </p>
     <hr />
-    <div v-if="!createTattooStore.customerSign && !createTattooStore.userSign">
+    <div v-if="!createTattooStore.customerSign">
         <section class="mb-4">
             <p class="text-sm font-bold mb-2">Firma della persona tatuata</p>
             <p class="text-xs text-gray-600 mb-2">Persona che riceve il tatuaggio</p>
             <Sign ref="customerSign" :width="400" :height="200" />
-        </section>
-        <hr />
-        <section class="mb-4">
-            <p class="text-sm font-bold mb-2">Firma dell'artista</p>
-            <p class="text-xs text-gray-600 mb-2">Artista che esegue il tatuaggio</p>
-            <Sign ref="userSign" :width="400" :height="200" />
         </section>
         <Button class="w-full h-12" @click="saveSignature">Conferma</Button>
     </div>
@@ -28,12 +22,6 @@
             <p class="text-sm font-bold mb-2 text-center">Firma della persona tatuata</p>
             <img class="bg-white mx-auto rounded-md shadow-md" :src="createTattooStore.customerSign"
                 alt="Firma della persona tatuata" />
-        </section>
-        <hr />
-        <section>
-            <p class="text-sm font-bold mb-2 text-center">Firma dell'artista</p>
-            <img class="bg-white mx-auto rounded-md shadow-md" :src="createTattooStore.userSign"
-                alt="Firma dell'artista" />
         </section>
     </div>
 </template>
@@ -47,7 +35,6 @@ import { useUiStore } from '@/stores/ui';
 import { useTatoosStore } from '@/stores/tattoos.store';
 
 const customerSign = ref<{ saveSignature: () => string } | null>(null);
-const userSign = ref<{ saveSignature: () => string } | null>(null);
 const createTattooStore = useCreateTattoStore();
 const uiStore = useUiStore();
 const tattoosStore = useTatoosStore();
@@ -59,22 +46,20 @@ onMounted(() => {
 const saveSignature = async () => {
     uiStore.loading = true;
     const tattooUuid = createTattooStore.uuid;
-    if (!tattooUuid || !customerSign.value || !userSign.value) {
+    if (!tattooUuid || !customerSign.value) {
         uiStore.loading = false;
-        uiStore.setToast('Dati mancanti per salvare le firme', 'error');
+        uiStore.setToast('Dati mancanti per salvare la firma', 'error');
         return;
     }
 
     const sign1 = customerSign.value.saveSignature();
-    const sign2 = userSign.value.saveSignature();
-    if (!sign1 || !sign2) {
+    if (!sign1) {
         uiStore.loading = false;
         uiStore.setToast('Firma mancante', 'error');
         return;
     }
-    const res = await saveSigns(tattooUuid, sign1, sign2);
+    const res = await saveSigns(tattooUuid, sign1);
     createTattooStore.customerSign = res.customerUrl;
-    createTattooStore.userSign = res.userUrl;
 
     const updatedTattoo = await getTattoByUuid(tattooUuid);
     tattoosStore.tattoos = tattoosStore.tattoos.map(tattoo => tattoo.uuid === updatedTattoo.uuid ? updatedTattoo : tattoo)
@@ -82,6 +67,6 @@ const saveSignature = async () => {
 
     createTattooStore.confirmSection('sign');
     uiStore.loading = false;
-    uiStore.setToast('Firme aggiunte correttamente');
+    uiStore.setToast('Firma aggiunta correttamente');
 };
 </script>

@@ -92,10 +92,10 @@ const goToStep = (step: string) => {
 const allSteps = [
     { name: 'info', validation: createTattoStore.infoSectionConfirmed },
     { name: 'declarations', validation: createTattoStore.declarationsSectionConfirmed },
+    { name: 'sign', validation: createTattoStore.signSectionConfirmed },
     { name: 'kirbyDesay', validation: createTattoStore.kirbyDesaySectionConfirmed },
     { name: 'ink', validation: createTattoStore.inksSectionConfirmed },
     { name: 'tattoo', validation: createTattoStore.tattooSectionConfirmed },
-    { name: 'sign', validation: createTattoStore.signSectionConfirmed },
 ];
 
 const refreshStudioProfile = async () => {

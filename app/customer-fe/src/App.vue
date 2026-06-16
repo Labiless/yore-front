@@ -140,7 +140,7 @@ const links = [
         }
         authStore.logout();
         userStore.clear();
-        router.push('/login');
+        window.location.href = '/login';
       });
     },
     icon: "LogOut",

@@ -169,7 +169,7 @@ const submit = async () => {
 };
 
 const skinTypes = [
-    { id: 1, name: 'molto chiara', description: 'descrizione della pelle', bg: '#F0E4F2' },
+    { id: 1, name: 'molto chiara', description: 'Si scotta sempre, non si abbronza mai', bg: '#F0E4F2' },
     { id: 2, name: 'CHIARA', description: 'Spesso si scotta, si abbronza leggermente', bg: '#FBC2CF' },
     { id: 3, name: 'MEDIO CHIARA', description: 'Si scotta a volte, si abbronza gradualmente', bg: '#FBB2A4' },
     { id: 4, name: 'MEDIO SCURA', description: 'Si scotta raramente, si abbronza facilmente', bg: '#D28D56' },

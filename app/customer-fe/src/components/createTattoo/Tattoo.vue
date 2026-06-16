@@ -140,8 +140,10 @@ const closePhotoPreview = () => {
 };
 
 const tryConfirmTattooSection = () => {
-    if (createTattoStore.photoBeforeUrl && createTattoStore.photoAfterUrl) {
+    if (createTattoStore.tattooPhotoValidation()) {
         createTattoStore.confirmSection('tattoo');
+    } else {
+        createTattoStore.invalidateSection('tattoo');
     }
 };
 
@@ -241,6 +243,7 @@ const saveTattooArtist = async () => {
         createTattoStore.tattooArtist = name;
         tattooArtistSaved.value = true;
         await refreshTattooInList(tattooUuid);
+        tryConfirmTattooSection();
         uiStore.setToast('Nome Artista salvato');
     } catch {
         uiStore.setToast("Errore nel salvataggio dell'Artista", 'error');

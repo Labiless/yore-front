@@ -58,7 +58,12 @@
         </div>
         <div class="shadow-md bg-white rounded-md p-3">
             <div class="flex items-start justify-between gap-3">
-                <p class="text-sm flex-1 min-w-0">Do il consenso per il trattamento dati</p>
+                <p class="text-sm flex-1 min-w-0">
+                    Do il consenso per il trattamento dati
+                    <a :href="consentPdfUrl" target="_blank" rel="noopener noreferrer" class="block text-xs text-blue-600 underline mt-0.5">
+                        Visualizza documento
+                    </a>
+                </p>
                 <button
                     type="button"
                     role="switch"
@@ -73,7 +78,12 @@
         </div>
         <div class="shadow-md bg-white rounded-md p-3">
             <div class="flex items-start justify-between gap-3">
-                <p class="text-sm flex-1 min-w-0">Do il consenso per la liberatoria</p>
+                <p class="text-sm flex-1 min-w-0">
+                    Do il consenso per la liberatoria
+                    <a :href="consentPdfUrl" target="_blank" rel="noopener noreferrer" class="block text-xs text-blue-600 underline mt-0.5">
+                        Visualizza documento
+                    </a>
+                </p>
                 <button
                     type="button"
                     role="switch"
@@ -107,6 +117,9 @@ import {
 const createTattoStore = useCreateTattoStore();
 const uiStore = useUiStore();
 const tattoosStore = useTatoosStore();
+
+const beRoot = (import.meta.env.VITE_BE_BASE_URL as string ?? '').replace(/\/api\/?$/, '');
+const consentPdfUrl = `${beRoot}/public/pdf_template/consenso_informato_sartoria.pdf`;
 
 watch(
     () => ({ ...createTattoStore.declarations }),

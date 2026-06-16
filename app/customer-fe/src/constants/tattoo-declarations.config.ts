@@ -140,10 +140,10 @@ export function createEmptyDeclarations(): TattooDeclarationsState {
     declPregnancyBreastfeeding: false,
     declMetalAllergy: false,
     declBloodThinners: false,
-    declConsentPhotosMarketing: false,
-    declConsentDesignStencil: false,
-    declConsentYoreInkSingleUse: false,
-    declConsentYoreInkNewSealed: false,
+    declConsentPhotosMarketing: true,
+    declConsentDesignStencil: true,
+    declConsentYoreInkSingleUse: true,
+    declConsentYoreInkNewSealed: true,
     declMedicalConditionsNotes: '',
   };
 }

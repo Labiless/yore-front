@@ -9,7 +9,7 @@
             <h1>Nessun inchiostro disponibile per creazione etichette</h1>
         </div>
     </div>
-    <div v-else class="w-full h-full">
+    <div v-else class="w-full">
         <div class="flex justify-between items-center mb-4 gap-2">
             <ArrowLeft @click="creatingLabelsStore.resetCreatingLabels()" class="shrink-0 cursor-pointer" />
             <p class="text-xl font-bold text-left flex-1">Associa le etichette a uno studio (opzionale)</p>

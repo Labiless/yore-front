@@ -89,27 +89,27 @@
         <label>
             Luogo di nascita
             <Input placeholder="Luogo di nascita" required v-model="createTattoStore.info.birthPlace"
-                pattern="[A-Za-zÀ-ÖØ-öø-ÿ''\s]+"
+                pattern="[A-Za-zÀ-ÖØ-öø-ÿ'' \-]+"
                 title="Luogo di nascita (es. Roma, L'Aquila)" />
         </label>
         <label>
             Paese di residenza
             <Input placeholder="Paese di residenza" required v-model="createTattoStore.info.country"
-                pattern="[A-Za-zÀ-ÖØ-öø-ÿ''\s]+"
+                pattern="[A-Za-zÀ-ÖØ-öø-ÿ'' \-]+"
                 title="Paese di residenza (es. Italia, Costa d'Avorio)" />
         </label>
 
         <label>
             Città di residenza
             <Input placeholder="Città di residenza" required v-model="createTattoStore.info.city"
-                pattern="[A-Za-zÀ-ÖØ-öø-ÿ''\s]+"
+                pattern="[A-Za-zÀ-ÖØ-öø-ÿ'' \-]+"
                 title="Città di residenza (es. Milano, L'Aquila)" />
         </label>
 
         <label class="sm:col-span-2">
             Indirizzo di residenza
             <Input placeholder="Indirizzo di residenza" required v-model="createTattoStore.info.address"
-                pattern="[A-Za-zÀ-ÖØ-öø-ÿ''0-9\s,.\-\/]+"
+                pattern="[A-Za-zÀ-ÖØ-öø-ÿ''0-9 ,.\-\/]+"
                 title="Indirizzo (es. Via L'Aquila, Via dei Mille)" />
         </label>
 

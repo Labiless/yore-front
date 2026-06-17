@@ -49,12 +49,12 @@
 
                 <label class="user-form-label" for="user-city">Città</label>
                 <Input id="user-city" class="bg-white" v-model="createUSerStore.city" name="city" type="text"
-                    required pattern="[A-Za-zÀ-ÖØ-öø-ÿ''\s]+"
+                    required pattern="[A-Za-zÀ-ÖØ-öø-ÿ'' \-]+"
                     title="Città (es. Milano, L'Aquila)" />
 
                 <label class="user-form-label" for="user-address">Indirizzo</label>
                 <Input id="user-address" class="bg-white" v-model="createUSerStore.address" name="address" type="text"
-                    required pattern="[A-Za-zÀ-ÖØ-öø-ÿ''0-9\s,.\-\/]+"
+                    required pattern="[A-Za-zÀ-ÖØ-öø-ÿ''0-9 ,.\-\/]+"
                     title="Indirizzo (es. Via Roma 5, Via L'Aquila)" />
 
                 <label class="user-form-label user-form-label--checkbox flex items-center gap-2 py-4">

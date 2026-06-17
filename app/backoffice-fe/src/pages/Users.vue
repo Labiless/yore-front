@@ -98,7 +98,7 @@
                                     v-model="editAddress.city"
                                     class="bg-white"
                                     type="text"
-                                    pattern="[A-Za-zÀ-ÖØ-öø-ÿ''\s]+"
+                                    pattern="[A-Za-zÀ-ÖØ-öø-ÿ'' \-]+"
                                     title="Città (es. Milano, L'Aquila)"
                                 />
                                 <label class="user-edit-label" for="edit-user-cap">CAP</label>
@@ -121,7 +121,7 @@
                                     v-model="editAddress.address"
                                     class="bg-white"
                                     type="text"
-                                    pattern="[A-Za-zÀ-ÖØ-öø-ÿ''0-9\s,.\-\/]+"
+                                    pattern="[A-Za-zÀ-ÖØ-öø-ÿ''0-9 ,.\-\/]+"
                                     title="Indirizzo (es. Via Roma 5, Via L'Aquila)"
                                 />
                                 <Button type="submit" class="h-10 w-full" :disabled="savingAddress">
